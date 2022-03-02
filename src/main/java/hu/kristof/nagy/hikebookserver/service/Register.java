@@ -17,9 +17,8 @@ public class Register {
     private UserSource userSource;
 
     public boolean registerUser(UserAuth user) {
-        ApiFuture<QuerySnapshot> query = userSource.users.select("name", "pswd")
+        ApiFuture<QuerySnapshot> query = userSource.users.select("name")
                 .whereEqualTo("name", user.getName())
-                .whereEqualTo("pswd", user.getPassword())
                 .get();
 
         try {
