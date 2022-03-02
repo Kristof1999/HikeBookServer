@@ -26,6 +26,8 @@ public class HikeBookServerApplication {
 
 	@Bean
 	public UserSource provideUserSource() {
-		return new UserSource();
+		UserSource userSource = new UserSource();
+		userSource.init();
+		return userSource;
 	}
 }
