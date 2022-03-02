@@ -17,12 +17,12 @@ public class Register {
     private UserSource userSource;
 
     public boolean registerUser(User user) {
-        ApiFuture<QuerySnapshot> query = userSource.users.select("name")
+        ApiFuture<QuerySnapshot> future = userSource.users.select("name")
                 .whereEqualTo("name", user.getName())
                 .get();
 
         try {
-            if (query.get().isEmpty()) {
+            if (future.get().isEmpty()) {
                 userSource.users
                         .document(user.getName())
                         .set(user);

@@ -14,13 +14,13 @@ public class Login {
     private UserSource userSource;
 
     public boolean loginUser(User user) {
-        ApiFuture<QuerySnapshot> query = userSource.users.select("name", "pswd")
+        ApiFuture<QuerySnapshot> future = userSource.users.select("name", "pswd")
                 .whereEqualTo("name", user.getName())
                 .whereEqualTo("pswd", user.getPassword())
                 .get();
 
         try {
-            if (query.get().isEmpty()) {
+            if (future.get().isEmpty()) {
                 // TODO: give back more meaningful error messages
                 return false;
             } else {
