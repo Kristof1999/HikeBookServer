@@ -1,13 +1,11 @@
 package hu.kristof.nagy.hikebookserver.service;
 
 import com.google.api.core.ApiFuture;
-import com.google.cloud.firestore.Query;
 import com.google.cloud.firestore.QuerySnapshot;
 import hu.kristof.nagy.hikebookserver.data.UserSource;
-import hu.kristof.nagy.hikebookserver.model.UserAuth;
+import hu.kristof.nagy.hikebookserver.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class Login {
@@ -15,7 +13,7 @@ public class Login {
     @Autowired
     private UserSource userSource;
 
-    public boolean loginUser(UserAuth user) {
+    public boolean loginUser(User user) {
         ApiFuture<QuerySnapshot> query = userSource.users.select("name", "pswd")
                 .whereEqualTo("name", user.getName())
                 .whereEqualTo("pswd", user.getPassword())
