@@ -14,6 +14,11 @@ public class Register {
     @Autowired
     private CloudDatabase db;
 
+    /**
+     * Registers the user if there is no other user
+     * in the database with the same name.
+     * @return true if registration was successful
+     */
     public boolean registerUser(User user) {
         CollectionReference users = db.getDb().collection("users");
         ApiFuture<QuerySnapshot> future = users.select("name")

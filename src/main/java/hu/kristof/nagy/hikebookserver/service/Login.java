@@ -13,6 +13,11 @@ public class Login {
     @Autowired
     private CloudDatabase db;
 
+    /**
+     * Logs in the given user if there exists one in the database
+     * with the given name and password.
+     * @return true if login was successful
+     */
     public boolean loginUser(User user) {
         ApiFuture<QuerySnapshot> future = db.getDb().collection("users")
                 .select("name", "pswd")
