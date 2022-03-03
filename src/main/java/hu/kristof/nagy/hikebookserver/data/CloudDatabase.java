@@ -7,7 +7,6 @@ import com.google.firebase.FirebaseOptions;
 import com.google.firebase.cloud.FirestoreClient;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -25,8 +24,6 @@ public class CloudDatabase {
 
             db = FirestoreClient.getFirestore();
             // TODO: do some logging
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
