@@ -5,6 +5,8 @@ import com.google.cloud.firestore.Firestore;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.cloud.FirestoreClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -12,6 +14,7 @@ import java.io.InputStream;
 
 public class CloudDatabase {
     private Firestore db;
+    private static final Logger log = LoggerFactory.getLogger(CloudDatabase.class);
 
     public CloudDatabase() {
         try {
@@ -23,7 +26,7 @@ public class CloudDatabase {
             FirebaseApp.initializeApp(options);
 
             db = FirestoreClient.getFirestore();
-            // TODO: do some logging
+            log.info("Initialized Firestore");
         } catch (IOException e) {
             e.printStackTrace();
         }

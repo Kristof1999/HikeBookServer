@@ -27,7 +27,6 @@ public class Login {
 
         try {
             if (future.get().isEmpty()) {
-                // TODO: give back more meaningful error messages
                 return false;
             } else {
                 return true;
