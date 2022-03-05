@@ -20,11 +20,11 @@ public class Login {
      */
     public boolean loginUser(User user) {
         ApiFuture<QuerySnapshot> future = db.getDb().collection("users")
-                .select("name", "pswd")
+                .select("name", "password")
                 .whereEqualTo("name", user.getName())
-                .whereEqualTo("pswd", user.getPassword())
+                .whereEqualTo("password", user.getPassword())
                 .get();
-
+        // TODO: test if whereEqualTo uses the User's equals
         try {
             if (future.get().isEmpty()) {
                 // TODO: give back more meaningful error messages

@@ -1,18 +1,19 @@
 package hu.kristof.nagy.hikebookserver.model;
 
-import java.util.Objects;
+import com.google.common.primitives.Bytes;
+
+import java.util.*;
 
 public class User {
-    private String name, password;
+    private String name;
+    private String password;
     private float avgSpeed;
 
     public User() {
     }
 
     public User(String name, String password) {
-        this.name = name;
-        this.password = password;
-        avgSpeed = 0f;
+        this(name, password, 0f);
     }
 
     public User(String name, String password, float avgSpeed) {
@@ -25,16 +26,8 @@ public class User {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getPassword() {
         return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public float getAvgSpeed() {
