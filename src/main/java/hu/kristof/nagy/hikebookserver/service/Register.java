@@ -7,6 +7,8 @@ import hu.kristof.nagy.hikebookserver.data.CloudDatabase;
 import hu.kristof.nagy.hikebookserver.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 public class Register {
@@ -27,8 +29,12 @@ public class Register {
 
         try {
             if (future.get().isEmpty()) {
-                users.document(user.getName())
-                        .set(user);
+                Map<String, Object> data = new HashMap<>();
+                data.put(User.NAME, user.getName());
+                data.put(User.PASSWORD, user.getPassword());
+                data.put(User.AVG_SPEED, user.getAvgSpeed());
+
+                users.document(user.getName()).set(data);
                 return true;
             } else {
                 return false;
