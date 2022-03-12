@@ -3,6 +3,7 @@ package hu.kristof.nagy.hikebookserver.service;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.QuerySnapshot;
 import hu.kristof.nagy.hikebookserver.data.CloudDatabase;
+import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -19,10 +20,11 @@ public class Login {
      * @return true if login was successful
      */
     public boolean loginUser(User user) {
-        ApiFuture<QuerySnapshot> future = db.getDb().collection("users")
-                .select("name", "password")
-                .whereEqualTo(User.NAME, user.getName())
-                .whereEqualTo(User.PASSWORD, user.getPassword())
+        ApiFuture<QuerySnapshot> future = db.getDb()
+                .collection(DbPathConstants.COLLECTION_USER)
+                .select(DbPathConstants.USER_NAME, DbPathConstants.USER_PASSWORD)
+                .whereEqualTo(DbPathConstants.USER_NAME, user.getName())
+                .whereEqualTo(DbPathConstants.USER_PASSWORD, user.getPassword())
                 .get();
 
         try {
@@ -31,9 +33,7 @@ public class Login {
             } else {
                 return true;
             }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
         return false;

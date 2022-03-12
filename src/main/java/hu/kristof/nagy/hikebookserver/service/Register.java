@@ -4,6 +4,7 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.QuerySnapshot;
 import hu.kristof.nagy.hikebookserver.data.CloudDatabase;
+import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -22,26 +23,26 @@ public class Register {
      * @return true if registration was successful
      */
     public boolean registerUser(User user) {
-        CollectionReference users = db.getDb().collection("users");
-        ApiFuture<QuerySnapshot> future = users.select("name")
-                .whereEqualTo("name", user.getName())
+        CollectionReference users = db.getDb()
+                .collection(DbPathConstants.COLLECTION_USER);
+        ApiFuture<QuerySnapshot> future = users
+                .select(DbPathConstants.USER_NAME)
+                .whereEqualTo(DbPathConstants.USER_NAME, user.getName())
                 .get();
 
         try {
             if (future.get().isEmpty()) {
                 Map<String, Object> data = new HashMap<>();
-                data.put(User.NAME, user.getName());
-                data.put(User.PASSWORD, user.getPassword());
-                data.put(User.AVG_SPEED, user.getAvgSpeed());
+                data.put(DbPathConstants.USER_NAME, user.getName());
+                data.put(DbPathConstants.USER_PASSWORD, user.getPassword());
+                data.put(DbPathConstants.USER_AVG_SPEED, user.getAvgSpeed());
 
                 users.document(user.getName()).set(data);
                 return true;
             } else {
                 return false;
             }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
         return false;

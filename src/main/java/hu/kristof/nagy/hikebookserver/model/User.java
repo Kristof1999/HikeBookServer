@@ -5,10 +5,6 @@ import com.google.common.primitives.Bytes;
 import java.util.*;
 
 public class User {
-    public static final String NAME = "name";
-    public static final String PASSWORD = "password";
-    public static final String AVG_SPEED = "avgSpeed";
-
     private String name;
     private String password;
     private float avgSpeed;

@@ -3,6 +3,7 @@ package hu.kristof.nagy.hikebookserver;
 import hu.kristof.nagy.hikebookserver.data.CloudDatabase;
 import hu.kristof.nagy.hikebookserver.service.Login;
 import hu.kristof.nagy.hikebookserver.service.Register;
+import hu.kristof.nagy.hikebookserver.service.RouteCreate;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -29,5 +30,10 @@ public class HikeBookServerApplication {
 	@Bean
 	public CloudDatabase provideCloudDatabase() {
 		return new CloudDatabase();
+	}
+
+	@Bean
+	public RouteCreate provideRouteCreate() {
+		return new RouteCreate();
 	}
 }

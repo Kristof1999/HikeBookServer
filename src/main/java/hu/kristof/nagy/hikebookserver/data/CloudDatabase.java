@@ -18,7 +18,9 @@ public class CloudDatabase {
 
     public CloudDatabase() {
         try {
-            InputStream serviceAccount = new FileInputStream("C:\\Users\\36203\\hikebook-595dc-firebase-adminsdk-9nnbq-8738991677.json");
+            InputStream serviceAccount = new FileInputStream(
+                    "C:\\Users\\36203\\hikebook-595dc-firebase-adminsdk-9nnbq-595a8f1501.json"
+            );
             GoogleCredentials credentials = GoogleCredentials.fromStream(serviceAccount);
             FirebaseOptions options = new FirebaseOptions.Builder()
                     .setCredentials(credentials)
