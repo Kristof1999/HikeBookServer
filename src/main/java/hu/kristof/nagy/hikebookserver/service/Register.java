@@ -2,8 +2,8 @@ package hu.kristof.nagy.hikebookserver.service;
 
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.CollectionReference;
+import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QuerySnapshot;
-import hu.kristof.nagy.hikebookserver.data.CloudDatabase;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,7 @@ import java.util.concurrent.ExecutionException;
 public class Register {
 
     @Autowired
-    private CloudDatabase db;
+    private Firestore db;
 
     /**
      * Registers the user if there is no other user
@@ -23,7 +23,7 @@ public class Register {
      * @return true if registration was successful
      */
     public boolean registerUser(User user) {
-        CollectionReference users = db.getDb()
+        CollectionReference users = db
                 .collection(DbPathConstants.COLLECTION_USER);
         ApiFuture<QuerySnapshot> future = users
                 .select(DbPathConstants.USER_NAME)

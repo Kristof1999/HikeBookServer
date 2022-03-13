@@ -1,13 +1,13 @@
 package hu.kristof.nagy.hikebookserver.service;
 
 import com.google.api.core.ApiFuture;
+import com.google.cloud.firestore.CollectionReference;
+import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QuerySnapshot;
-import hu.kristof.nagy.hikebookserver.data.CloudDatabase;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.Point;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,7 +16,7 @@ import java.util.concurrent.ExecutionException;
 public class RouteCreate {
 
     @Autowired
-    private CloudDatabase db;
+    private Firestore db;
 
     /**
      * Before saving the route, checks if the user has no route called routeName,
@@ -27,7 +27,7 @@ public class RouteCreate {
      * @return true if save is successful
      */
     public boolean createRoute(String userName, String routeName, List<Point> points) {
-        ApiFuture<QuerySnapshot> future = db.getDb()
+        ApiFuture<QuerySnapshot> future = db
                 .collection(DbPathConstants.COLLECTION_ROUTE)
                 .select(DbPathConstants.ROUTE_USER_NAME,
                         DbPathConstants.ROUTE_NAME,
@@ -42,8 +42,7 @@ public class RouteCreate {
                 data.put(DbPathConstants.ROUTE_USER_NAME, userName);
                 data.put(DbPathConstants.ROUTE_NAME, routeName);
                 data.put(DbPathConstants.ROUTE_POINTS, points);
-                db.getDb()
-                        .collection(DbPathConstants.COLLECTION_ROUTE)
+                db.collection(DbPathConstants.COLLECTION_ROUTE)
                         .add(data);
                 return true;
             } else {

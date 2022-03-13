@@ -1,12 +1,11 @@
 package hu.kristof.nagy.hikebookserver.api;
 
 import hu.kristof.nagy.hikebookserver.model.Point;
+import hu.kristof.nagy.hikebookserver.model.Route;
 import hu.kristof.nagy.hikebookserver.service.RouteCreate;
+import hu.kristof.nagy.hikebookserver.service.RouteLoad;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -16,6 +15,9 @@ public class RouteController {
     @Autowired
     private RouteCreate routeCreate;
 
+    @Autowired
+    private RouteLoad routeLoad;
+
     @PutMapping("routes/create/{userName}/{routeName}")
     public boolean createRoute(
             @PathVariable String userName,
@@ -23,5 +25,10 @@ public class RouteController {
             @RequestBody List<Point> points
             ) {
         return routeCreate.createRoute(userName, routeName, points);
+    }
+
+    @GetMapping("routes/load/{userName}")
+    public List<Route> loadRoutesForUser(@PathVariable String userName) {
+        return routeLoad.loadRoutesForUser(userName);
     }
 }

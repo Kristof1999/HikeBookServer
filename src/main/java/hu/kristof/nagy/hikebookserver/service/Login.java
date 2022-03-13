@@ -1,8 +1,8 @@
 package hu.kristof.nagy.hikebookserver.service;
 
 import com.google.api.core.ApiFuture;
+import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QuerySnapshot;
-import hu.kristof.nagy.hikebookserver.data.CloudDatabase;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +12,7 @@ import java.util.concurrent.ExecutionException;
 public class Login {
 
     @Autowired
-    private CloudDatabase db;
+    private Firestore db;
 
     /**
      * Logs in the given user if there exists one in the database
@@ -20,7 +20,7 @@ public class Login {
      * @return true if login was successful
      */
     public boolean loginUser(User user) {
-        ApiFuture<QuerySnapshot> future = db.getDb()
+        ApiFuture<QuerySnapshot> future = db
                 .collection(DbPathConstants.COLLECTION_USER)
                 .select(DbPathConstants.USER_NAME, DbPathConstants.USER_PASSWORD)
                 .whereEqualTo(DbPathConstants.USER_NAME, user.getName())
