@@ -5,10 +5,7 @@ import com.google.cloud.firestore.Firestore;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.cloud.FirestoreClient;
-import hu.kristof.nagy.hikebookserver.service.Login;
-import hu.kristof.nagy.hikebookserver.service.Register;
-import hu.kristof.nagy.hikebookserver.service.RouteCreate;
-import hu.kristof.nagy.hikebookserver.service.RouteLoad;
+import hu.kristof.nagy.hikebookserver.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -47,6 +44,11 @@ public class HikeBookServerApplication {
 	@Bean
 	public RouteLoad provideRouteLoad() {
 		return new RouteLoad();
+	}
+
+	@Bean
+	public RouteDelete provideRouteDelete() {
+		return new RouteDelete();
 	}
 
 	@Scope("singleton")
