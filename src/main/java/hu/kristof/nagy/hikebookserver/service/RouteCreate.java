@@ -30,23 +30,30 @@ public class RouteCreate {
         ApiFuture<QuerySnapshot> future = db
                 .collection(DbPathConstants.COLLECTION_ROUTE)
                 .select(DbPathConstants.ROUTE_USER_NAME,
-                        DbPathConstants.ROUTE_NAME,
-                        DbPathConstants.ROUTE_POINTS)
+                        DbPathConstants.ROUTE_NAME)
                 .whereEqualTo(DbPathConstants.ROUTE_USER_NAME, userName)
                 .whereEqualTo(DbPathConstants.ROUTE_NAME, routeName)
-                .whereEqualTo(DbPathConstants.ROUTE_POINTS, points)
                 .get();
         try {
             if (future.get().isEmpty()) {
-                Map<String, Object> data = new HashMap<>();
-                data.put(DbPathConstants.ROUTE_USER_NAME, userName);
-                data.put(DbPathConstants.ROUTE_NAME, routeName);
-                data.put(DbPathConstants.ROUTE_POINTS, points);
-                db.collection(DbPathConstants.COLLECTION_ROUTE)
-                        .add(data);
-                return true;
+                ApiFuture<QuerySnapshot> query = db
+                        .collection(DbPathConstants.COLLECTION_ROUTE)
+                        .select(DbPathConstants.ROUTE_POINTS)
+                        .whereEqualTo(DbPathConstants.ROUTE_POINTS, points)
+                        .get();
+                if (query.get().isEmpty()) {
+                    Map<String, Object> data = new HashMap<>();
+                    data.put(DbPathConstants.ROUTE_USER_NAME, userName);
+                    data.put(DbPathConstants.ROUTE_NAME, routeName);
+                    data.put(DbPathConstants.ROUTE_POINTS, points);
+                    db.collection(DbPathConstants.COLLECTION_ROUTE)
+                            .add(data);
+                    return true;
+                } else {
+                    return false; //már van ilyen (más nevű) út
+                }
             } else {
-                return false;
+                return false; //név nem egyedi
             }
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();

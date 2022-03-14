@@ -4,6 +4,7 @@ import hu.kristof.nagy.hikebookserver.model.Point;
 import hu.kristof.nagy.hikebookserver.model.Route;
 import hu.kristof.nagy.hikebookserver.service.RouteCreate;
 import hu.kristof.nagy.hikebookserver.service.RouteDelete;
+import hu.kristof.nagy.hikebookserver.service.RouteEdit;
 import hu.kristof.nagy.hikebookserver.service.RouteLoad;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +22,9 @@ public class RouteController {
 
     @Autowired
     private RouteDelete routeDelete;
+
+    @Autowired
+    private RouteEdit routeEdit;
 
     @PutMapping("routes/create/{userName}/{routeName}")
     public boolean createRoute(
@@ -42,5 +46,14 @@ public class RouteController {
             @PathVariable String routeName
     ) {
         return routeDelete.deleteRoute(userName, routeName);
+    }
+
+    @PutMapping("routes/edit/{userName}/{routeName}")
+    public boolean editRoute(
+            @PathVariable String userName,
+            @PathVariable String routeName,
+            @RequestBody Route route
+    ) {
+        return routeEdit.editRoute(userName, routeName, route);
     }
 }
