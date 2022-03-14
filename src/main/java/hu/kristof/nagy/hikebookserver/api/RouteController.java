@@ -26,7 +26,7 @@ public class RouteController {
     @Autowired
     private RouteEdit routeEdit;
 
-    @PutMapping("routes/create/{userName}/{routeName}")
+    @PutMapping("routes/{userName}/{routeName}")
     public boolean createRoute(
             @PathVariable String userName,
             @PathVariable String routeName,
@@ -35,12 +35,12 @@ public class RouteController {
         return routeCreate.createRoute(userName, routeName, points);
     }
 
-    @GetMapping("routes/load/{userName}")
+    @GetMapping("routes/{userName}")
     public List<Route> loadRoutesForUser(@PathVariable String userName) {
         return routeLoad.loadRoutesForUser(userName);
     }
 
-    @GetMapping("routes/delete/{userName}/{routeName}")
+    @DeleteMapping("routes/{userName}/{routeName}")
     public boolean deleteRoute(
             @PathVariable String userName,
             @PathVariable String routeName
