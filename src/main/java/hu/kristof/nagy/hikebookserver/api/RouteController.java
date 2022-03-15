@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+// TODO: add @RequestMapping("routes") for class
 @RestController
 public class RouteController {
 
@@ -39,6 +40,14 @@ public class RouteController {
     @GetMapping("routes/{userName}")
     public List<Route> loadRoutesForUser(@PathVariable String userName) {
         return routeLoad.loadRoutesForUser(userName);
+    }
+
+    @GetMapping("routes/{userName}/{routeName}")
+    public List<Point> loadPoints(
+            @PathVariable String userName,
+            @PathVariable String routeName
+    ) {
+        return routeLoad.loadPoints(userName, routeName);
     }
 
     @GetMapping("routes")

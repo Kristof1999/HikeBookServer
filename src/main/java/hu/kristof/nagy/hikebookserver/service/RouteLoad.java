@@ -5,9 +5,11 @@ import com.google.cloud.firestore.*;
 import hu.kristof.nagy.hikebookserver.FirestoreInitilizationException;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.BrowseListItem;
+import hu.kristof.nagy.hikebookserver.model.Point;
 import hu.kristof.nagy.hikebookserver.model.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.print.attribute.standard.DocumentName;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CancellationException;
@@ -50,5 +52,21 @@ public class RouteLoad {
             }
         }
         return routes;
+    }
+
+    public List<Point> loadPoints(String userName, String routeName) {
+        ApiFuture<QuerySnapshot> future = db.collection(DbPathConstants.COLLECTION_ROUTE)
+                .select(DbPathConstants.ROUTE_POINTS)
+                .whereEqualTo(DbPathConstants.ROUTE_USER_NAME, userName)
+                .whereEqualTo(DbPathConstants.ROUTE_NAME, routeName)
+                .get();
+        try {
+            QueryDocumentSnapshot doc = future.get().getDocuments().get(0);
+            List<Point> points = (List<Point>) doc.get(DbPathConstants.ROUTE_POINTS);
+            return points;
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
+        return List.of();
     }
 }
