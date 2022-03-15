@@ -1,8 +1,8 @@
 package hu.kristof.nagy.hikebookserver.api;
 
+import hu.kristof.nagy.hikebookserver.model.BrowseListItem;
 import hu.kristof.nagy.hikebookserver.model.Point;
 import hu.kristof.nagy.hikebookserver.model.Route;
-import hu.kristof.nagy.hikebookserver.model.UserRoute;
 import hu.kristof.nagy.hikebookserver.service.RouteCreate;
 import hu.kristof.nagy.hikebookserver.service.RouteDelete;
 import hu.kristof.nagy.hikebookserver.service.RouteEdit;
@@ -42,8 +42,8 @@ public class RouteController {
     }
 
     @GetMapping("routes")
-    public List<UserRoute> loadRoutes() {
-        return routeLoad.loadRoutes();
+    public List<BrowseListItem> listRoutes() {
+        return routeLoad.listRoutes();
     }
 
     @DeleteMapping("routes/{userName}/{routeName}")
