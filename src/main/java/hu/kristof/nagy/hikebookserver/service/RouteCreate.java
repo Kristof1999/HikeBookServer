@@ -39,6 +39,8 @@ public class RouteCreate {
                         .collection(DbPathConstants.COLLECTION_ROUTE)
                         .select(DbPathConstants.ROUTE_POINTS)
                         .whereEqualTo(DbPathConstants.ROUTE_POINTS, points)
+                        .whereEqualTo(DbPathConstants.ROUTE_USER_NAME, userName)
+                        .whereEqualTo(DbPathConstants.ROUTE_NAME, routeName)
                         .get();
                 if (query.get().isEmpty()) {
                     Map<String, Object> data = new HashMap<>();
