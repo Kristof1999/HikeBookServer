@@ -1,6 +1,7 @@
 package hu.kristof.nagy.hikebookserver.service;
 
 import com.google.api.core.ApiFuture;
+import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QuerySnapshot;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
@@ -36,8 +37,9 @@ public class RouteEdit {
 
     private boolean updateRoute(String userName, String routeName, Route route) {
         // TODO: check if route points are unique for the given user
-        ApiFuture<QuerySnapshot> future = db
-                .collection(DbPathConstants.COLLECTION_ROUTE)
+        CollectionReference routes = db
+                .collection(DbPathConstants.COLLECTION_ROUTE);
+        ApiFuture<QuerySnapshot> future = routes
                 .select(DbPathConstants.ROUTE_USER_NAME,
                         DbPathConstants.ROUTE_NAME)
                 .whereEqualTo(DbPathConstants.ROUTE_USER_NAME, userName)
@@ -49,8 +51,7 @@ public class RouteEdit {
             data.put(DbPathConstants.ROUTE_USER_NAME, userName);
             data.put(DbPathConstants.ROUTE_NAME, route.getRouteName());
             data.put(DbPathConstants.ROUTE_POINTS, route.getPoints());
-            db.collection(DbPathConstants.COLLECTION_ROUTE)
-                    .document(id)
+            routes.document(id)
                     .set(data);
             return true;
         } catch (ExecutionException | InterruptedException e) {

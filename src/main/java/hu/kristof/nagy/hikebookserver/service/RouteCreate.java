@@ -1,7 +1,9 @@
 package hu.kristof.nagy.hikebookserver.service;
 
 import com.google.api.core.ApiFuture;
+import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.Query;
 import com.google.cloud.firestore.QuerySnapshot;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.Point;
@@ -27,23 +29,21 @@ public class RouteCreate {
      * @return true if route is unique
      */
     public boolean createRoute(String userName, String routeName, List<Point> points) {
-        ApiFuture<QuerySnapshot> future = db
-                .collection(DbPathConstants.COLLECTION_ROUTE)
+        CollectionReference routes = db
+                .collection(DbPathConstants.COLLECTION_ROUTE);
+        Query query = routes
                 .select(DbPathConstants.ROUTE_USER_NAME,
                         DbPathConstants.ROUTE_NAME)
                 .whereEqualTo(DbPathConstants.ROUTE_USER_NAME, userName)
-                .whereEqualTo(DbPathConstants.ROUTE_NAME, routeName)
-                .get();
+                .whereEqualTo(DbPathConstants.ROUTE_NAME, routeName);
+        ApiFuture<QuerySnapshot> future = query.get();
         try {
             if (future.get().isEmpty()) {
-                ApiFuture<QuerySnapshot> query = db
-                        .collection(DbPathConstants.COLLECTION_ROUTE)
+                // TODO: test if this multiple querying works
+                query = query
                         .select(DbPathConstants.ROUTE_POINTS)
-                        .whereEqualTo(DbPathConstants.ROUTE_POINTS, points)
-                        .whereEqualTo(DbPathConstants.ROUTE_USER_NAME, userName)
-                        .whereEqualTo(DbPathConstants.ROUTE_NAME, routeName)
-                        .get();
-                if (query.get().isEmpty()) {
+                        .whereEqualTo(DbPathConstants.ROUTE_NAME, routeName);
+                if (query.get().get().isEmpty()) {
                     Map<String, Object> data = new HashMap<>();
                     data.put(DbPathConstants.ROUTE_USER_NAME, userName);
                     data.put(DbPathConstants.ROUTE_NAME, routeName);

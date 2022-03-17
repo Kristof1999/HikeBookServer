@@ -1,6 +1,7 @@
 package hu.kristof.nagy.hikebookserver.service;
 
 import com.google.api.core.ApiFuture;
+import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QuerySnapshot;
 import com.google.cloud.firestore.WriteResult;
@@ -20,15 +21,15 @@ public class RouteDelete {
      * @return true if deletion was successful
      */
     public boolean deleteRoute(String userName, String routeName) {
-        ApiFuture<QuerySnapshot> future = db
-                .collection(DbPathConstants.COLLECTION_ROUTE)
+        CollectionReference routes = db
+                .collection(DbPathConstants.COLLECTION_ROUTE);
+        ApiFuture<QuerySnapshot> future = routes
                 .whereEqualTo(DbPathConstants.ROUTE_USER_NAME, userName)
                 .whereEqualTo(DbPathConstants.ROUTE_NAME, routeName)
                 .get();
         try {
             String id = future.get().getDocuments().get(0).getId();
-             db.collection(DbPathConstants.COLLECTION_ROUTE)
-                    .document(id)
+             routes.document(id)
                     .delete()
                     .get();
              return true;
