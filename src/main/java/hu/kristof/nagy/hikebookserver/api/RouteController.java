@@ -3,10 +3,10 @@ package hu.kristof.nagy.hikebookserver.api;
 import hu.kristof.nagy.hikebookserver.model.BrowseListItem;
 import hu.kristof.nagy.hikebookserver.model.Point;
 import hu.kristof.nagy.hikebookserver.model.Route;
-import hu.kristof.nagy.hikebookserver.service.RouteCreate;
-import hu.kristof.nagy.hikebookserver.service.RouteDelete;
-import hu.kristof.nagy.hikebookserver.service.RouteEdit;
-import hu.kristof.nagy.hikebookserver.service.RouteLoad;
+import hu.kristof.nagy.hikebookserver.service.RouteCreateService;
+import hu.kristof.nagy.hikebookserver.service.RouteDeleteService;
+import hu.kristof.nagy.hikebookserver.service.RouteEditService;
+import hu.kristof.nagy.hikebookserver.service.RouteLoadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,16 +17,16 @@ import java.util.List;
 public class RouteController {
 
     @Autowired
-    private RouteCreate routeCreate;
+    private RouteCreateService routeCreate;
 
     @Autowired
-    private RouteLoad routeLoad;
+    private RouteLoadService routeLoad;
 
     @Autowired
-    private RouteDelete routeDelete;
+    private RouteDeleteService routeDelete;
 
     @Autowired
-    private RouteEdit routeEdit;
+    private RouteEditService routeEdit;
 
     @PutMapping("{userName}/{routeName}")
     public boolean createRoute(

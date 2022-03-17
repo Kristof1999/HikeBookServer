@@ -6,10 +6,12 @@ import com.google.cloud.firestore.QuerySnapshot;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.concurrent.ExecutionException;
 
-public class Login {
+@Service
+public class LoginService {
 
     @Autowired
     private Firestore db;

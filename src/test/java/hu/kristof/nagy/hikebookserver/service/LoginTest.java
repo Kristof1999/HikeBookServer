@@ -6,20 +6,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class LoginTest {
 
     @Autowired
-    private Login login;
+    private LoginService login;
 
     @Autowired
-    private Register register;
+    private RegisterService register;
 
     @BeforeEach
     void setUp() {

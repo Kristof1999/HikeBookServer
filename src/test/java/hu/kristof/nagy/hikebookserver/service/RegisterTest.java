@@ -5,16 +5,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 class RegisterTest {
 
     @Autowired
-    private Register register;
+    private RegisterService register;
 
     @Test
     private void testCorrectRegistration() {

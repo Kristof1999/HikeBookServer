@@ -7,12 +7,15 @@ import com.google.cloud.firestore.QuerySnapshot;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.Route;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-public class RouteEdit {
+@Service
+public class RouteEditService {
+
     @Autowired
     private Firestore db;
 

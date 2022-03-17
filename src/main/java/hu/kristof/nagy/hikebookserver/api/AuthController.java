@@ -12,8 +12,8 @@ whether distributed in print or electronically.
 package hu.kristof.nagy.hikebookserver.api;
 
 import hu.kristof.nagy.hikebookserver.model.User;
-import hu.kristof.nagy.hikebookserver.service.Login;
-import hu.kristof.nagy.hikebookserver.service.Register;
+import hu.kristof.nagy.hikebookserver.service.LoginService;
+import hu.kristof.nagy.hikebookserver.service.RegisterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,10 +23,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     @Autowired
-    private Login login;
+    private LoginService login;
 
     @Autowired
-    private Register register;
+    private RegisterService register;
 
     @PostMapping("/login")
     public boolean loginUser(@RequestBody User user) {

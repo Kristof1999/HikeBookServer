@@ -8,13 +8,15 @@ import com.google.cloud.firestore.QuerySnapshot;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.Point;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-public class RouteCreate {
+@Service
+public class RouteCreateService {
 
     @Autowired
     private Firestore db;
