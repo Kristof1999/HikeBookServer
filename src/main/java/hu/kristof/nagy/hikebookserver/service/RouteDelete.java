@@ -14,6 +14,11 @@ public class RouteDelete {
     @Autowired
     private Firestore db;
 
+    /**
+     * @param userName name of user who requested deletion
+     * @param routeName name of route which to delete for the given user
+     * @return true if deletion was successful
+     */
     public boolean deleteRoute(String userName, String routeName) {
         ApiFuture<QuerySnapshot> future = db
                 .collection(DbPathConstants.COLLECTION_ROUTE)

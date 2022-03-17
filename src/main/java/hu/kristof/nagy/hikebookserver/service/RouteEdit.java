@@ -15,6 +15,13 @@ public class RouteEdit {
     @Autowired
     private Firestore db;
 
+    /**
+     * Edits the route.
+     * @param userName name of user who requested editing
+     * @param oldRouteName name of route before editing
+     * @param route the edited route
+     * @return true if the edited route is unique for the given user
+     */
     public boolean editRoute(String userName, String oldRouteName, Route route) {
         if (!oldRouteName.equals(route.getRouteName())) {
             if (routeNameExists(userName, route.getRouteName())) {
@@ -28,6 +35,7 @@ public class RouteEdit {
     }
 
     private boolean updateRoute(String userName, String routeName, Route route) {
+        // TODO: check if route points are unique for the given user
         ApiFuture<QuerySnapshot> future = db
                 .collection(DbPathConstants.COLLECTION_ROUTE)
                 .select(DbPathConstants.ROUTE_USER_NAME,

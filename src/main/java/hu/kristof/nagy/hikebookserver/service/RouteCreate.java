@@ -18,12 +18,13 @@ public class RouteCreate {
     private Firestore db;
 
     /**
-     * Before saving the route, checks if the user has no route called routeName,
+     * Before saving the route, checks if the route is unique:
+     * the user has no route called routeName,
      * and no route whose points are the same as the points argument.
      * @param userName name of user who created the route
      * @param routeName name of the created route
      * @param points points of the created route
-     * @return true if save is successful
+     * @return true if route is unique
      */
     public boolean createRoute(String userName, String routeName, List<Point> points) {
         ApiFuture<QuerySnapshot> future = db
