@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-// TODO: add @RequestMapping("routes") for class
+@RequestMapping("routes/")
 @RestController
 public class RouteController {
 
@@ -28,7 +28,7 @@ public class RouteController {
     @Autowired
     private RouteEdit routeEdit;
 
-    @PutMapping("routes/{userName}/{routeName}")
+    @PutMapping("{userName}/{routeName}")
     public boolean createRoute(
             @PathVariable String userName,
             @PathVariable String routeName,
@@ -37,12 +37,12 @@ public class RouteController {
         return routeCreate.createRoute(userName, routeName, points);
     }
 
-    @GetMapping("routes/{userName}")
+    @GetMapping("{userName}")
     public List<Route> loadRoutesForUser(@PathVariable String userName) {
         return routeLoad.loadRoutesForUser(userName);
     }
 
-    @GetMapping("routes/{userName}/{routeName}")
+    @GetMapping("{userName}/{routeName}")
     public List<Point> loadPoints(
             @PathVariable String userName,
             @PathVariable String routeName
@@ -50,12 +50,12 @@ public class RouteController {
         return routeLoad.loadPoints(userName, routeName);
     }
 
-    @GetMapping("routes")
+    @GetMapping("")
     public List<BrowseListItem> listRoutes() {
         return routeLoad.listRoutes();
     }
 
-    @DeleteMapping("routes/{userName}/{routeName}")
+    @DeleteMapping("{userName}/{routeName}")
     public boolean deleteRoute(
             @PathVariable String userName,
             @PathVariable String routeName
@@ -63,7 +63,7 @@ public class RouteController {
         return routeDelete.deleteRoute(userName, routeName);
     }
 
-    @PutMapping("routes/edit/{userName}/{routeName}")
+    @PutMapping("edit/{userName}/{routeName}")
     public boolean editRoute(
             @PathVariable String userName,
             @PathVariable String routeName,
