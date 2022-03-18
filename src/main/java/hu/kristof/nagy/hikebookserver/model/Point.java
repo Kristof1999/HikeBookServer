@@ -5,6 +5,7 @@ import java.util.Objects;
 public class Point {
     private double latitude, longitude;
     private PointType type;
+    private String title;
 
     public Point() {
         this(0.0, 0.0, PointType.NEW);
@@ -40,16 +41,26 @@ public class Point {
         this.type = type;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Point point = (Point) o;
-        return Double.compare(point.getLatitude(), getLatitude()) == 0 && Double.compare(point.getLongitude(), getLongitude()) == 0 && getType() == point.getType();
+        return Double.compare(point.getLatitude(), getLatitude()) == 0 &&
+                Double.compare(point.getLongitude(), getLongitude()) == 0 &&
+                getType() == point.getType() && getTitle().equals(point.getTitle());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getLatitude(), getLongitude(), getType());
+        return Objects.hash(getLatitude(), getLongitude(), getType(), getTitle());
     }
 }
