@@ -41,6 +41,7 @@ public class RouteCreateTest {
         boolean res = routeCreateService.createRoute("asd", "route", points, "");
 
         assertTrue(res);
+        // TODO: check the fields of the route after loading it
     }
 
     @Test
