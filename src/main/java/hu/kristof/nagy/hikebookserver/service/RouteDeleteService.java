@@ -29,11 +29,16 @@ public class RouteDeleteService {
                 .whereEqualTo(DbPathConstants.ROUTE_NAME, routeName)
                 .get();
         try {
-            String id = future.get().getDocuments().get(0).getId();
-             routes.document(id)
-                    .delete()
-                    .get();
-             return true;
+            QuerySnapshot querySnapshot = future.get();
+            if (querySnapshot.isEmpty()) {
+                return false;
+            } else {
+                String id = querySnapshot.getDocuments().get(0).getId();
+                routes.document(id)
+                        .delete()
+                        .get();
+                return true;
+            }
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
             return false;

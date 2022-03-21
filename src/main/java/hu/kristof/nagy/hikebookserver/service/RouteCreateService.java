@@ -49,7 +49,8 @@ public class RouteCreateService {
                             userName, routeName, points, description
                     );
                     db.collection(DbPathConstants.COLLECTION_ROUTE)
-                            .add(data);
+                            .add(data)
+                            .get();
                     return true;
                 } else {
                     return false; // route exists with a different name
