@@ -12,4 +12,5 @@ public class DbPathConstants {
     public static final String ROUTE_GROUP_NAME = "groupName";
     public static final String ROUTE_NAME = "routeName";
     public static final String ROUTE_POINTS = "points";
+    public static final String ROUTE_DESCRIPTION = "description";
 }

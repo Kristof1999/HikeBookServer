@@ -30,7 +30,9 @@ public class RouteLoadService {
     public List<Route> loadRoutesForUser(String userName) {
         ApiFuture<QuerySnapshot> future =  db
                 .collection(DbPathConstants.COLLECTION_ROUTE)
-                .select(DbPathConstants.ROUTE_NAME, DbPathConstants.ROUTE_POINTS)
+                .select(DbPathConstants.ROUTE_NAME,
+                        DbPathConstants.ROUTE_POINTS,
+                        DbPathConstants.ROUTE_DESCRIPTION)
                 .whereEqualTo(DbPathConstants.ROUTE_USER_NAME, userName)
                 .get();
         try {

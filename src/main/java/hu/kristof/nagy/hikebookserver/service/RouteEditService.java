@@ -9,7 +9,6 @@ import hu.kristof.nagy.hikebookserver.model.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -50,10 +49,10 @@ public class RouteEditService {
                 .get();
         try {
             String id = future.get().getDocuments().get(0).getId();
-            Map<String, Object> data = new HashMap<>();
-            data.put(DbPathConstants.ROUTE_USER_NAME, userName);
-            data.put(DbPathConstants.ROUTE_NAME, route.getRouteName());
-            data.put(DbPathConstants.ROUTE_POINTS, route.getPoints());
+
+            Map<String, Object> data = Route.toMap(
+                    userName, route.getRouteName(), route.getPoints(), route.getDescription()
+            );
             routes.document(id)
                     .set(data);
             return true;

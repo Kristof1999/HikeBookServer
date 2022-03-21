@@ -7,10 +7,10 @@ import com.google.cloud.firestore.Query;
 import com.google.cloud.firestore.QuerySnapshot;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.Point;
+import hu.kristof.nagy.hikebookserver.model.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -30,7 +30,7 @@ public class RouteCreateService {
      * @param points points of the created route
      * @return true if route is unique
      */
-    public boolean createRoute(String userName, String routeName, List<Point> points) {
+    public boolean createRoute(String userName, String routeName, List<Point> points, String description) {
         CollectionReference routes = db
                 .collection(DbPathConstants.COLLECTION_ROUTE);
         Query query = routes
@@ -46,10 +46,9 @@ public class RouteCreateService {
                         .select(DbPathConstants.ROUTE_POINTS)
                         .whereEqualTo(DbPathConstants.ROUTE_NAME, routeName);
                 if (query.get().get().isEmpty()) {
-                    Map<String, Object> data = new HashMap<>();
-                    data.put(DbPathConstants.ROUTE_USER_NAME, userName);
-                    data.put(DbPathConstants.ROUTE_NAME, routeName);
-                    data.put(DbPathConstants.ROUTE_POINTS, points);
+                    Map<String, Object> data = Route.toMap(
+                            userName, routeName, points, description
+                    );
                     db.collection(DbPathConstants.COLLECTION_ROUTE)
                             .add(data);
                     return true;

@@ -32,9 +32,9 @@ public class RouteController {
     public boolean createRoute(
             @PathVariable String userName,
             @PathVariable String routeName,
-            @RequestBody List<Point> points
+            @RequestBody Route route
             ) {
-        return routeCreate.createRoute(userName, routeName, points);
+        return routeCreate.createRoute(userName, routeName, route.getPoints(), route.getDescription());
     }
 
     @GetMapping("{userName}")
