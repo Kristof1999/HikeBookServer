@@ -43,11 +43,11 @@ public class RouteController {
     }
 
     @GetMapping("{userName}/{routeName}")
-    public List<Point> loadPoints(
+    public Route loadRoute(
             @PathVariable String userName,
             @PathVariable String routeName
     ) {
-        return routeLoad.loadPoints(userName, routeName);
+        return routeLoad.loadRoute(userName, routeName);
     }
 
     @GetMapping("")

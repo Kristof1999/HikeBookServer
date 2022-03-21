@@ -66,24 +66,25 @@ public class RouteLoadService {
     }
 
     /**
-     * Loads the points of the given route and user.
+     * Loads the specified route.
      * @param userName name of the user who requested the load
      * @param routeName name of the route for which to load the points
-     * @return list of points of the route
      */
-    public List<Point> loadPoints(String userName, String routeName) {
+    public Route loadRoute(String userName, String routeName) {
         ApiFuture<QuerySnapshot> future = db.collection(DbPathConstants.COLLECTION_ROUTE)
-                .select(DbPathConstants.ROUTE_POINTS)
+                .select(DbPathConstants.ROUTE_POINTS,
+                        DbPathConstants.ROUTE_NAME,
+                        DbPathConstants.ROUTE_USER_NAME,
+                        DbPathConstants.ROUTE_DESCRIPTION)
                 .whereEqualTo(DbPathConstants.ROUTE_USER_NAME, userName)
                 .whereEqualTo(DbPathConstants.ROUTE_NAME, routeName)
                 .get();
         try {
             QueryDocumentSnapshot doc = future.get().getDocuments().get(0);
-            List<Point> points = (List<Point>) doc.get(DbPathConstants.ROUTE_POINTS);
-            return points;
+            return Route.from(doc);
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
-        return List.of();
+        return new Route(); // lehet inkább mást kellene visszaadni
     }
 }
