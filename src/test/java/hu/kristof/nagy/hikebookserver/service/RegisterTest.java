@@ -4,6 +4,7 @@ import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.User;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,13 +26,7 @@ class RegisterTest {
 
     @BeforeEach
     void setUp() {
-        for(DocumentReference doc : db.collection(DbPathConstants.COLLECTION_USER).listDocuments()) {
-            try {
-                doc.delete().get();
-            } catch (ExecutionException | InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+        TestUtils.cleanUsers(db);
     }
 
     @Test
@@ -46,6 +41,7 @@ class RegisterTest {
         User user = new User("asd", "asd");
         register.registerUser(user);
 
+        TestUtils.wait(10);
         boolean res = register.registerUser(user);
 
         assertFalse(res);

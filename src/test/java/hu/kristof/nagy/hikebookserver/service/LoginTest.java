@@ -31,19 +31,14 @@ class LoginTest {
 
     @BeforeEach
     void setUp() {
-        for(DocumentReference doc : db.collection(DbPathConstants.COLLECTION_USER).listDocuments()) {
-            try {
-                doc.delete().get();
-            } catch (ExecutionException | InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+        TestUtils.cleanUsers(db);
     }
 
     @Test
     void testCorrectLogin() {
         register.registerUser(new User("asd", "asd"));
 
+        TestUtils.wait(10);
         boolean res = login.loginUser(new User("asd","asd"));
 
         assertTrue(res);
