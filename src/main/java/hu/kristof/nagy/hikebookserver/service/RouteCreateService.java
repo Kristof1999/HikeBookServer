@@ -41,7 +41,6 @@ public class RouteCreateService {
         ApiFuture<QuerySnapshot> future = query.get();
         try {
             if (future.get().isEmpty()) {
-                // TODO: test if this multiple querying works
                 query = query
                         .select(DbPathConstants.ROUTE_POINTS)
                         .whereEqualTo(DbPathConstants.ROUTE_NAME, routeName);
@@ -53,10 +52,10 @@ public class RouteCreateService {
                             .add(data);
                     return true;
                 } else {
-                    return false; //már van ilyen (más nevű) út
+                    return false; // route exists with a different name
                 }
             } else {
-                return false; //név nem egyedi
+                return false; // name is not unique
             }
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
