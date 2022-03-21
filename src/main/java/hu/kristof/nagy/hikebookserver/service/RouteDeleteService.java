@@ -31,12 +31,13 @@ public class RouteDeleteService {
         try {
             QuerySnapshot querySnapshot = future.get();
             if (querySnapshot.isEmpty()) {
+                // route with given name and userName didn't exist
                 return false;
             } else {
                 String id = querySnapshot.getDocuments().get(0).getId();
                 routes.document(id)
                         .delete()
-                        .get();
+                        .get(); // wait for write result
                 return true;
             }
         } catch (ExecutionException | InterruptedException e) {

@@ -41,22 +41,24 @@ public class RouteCreateService {
         ApiFuture<QuerySnapshot> future = query.get();
         try {
             if (future.get().isEmpty()) {
+                // route name is unique
                 query = query
                         .select(DbPathConstants.ROUTE_POINTS)
                         .whereEqualTo(DbPathConstants.ROUTE_NAME, routeName);
                 if (query.get().get().isEmpty()) {
+                    // route is unique
                     Map<String, Object> data = Route.toMap(
                             userName, routeName, points, description
                     );
                     db.collection(DbPathConstants.COLLECTION_ROUTE)
                             .add(data)
-                            .get();
+                            .get(); // wait for write result
                     return true;
                 } else {
                     return false; // route exists with a different name
                 }
             } else {
-                return false; // name is not unique
+                return false;
             }
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();

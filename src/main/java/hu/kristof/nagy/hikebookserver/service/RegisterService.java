@@ -34,12 +34,15 @@ public class RegisterService {
 
         try {
             if (future.get().isEmpty()) {
+                // userName is unique
                 Map<String, Object> data = new HashMap<>();
                 data.put(DbPathConstants.USER_NAME, user.getName());
                 data.put(DbPathConstants.USER_PASSWORD, user.getPassword());
                 data.put(DbPathConstants.USER_AVG_SPEED, user.getAvgSpeed());
 
-                users.document(user.getName()).set(data).get();
+                users.document(user.getName())
+                        .set(data)
+                        .get();// wait for write result
                 return true;
             } else {
                 return false;

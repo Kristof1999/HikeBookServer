@@ -4,11 +4,14 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QuerySnapshot;
+import com.google.protobuf.Api;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
+import hu.kristof.nagy.hikebookserver.model.Point;
 import hu.kristof.nagy.hikebookserver.model.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -27,6 +30,7 @@ public class RouteEditService {
      */
     public boolean editRoute(String userName, String oldRouteName, Route route) {
         if (!oldRouteName.equals(route.getRouteName())) {
+            // route name changed
             if (routeNameExists(userName, route.getRouteName())) {
                 return false;
             } else {
@@ -38,7 +42,6 @@ public class RouteEditService {
     }
 
     private boolean updateRoute(String userName, String routeName, Route route) {
-        // TODO: check if route points are unique for the given user
         CollectionReference routes = db
                 .collection(DbPathConstants.COLLECTION_ROUTE);
         ApiFuture<QuerySnapshot> future = routes
@@ -48,14 +51,41 @@ public class RouteEditService {
                 .whereEqualTo(DbPathConstants.ROUTE_NAME, routeName)
                 .get();
         try {
-            String id = future.get().getDocuments().get(0).getId();
+            QuerySnapshot querySnapshot = future.get();
+            if (querySnapshot.isEmpty()) {
+                // editing a non-existent route
+                return false;
+            } else {
+                if (arePointsUniqueForUser(userName, route.getPoints())) {
+                    String id = querySnapshot.getDocuments().get(0).getId();
 
-            Map<String, Object> data = Route.toMap(
-                    userName, route.getRouteName(), route.getPoints(), route.getDescription()
-            );
-            routes.document(id)
-                    .set(data);
-            return true;
+                    Map<String, Object> data = Route.toMap(
+                            userName, route.getRouteName(), route.getPoints(), route.getDescription()
+                    );
+                    routes.document(id)
+                            .set(data)
+                            .get(); // wait for write result
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    private boolean arePointsUniqueForUser(String userName, List<Point> points) {
+        ApiFuture<QuerySnapshot> future = db.collection(DbPathConstants.COLLECTION_ROUTE)
+                .whereEqualTo(DbPathConstants.ROUTE_USER_NAME, userName)
+                .whereEqualTo(DbPathConstants.ROUTE_POINTS, points)
+                .get();
+        try {
+            if (future.get().isEmpty())
+                return true;
+            else
+                return false;
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
