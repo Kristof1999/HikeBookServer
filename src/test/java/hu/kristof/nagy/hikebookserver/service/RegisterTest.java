@@ -41,7 +41,6 @@ class RegisterTest {
         User user = new User("asd", "asd");
         register.registerUser(user);
 
-        TestUtils.wait(10);
         boolean res = register.registerUser(user);
 
         assertFalse(res);

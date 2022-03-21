@@ -39,7 +39,7 @@ public class RegisterService {
                 data.put(DbPathConstants.USER_PASSWORD, user.getPassword());
                 data.put(DbPathConstants.USER_AVG_SPEED, user.getAvgSpeed());
 
-                users.document(user.getName()).set(data);
+                users.document(user.getName()).set(data).get();
                 return true;
             } else {
                 return false;

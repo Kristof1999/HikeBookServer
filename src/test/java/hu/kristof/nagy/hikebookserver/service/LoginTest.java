@@ -38,7 +38,6 @@ class LoginTest {
     void testCorrectLogin() {
         register.registerUser(new User("asd", "asd"));
 
-        TestUtils.wait(10);
         boolean res = login.loginUser(new User("asd","asd"));
 
         assertTrue(res);
