@@ -1,6 +1,7 @@
 package hu.kristof.nagy.hikebookserver.api;
 
 import hu.kristof.nagy.hikebookserver.model.BrowseListItem;
+import hu.kristof.nagy.hikebookserver.model.Route;
 import hu.kristof.nagy.hikebookserver.model.UserRoute;
 import hu.kristof.nagy.hikebookserver.service.UserRouteCreateService;
 import hu.kristof.nagy.hikebookserver.service.UserRouteDeleteService;
@@ -39,7 +40,7 @@ public class RouteController {
     }
 
     @GetMapping("{userName}")
-    public List<UserRoute> loadRoutesForUser(@PathVariable String userName) {
+    public List<UserRoute> loadUserRoutesForUser(@PathVariable String userName) {
         return routeLoad.loadUserRoutesForUser(userName);
     }
 
@@ -68,8 +69,9 @@ public class RouteController {
     public boolean editUserRoute(
             @PathVariable String userName,
             @PathVariable String routeName,
-            @RequestBody UserRoute route
+            @RequestBody Route route
     ) {
-        return routeEdit.editUserRoute(userName, routeName, route);
+        UserRoute userRoute = new UserRoute(userName, routeName, route.getPoints(), route.getDescription());
+        return routeEdit.editUserRoute(routeName, userRoute);
     }
 }
