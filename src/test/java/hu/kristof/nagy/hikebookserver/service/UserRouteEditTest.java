@@ -12,8 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 public class UserRouteEditTest {
@@ -32,7 +31,7 @@ public class UserRouteEditTest {
     }
 
     @Test
-    void testSameRouteName() {
+    void testNoChange() {
         List<Point> points = new ArrayList<>();
         points.add(new Point(0.0, 0.0, PointType.SET, ""));
         points.add(new Point(1.0, 1.0, PointType.NEW, ""));
@@ -40,16 +39,31 @@ public class UserRouteEditTest {
         String routeName = "route";
         routeCreateService.createUserRoute(new UserRoute(userName, routeName, points, ""));
 
-        points.remove(0);
-        boolean res = routeEditService.editUserRoute(userName, routeName,
+        UserRoute editedUserRoute = new UserRoute(userName, routeName, points, "");
+        boolean res = routeEditService.editUserRoute(routeName, editedUserRoute);
+
+        assertFalse(res);
+    }
+
+    @Test
+    void testDifferentRouteNameSamePoints() {
+        List<Point> points = new ArrayList<>();
+        points.add(new Point(0.0, 0.0, PointType.SET, ""));
+        points.add(new Point(1.0, 1.0, PointType.NEW, ""));
+        String userName = "asd";
+        String routeName = "route";
+        routeCreateService.createUserRoute(
                 new UserRoute(userName, routeName, points, "")
         );
+
+        UserRoute editedUserRoute = new UserRoute(userName, routeName + "2", points, "");
+        boolean res = routeEditService.editUserRoute(routeName, editedUserRoute);
 
         assertTrue(res);
     }
 
     @Test
-    void testDifferentRouteName() {
+    void testDifferentRouteNameDifferentPoints() {
         List<Point> points = new ArrayList<>();
         points.add(new Point(0.0, 0.0, PointType.SET, ""));
         points.add(new Point(1.0, 1.0, PointType.NEW, ""));
@@ -60,35 +74,17 @@ public class UserRouteEditTest {
         );
 
         points.remove(0);
-        boolean res = routeEditService.editUserRoute(userName, routeName,
-                new UserRoute(userName, routeName + "2", points, "")
-        );
+        UserRoute editedUserRoute = new UserRoute(userName, routeName + "2", points, "");
+        boolean res = routeEditService.editUserRoute(routeName, editedUserRoute);
 
         assertTrue(res);
     }
 
     @Test
     void testNonExistentRoute() {
-        boolean res = routeEditService.editUserRoute("", "",
+        assertThrows(IllegalArgumentException.class,
+                () -> routeEditService.editUserRoute("",
                 new UserRoute("", "", new ArrayList<>(), "")
-        );
-
-        assertFalse(res);
-    }
-
-    @Test
-    void testSamePoints() {
-        List<Point> points = new ArrayList<>();
-        points.add(new Point(0.0, 0.0, PointType.SET, ""));
-        points.add(new Point(1.0, 1.0, PointType.NEW, ""));
-        String userName = "asd";
-        String routeName = "route";
-        routeCreateService.createUserRoute(new UserRoute(userName, routeName, points, ""));
-
-        boolean res = routeEditService.editUserRoute(userName, routeName,
-                new UserRoute(userName, routeName + "2", points, "")
-        );
-
-        assertFalse(res);
+        ));
     }
 }
