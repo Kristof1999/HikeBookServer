@@ -1,8 +1,6 @@
 package hu.kristof.nagy.hikebookserver.model;
 
 import com.google.cloud.firestore.QueryDocumentSnapshot;
-import com.google.common.io.LittleEndianDataOutputStream;
-import com.google.firebase.database.GenericTypeIndicator;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 
 import java.util.*;
@@ -30,9 +28,8 @@ public class Route {
         String routeName = Objects.requireNonNull(
                 queryDocumentSnapshot.getString(DbPathConstants.ROUTE_NAME)
         );
-        GenericTypeIndicator<List<Point>> genericTypeIndicator = new GenericTypeIndicator<List<Point>>(){};
         List<Point> points = (List<Point>) Objects.requireNonNull(
-                queryDocumentSnapshot.get(DbPathConstants.ROUTE_POINTS, List.class)
+                queryDocumentSnapshot.get(DbPathConstants.ROUTE_POINTS)
         );
         String description = Objects.requireNonNull(
                 queryDocumentSnapshot.getString(DbPathConstants.ROUTE_DESCRIPTION)
@@ -40,15 +37,12 @@ public class Route {
         return new Route(routeName, points, description);
     }
 
-    public static Map<String, Object> toMap(
-            String userName, String routeName,
-            List<Point> points, String description
-            ) {
+    public Map<String, Object> toMap(String userName) {
         Map<String, Object> data = new HashMap<>();
         data.put(DbPathConstants.ROUTE_USER_NAME, userName);
-        data.put(DbPathConstants.ROUTE_NAME, routeName);
-        data.put(DbPathConstants.ROUTE_POINTS, points);
-        data.put(DbPathConstants.ROUTE_DESCRIPTION, description);
+        data.put(DbPathConstants.ROUTE_NAME, getRouteName());
+        data.put(DbPathConstants.ROUTE_POINTS, getPoints());
+        data.put(DbPathConstants.ROUTE_DESCRIPTION, getDescription());
         return data;
     }
 

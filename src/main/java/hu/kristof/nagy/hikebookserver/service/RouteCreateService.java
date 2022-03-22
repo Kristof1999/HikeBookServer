@@ -47,9 +47,8 @@ public class RouteCreateService {
                         .whereEqualTo(DbPathConstants.ROUTE_NAME, routeName);
                 if (query.get().get().isEmpty()) {
                     // route is unique
-                    Map<String, Object> data = Route.toMap(
-                            userName, routeName, points, description
-                    );
+                    Route route = new Route(routeName, points, description);
+                    Map<String, Object> data = route.toMap(userName);
                     db.collection(DbPathConstants.COLLECTION_ROUTE)
                             .add(data)
                             .get(); // wait for write result

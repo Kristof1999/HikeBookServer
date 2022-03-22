@@ -59,9 +59,7 @@ public class RouteEditService {
                 if (arePointsUniqueForUser(userName, route.getPoints())) {
                     String id = querySnapshot.getDocuments().get(0).getId();
 
-                    Map<String, Object> data = Route.toMap(
-                            userName, route.getRouteName(), route.getPoints(), route.getDescription()
-                    );
+                    Map<String, Object> data = route.toMap(userName);
                     routes.document(id)
                             .set(data)
                             .get(); // wait for write result
