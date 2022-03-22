@@ -69,9 +69,8 @@ public class RouteController {
     public boolean editUserRoute(
             @PathVariable String userName,
             @PathVariable String routeName,
-            @RequestBody Route route
+            @RequestBody UserRoute userRoute // TODO: try to make this work with Route
     ) {
-        UserRoute userRoute = new UserRoute(userName, routeName, route.getPoints(), route.getDescription());
         return routeEdit.editUserRoute(routeName, userRoute);
     }
 }
