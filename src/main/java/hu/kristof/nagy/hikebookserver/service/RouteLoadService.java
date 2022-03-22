@@ -56,10 +56,10 @@ public class RouteLoadService {
             try {
                 DocumentSnapshot doc = docRef.get().get();
                 String userName = Objects.requireNonNull(
-                        doc.get(DbPathConstants.ROUTE_USER_NAME, String.class)
+                        doc.getString(DbPathConstants.ROUTE_USER_NAME)
                 );
                 String routeName = Objects.requireNonNull(
-                        doc.get(DbPathConstants.ROUTE_NAME, String.class)
+                        doc.getString(DbPathConstants.ROUTE_NAME)
                 );
                 routes.add(new BrowseListItem(userName, routeName));
             } catch (ExecutionException | InterruptedException e) {

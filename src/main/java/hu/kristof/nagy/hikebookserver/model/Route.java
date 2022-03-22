@@ -1,6 +1,8 @@
 package hu.kristof.nagy.hikebookserver.model;
 
 import com.google.cloud.firestore.QueryDocumentSnapshot;
+import com.google.common.io.LittleEndianDataOutputStream;
+import com.google.firebase.database.GenericTypeIndicator;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 
 import java.util.*;
@@ -26,13 +28,14 @@ public class Route {
     // not present in the select call, then you'll get a NullPointerException
     public static Route from(QueryDocumentSnapshot queryDocumentSnapshot) {
         String routeName = Objects.requireNonNull(
-                queryDocumentSnapshot.get(DbPathConstants.ROUTE_NAME)
-        ).toString();
-        List<Point> points = (List<Point>) Objects.requireNonNull(
-                queryDocumentSnapshot.get(DbPathConstants.ROUTE_POINTS)
+                queryDocumentSnapshot.getString(DbPathConstants.ROUTE_NAME)
         );
-        String description = (String) Objects.requireNonNull(
-                queryDocumentSnapshot.get(DbPathConstants.ROUTE_DESCRIPTION)
+        GenericTypeIndicator<List<Point>> genericTypeIndicator = new GenericTypeIndicator<List<Point>>(){};
+        List<Point> points = (List<Point>) Objects.requireNonNull(
+                queryDocumentSnapshot.get(DbPathConstants.ROUTE_POINTS, List.class)
+        );
+        String description = Objects.requireNonNull(
+                queryDocumentSnapshot.getString(DbPathConstants.ROUTE_DESCRIPTION)
         );
         return new Route(routeName, points, description);
     }
