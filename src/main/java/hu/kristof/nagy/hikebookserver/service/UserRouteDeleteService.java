@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.concurrent.ExecutionException;
 
 @Service
-public class RouteDeleteService {
+public class UserRouteDeleteService {
 
     @Autowired
     private Firestore db;
@@ -21,7 +21,7 @@ public class RouteDeleteService {
      * @param routeName name of route which to delete for the given user
      * @return true if deletion was successful
      */
-    public boolean deleteRoute(String userName, String routeName) {
+    public boolean deleteUserRoute(String userName, String routeName) {
         CollectionReference routes = db
                 .collection(DbPathConstants.COLLECTION_ROUTE);
         ApiFuture<QuerySnapshot> future = routes

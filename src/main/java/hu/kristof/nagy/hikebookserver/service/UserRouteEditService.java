@@ -4,10 +4,9 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QuerySnapshot;
-import com.google.protobuf.Api;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.Point;
-import hu.kristof.nagy.hikebookserver.model.Route;
+import hu.kristof.nagy.hikebookserver.model.UserRoute;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +15,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 @Service
-public class RouteEditService {
+public class UserRouteEditService {
 
     @Autowired
     private Firestore db;
@@ -28,23 +27,23 @@ public class RouteEditService {
      * @param route the edited route
      * @return true if the edited route is unique for the given user
      */
-    public boolean editRoute(String userName, String oldRouteName, Route route) {
+    public boolean editUserRoute(String userName, String oldRouteName, UserRoute route) {
         // szerepkörök miatt érdemes a userName-t hagyni argumentumként, mivel
         // így a jövőben könnyen megnézhetjük, hogy az adott user-nak van-e engedélye
         // szerkeszteni csoport útvonalat
         if (!oldRouteName.equals(route.getRouteName())) {
             // route name changed
-            if (routeNameExists(userName, route.getRouteName())) {
+            if (routeNameExistsForUser(userName, route.getRouteName())) {
                 return false;
             } else {
-                return updateRoute(userName, oldRouteName, route);
+                return updateUserRoute(userName, oldRouteName, route);
             }
         } else {
-            return updateRoute(userName, oldRouteName, route);
+            return updateUserRoute(userName, oldRouteName, route);
         }
     }
 
-    private boolean updateRoute(String userName, String routeName, Route route) {
+    private boolean updateUserRoute(String userName, String routeName, UserRoute route) {
         CollectionReference routes = db
                 .collection(DbPathConstants.COLLECTION_ROUTE);
         ApiFuture<QuerySnapshot> future = routes
@@ -93,7 +92,7 @@ public class RouteEditService {
         return false;
     }
 
-    private boolean routeNameExists(String userName, String routeName) {
+    private boolean routeNameExistsForUser(String userName, String routeName) {
         ApiFuture<QuerySnapshot> future = db
                 .collection(DbPathConstants.COLLECTION_ROUTE)
                 .select(DbPathConstants.ROUTE_USER_NAME,

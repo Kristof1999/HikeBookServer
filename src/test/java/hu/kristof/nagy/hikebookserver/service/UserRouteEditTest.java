@@ -3,7 +3,7 @@ package hu.kristof.nagy.hikebookserver.service;
 import com.google.cloud.firestore.Firestore;
 import hu.kristof.nagy.hikebookserver.model.Point;
 import hu.kristof.nagy.hikebookserver.model.PointType;
-import hu.kristof.nagy.hikebookserver.model.Route;
+import hu.kristof.nagy.hikebookserver.model.UserRoute;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,12 +16,12 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
-public class RouteEditTest {
+public class UserRouteEditTest {
     @Autowired
-    private RouteEditService routeEditService;
+    private UserRouteEditService routeEditService;
 
     @Autowired
-    private RouteCreateService routeCreateService;
+    private UserRouteCreateService routeCreateService;
 
     @Autowired
     private Firestore db;
@@ -38,11 +38,11 @@ public class RouteEditTest {
         points.add(new Point(1.0, 1.0, PointType.NEW, ""));
         String userName = "asd";
         String routeName = "route";
-        routeCreateService.createRoute(new Route(userName, routeName, points, ""));
+        routeCreateService.createUserRoute(new UserRoute(userName, routeName, points, ""));
 
         points.remove(0);
-        boolean res = routeEditService.editRoute(userName, routeName,
-                new Route(userName, routeName, points, "")
+        boolean res = routeEditService.editUserRoute(userName, routeName,
+                new UserRoute(userName, routeName, points, "")
         );
 
         assertTrue(res);
@@ -55,13 +55,13 @@ public class RouteEditTest {
         points.add(new Point(1.0, 1.0, PointType.NEW, ""));
         String userName = "asd";
         String routeName = "route";
-        routeCreateService.createRoute(
-                new Route(userName, routeName, points, "")
+        routeCreateService.createUserRoute(
+                new UserRoute(userName, routeName, points, "")
         );
 
         points.remove(0);
-        boolean res = routeEditService.editRoute(userName, routeName,
-                new Route(userName, routeName + "2", points, "")
+        boolean res = routeEditService.editUserRoute(userName, routeName,
+                new UserRoute(userName, routeName + "2", points, "")
         );
 
         assertTrue(res);
@@ -69,8 +69,8 @@ public class RouteEditTest {
 
     @Test
     void testNonExistentRoute() {
-        boolean res = routeEditService.editRoute("", "",
-                new Route("", "", new ArrayList<>(), "")
+        boolean res = routeEditService.editUserRoute("", "",
+                new UserRoute("", "", new ArrayList<>(), "")
         );
 
         assertFalse(res);
@@ -83,10 +83,10 @@ public class RouteEditTest {
         points.add(new Point(1.0, 1.0, PointType.NEW, ""));
         String userName = "asd";
         String routeName = "route";
-        routeCreateService.createRoute(new Route(userName, routeName, points, ""));
+        routeCreateService.createUserRoute(new UserRoute(userName, routeName, points, ""));
 
-        boolean res = routeEditService.editRoute(userName, routeName,
-                new Route(userName, routeName + "2", points, "")
+        boolean res = routeEditService.editUserRoute(userName, routeName,
+                new UserRoute(userName, routeName + "2", points, "")
         );
 
         assertFalse(res);

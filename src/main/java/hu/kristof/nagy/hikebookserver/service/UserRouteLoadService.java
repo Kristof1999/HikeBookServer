@@ -6,6 +6,7 @@ import hu.kristof.nagy.hikebookserver.FirestoreInitilizationException;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.BrowseListItem;
 import hu.kristof.nagy.hikebookserver.model.Route;
+import hu.kristof.nagy.hikebookserver.model.UserRoute;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +18,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 @Service
-public class RouteLoadService {
+public class UserRouteLoadService {
 
     @Autowired
     private Firestore db;
@@ -27,10 +28,11 @@ public class RouteLoadService {
      * @param userName the user's name for who to load the routes
      * @return list of routes which belong to the given user
      */
-    public List<Route> loadRoutesForUser(String userName) {
+    public List<UserRoute> loadUserRoutesForUser(String userName) {
         ApiFuture<QuerySnapshot> future =  db
                 .collection(DbPathConstants.COLLECTION_ROUTE)
-                .select(DbPathConstants.ROUTE_NAME,
+                .select(DbPathConstants.ROUTE_USER_NAME,
+                        DbPathConstants.ROUTE_NAME,
                         DbPathConstants.ROUTE_POINTS,
                         DbPathConstants.ROUTE_DESCRIPTION)
                 .whereEqualTo(DbPathConstants.ROUTE_USER_NAME, userName)
@@ -38,7 +40,7 @@ public class RouteLoadService {
         try {
             return future.get().getDocuments()
                     .stream()
-                    .map(Route::from)
+                    .map(UserRoute::from)
                     .collect(Collectors.toList());
         } catch (InterruptedException | CancellationException | ExecutionException e) {
             e.printStackTrace();
@@ -46,11 +48,10 @@ public class RouteLoadService {
         throw new FirestoreInitilizationException();
     }
 
-    // TODO: decide if group routes should be included
     /**
      * Lists all the routes' name and associated user name.
      */
-    public List<BrowseListItem> listRoutes() {
+    public List<BrowseListItem> listUserRoutes() {
         List<BrowseListItem> routes = new ArrayList<>();
         for(DocumentReference docRef : db.collection(DbPathConstants.COLLECTION_ROUTE).listDocuments()) {
             try {
@@ -74,7 +75,7 @@ public class RouteLoadService {
      * @param userName name of the user who requested the load
      * @param routeName name of the route for which to load the points
      */
-    public Route loadRoute(String userName, String routeName) {
+    public UserRoute loadUserRoute(String userName, String routeName) {
         ApiFuture<QuerySnapshot> future = db.collection(DbPathConstants.COLLECTION_ROUTE)
                 .select(DbPathConstants.ROUTE_POINTS,
                         DbPathConstants.ROUTE_NAME,
@@ -85,10 +86,10 @@ public class RouteLoadService {
                 .get();
         try {
             QueryDocumentSnapshot doc = future.get().getDocuments().get(0);
-            return Route.from(doc);
+            return UserRoute.from(doc);
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
-        return new Route(); // lehet inkább mást kellene visszaadni
+        return new UserRoute(); // lehet inkább mást kellene visszaadni
     }
 }
