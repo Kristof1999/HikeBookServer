@@ -22,7 +22,6 @@ public class UserRouteEditService {
 
     /**
      * Edits the route.
-     * @param userName name of user who requested editing
      * @param oldRouteName name of route before editing
      * @param route the edited route
      * @return true if the edited route is unique for the given user
