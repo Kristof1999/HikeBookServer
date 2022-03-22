@@ -88,4 +88,13 @@ public class Route {
     public int hashCode() {
         return Objects.hash(getRouteName(), getPoints(), getDescription());
     }
+
+    @Override
+    public String toString() {
+        return "Route{" +
+                "routeName='" + routeName + '\'' +
+                ", points=" + points +
+                ", description='" + description + '\'' +
+                '}';
+    }
 }

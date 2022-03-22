@@ -50,4 +50,13 @@ public class User {
     public int hashCode() {
         return Objects.hash(getName(), getPassword());
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "name='" + name + '\'' +
+                ", password='" + password + '\'' +
+                ", avgSpeed=" + avgSpeed +
+                '}';
+    }
 }

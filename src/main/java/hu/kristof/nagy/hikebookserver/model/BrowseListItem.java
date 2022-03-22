@@ -38,4 +38,12 @@ public class BrowseListItem {
     public int hashCode() {
         return Objects.hash(getUserName(), getRouteName());
     }
+
+    @Override
+    public String toString() {
+        return "BrowseListItem{" +
+                "userName='" + userName + '\'' +
+                ", routeName='" + routeName + '\'' +
+                '}';
+    }
 }

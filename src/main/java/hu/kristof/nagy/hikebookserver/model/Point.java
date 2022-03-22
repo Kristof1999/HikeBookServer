@@ -64,4 +64,14 @@ public class Point {
     public int hashCode() {
         return Objects.hash(getLatitude(), getLongitude(), getType(), getTitle());
     }
+
+    @Override
+    public String toString() {
+        return "Point{" +
+                "latitude=" + latitude +
+                ", longitude=" + longitude +
+                ", type=" + type +
+                ", title='" + title + '\'' +
+                '}';
+    }
 }
