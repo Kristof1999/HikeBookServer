@@ -29,6 +29,9 @@ public class RouteEditService {
      * @return true if the edited route is unique for the given user
      */
     public boolean editRoute(String userName, String oldRouteName, Route route) {
+        // szerepkörök miatt érdemes a userName-t hagyni argumentumként, mivel
+        // így a jövőben könnyen megnézhetjük, hogy az adott user-nak van-e engedélye
+        // szerkeszteni csoport útvonalat
         if (!oldRouteName.equals(route.getRouteName())) {
             // route name changed
             if (routeNameExists(userName, route.getRouteName())) {
@@ -59,7 +62,7 @@ public class RouteEditService {
                 if (arePointsUniqueForUser(userName, route.getPoints())) {
                     String id = querySnapshot.getDocuments().get(0).getId();
 
-                    Map<String, Object> data = route.toMap(userName);
+                    Map<String, Object> data = route.toMap();
                     routes.document(id)
                             .set(data)
                             .get(); // wait for write result

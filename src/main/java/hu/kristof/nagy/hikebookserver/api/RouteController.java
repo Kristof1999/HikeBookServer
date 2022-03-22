@@ -34,7 +34,7 @@ public class RouteController {
             @PathVariable String routeName,
             @RequestBody Route route
             ) {
-        return routeCreate.createRoute(userName, routeName, route.getPoints(), route.getDescription());
+        return routeCreate.createRoute(route);
     }
 
     @GetMapping("{userName}")

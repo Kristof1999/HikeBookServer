@@ -6,12 +6,10 @@ import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.Query;
 import com.google.cloud.firestore.QuerySnapshot;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
-import hu.kristof.nagy.hikebookserver.model.Point;
 import hu.kristof.nagy.hikebookserver.model.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -25,30 +23,27 @@ public class RouteCreateService {
      * Before saving the route, checks if the route is unique:
      * the user has no route called routeName,
      * and no route whose points are the same as the points argument.
-     * @param userName name of user who created the route
-     * @param routeName name of the created route
-     * @param points points of the created route
+     * @param route the created route
      * @return true if route is unique
      */
-    public boolean createRoute(String userName, String routeName, List<Point> points, String description) {
+    public boolean createRoute(Route route) {
         CollectionReference routes = db
                 .collection(DbPathConstants.COLLECTION_ROUTE);
         Query query = routes
                 .select(DbPathConstants.ROUTE_USER_NAME,
                         DbPathConstants.ROUTE_NAME)
-                .whereEqualTo(DbPathConstants.ROUTE_USER_NAME, userName)
-                .whereEqualTo(DbPathConstants.ROUTE_NAME, routeName);
+                .whereEqualTo(DbPathConstants.ROUTE_USER_NAME, route.getUserOrGroupName())
+                .whereEqualTo(DbPathConstants.ROUTE_NAME, route.getRouteName());
         ApiFuture<QuerySnapshot> future = query.get();
         try {
             if (future.get().isEmpty()) {
                 // route name is unique
                 query = query
                         .select(DbPathConstants.ROUTE_POINTS)
-                        .whereEqualTo(DbPathConstants.ROUTE_NAME, routeName);
+                        .whereEqualTo(DbPathConstants.ROUTE_NAME, route.getRouteName());
                 if (query.get().get().isEmpty()) {
                     // route is unique
-                    Route route = new Route(routeName, points, description);
-                    Map<String, Object> data = route.toMap(userName);
+                    Map<String, Object> data = route.toMap();
                     db.collection(DbPathConstants.COLLECTION_ROUTE)
                             .add(data)
                             .get(); // wait for write result

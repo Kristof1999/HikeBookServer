@@ -38,10 +38,12 @@ public class RouteEditTest {
         points.add(new Point(1.0, 1.0, PointType.NEW, ""));
         String userName = "asd";
         String routeName = "route";
-        routeCreateService.createRoute(userName, routeName, points, "");
+        routeCreateService.createRoute(new Route(userName, routeName, points, ""));
 
         points.remove(0);
-        boolean res = routeEditService.editRoute(userName, routeName, new Route(routeName, points, ""));
+        boolean res = routeEditService.editRoute(userName, routeName,
+                new Route(userName, routeName, points, "")
+        );
 
         assertTrue(res);
     }
@@ -53,11 +55,13 @@ public class RouteEditTest {
         points.add(new Point(1.0, 1.0, PointType.NEW, ""));
         String userName = "asd";
         String routeName = "route";
-        routeCreateService.createRoute(userName, routeName, points, "");
+        routeCreateService.createRoute(
+                new Route(userName, routeName, points, "")
+        );
 
         points.remove(0);
         boolean res = routeEditService.editRoute(userName, routeName,
-                new Route(routeName + "2", points, "")
+                new Route(userName, routeName + "2", points, "")
         );
 
         assertTrue(res);
@@ -66,7 +70,7 @@ public class RouteEditTest {
     @Test
     void testNonExistentRoute() {
         boolean res = routeEditService.editRoute("", "",
-                new Route("", new ArrayList<>(), "")
+                new Route("", "", new ArrayList<>(), "")
         );
 
         assertFalse(res);
@@ -79,10 +83,10 @@ public class RouteEditTest {
         points.add(new Point(1.0, 1.0, PointType.NEW, ""));
         String userName = "asd";
         String routeName = "route";
-        routeCreateService.createRoute(userName, routeName, points, "");
+        routeCreateService.createRoute(new Route(userName, routeName, points, ""));
 
         boolean res = routeEditService.editRoute(userName, routeName,
-                new Route(routeName + "2", points, "")
+                new Route(userName, routeName + "2", points, "")
         );
 
         assertFalse(res);

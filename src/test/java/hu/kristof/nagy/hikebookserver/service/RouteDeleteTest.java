@@ -3,6 +3,7 @@ package hu.kristof.nagy.hikebookserver.service;
 import com.google.cloud.firestore.Firestore;
 import hu.kristof.nagy.hikebookserver.model.Point;
 import hu.kristof.nagy.hikebookserver.model.PointType;
+import hu.kristof.nagy.hikebookserver.model.Route;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +39,7 @@ public class RouteDeleteTest {
         points.add(new Point(1.0, 1.0, PointType.NEW, ""));
         String userName = "asd";
         String routeName = "route";
-        routeCreateService.createRoute(userName, routeName, points, "");
+        routeCreateService.createRoute(new Route(userName, routeName, points, ""));
 
         boolean res = routeDeleteService.deleteRoute(userName, routeName);
 
