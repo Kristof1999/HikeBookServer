@@ -27,23 +27,50 @@ public class UserRouteEditService {
      * @param route the edited route
      * @return true if the edited route is unique for the given user
      */
-    public boolean editUserRoute(String userName, String oldRouteName, UserRoute route) {
+    public boolean editUserRoute(String oldRouteName, UserRoute route) {
         // szerepkörök miatt érdemes a userName-t hagyni argumentumként, mivel
         // így a jövőben könnyen megnézhetjük, hogy az adott user-nak van-e engedélye
         // szerkeszteni csoport útvonalat
         if (!oldRouteName.equals(route.getRouteName())) {
-            // route name changed
-            if (routeNameExistsForUser(userName, route.getRouteName())) {
-                return false;
-            } else {
-                return updateUserRoute(userName, oldRouteName, route);
-            }
+            return updateUserRouteWithNameChange(oldRouteName, route);
         } else {
-            return updateUserRoute(userName, oldRouteName, route);
+            return updateUserRoute(oldRouteName, route);
         }
     }
 
-    private boolean updateUserRoute(String userName, String routeName, UserRoute route) {
+    private boolean updateUserRouteWithNameChange(String oldRouteName, UserRoute route) {
+        if (routeNameExistsForUser(route.getUserName(), route.getRouteName())) {
+            return false;
+        } else {
+            saveAndWait(oldRouteName, route);
+            return true;
+        }
+    }
+
+    private boolean updateUserRoute(String oldRouteName, UserRoute route) {
+        if (arePointsUniqueForUser(route.getUserName(), route.getPoints())) {
+            saveAndWait(oldRouteName, route);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private void saveAndWait(String oldRouteName, UserRoute route) {
+        QuerySnapshot querySnapshot = getRouteQuerySnapshot(route.getUserName(), oldRouteName);
+        String id = querySnapshot.getDocuments().get(0).getId();
+        try {
+            Map<String, Object> data = route.toMap();
+            db.collection(DbPathConstants.COLLECTION_ROUTE)
+                    .document(id)
+                    .set(data)
+                    .get(); // wait for write result
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private QuerySnapshot getRouteQuerySnapshot(String userName, String routeName) {
         CollectionReference routes = db
                 .collection(DbPathConstants.COLLECTION_ROUTE);
         ApiFuture<QuerySnapshot> future = routes
@@ -55,25 +82,14 @@ public class UserRouteEditService {
         try {
             QuerySnapshot querySnapshot = future.get();
             if (querySnapshot.isEmpty()) {
-                // editing a non-existent route
-                return false;
+                throw new IllegalArgumentException("No route exists with userName: " + userName + ", and routeName: " + routeName);
             } else {
-                if (arePointsUniqueForUser(userName, route.getPoints())) {
-                    String id = querySnapshot.getDocuments().get(0).getId();
-
-                    Map<String, Object> data = route.toMap();
-                    routes.document(id)
-                            .set(data)
-                            .get(); // wait for write result
-                    return true;
-                } else {
-                    return false;
-                }
+                return querySnapshot;
             }
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
-        return false;
+        throw new IllegalArgumentException("Something went wrong.");
     }
 
     private boolean arePointsUniqueForUser(String userName, List<Point> points) {
