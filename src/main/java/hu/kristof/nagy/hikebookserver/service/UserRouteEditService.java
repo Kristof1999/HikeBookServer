@@ -81,14 +81,17 @@ public class UserRouteEditService {
         try {
             QuerySnapshot querySnapshot = future.get();
             if (querySnapshot.isEmpty()) {
-                throw new IllegalArgumentException("No route exists with userName: " + userName + ", and routeName: " + routeName);
+                throw new IllegalArgumentException(
+                        "Nem létezik útvonal a következő felhasználó névvel: "
+                                + userName + ", és útvonal névvel: " + routeName
+                );
             } else {
                 return querySnapshot;
             }
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
-        throw new IllegalArgumentException("Something went wrong.");
+        throw new IllegalArgumentException("Valami hiba történt.");
     }
 
     private boolean arePointsUniqueForUser(String userName, List<Point> points) {
@@ -100,7 +103,10 @@ public class UserRouteEditService {
             if (future.get().isEmpty())
                 return true;
             else
-                return false;
+                throw new IllegalArgumentException(
+                        "Az útvonal pontjai nem egyediek!" +
+                                "Kérem, hogy más pontokat használjon."
+                );
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
@@ -119,10 +125,13 @@ public class UserRouteEditService {
            if (future.get().isEmpty())
                return false;
            else
-               return true;
+               throw new IllegalArgumentException(
+                       "A(z) " + routeName + " nevű útvonal már létezik!" +
+                               "Kérem, hogy válasszon másik nevet."
+               );
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
-        return false;
+        throw new IllegalArgumentException("Valami hiba történt.");
     }
 }
