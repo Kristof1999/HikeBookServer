@@ -18,7 +18,7 @@ public class Route {
     public Route(String userOrGroupName, String routeName, List<Point> points, String description) {
         this.userOrGroupName = userOrGroupName;
         this.routeName = routeName;
-        this.points = List.copyOf(points);
+        setPoints(points);
         this.description = description;
     }
 
@@ -31,20 +31,11 @@ public class Route {
     // loadRoutesForUser select call: if you want to get a field which is
     // not present in the select call, then you'll get a NullPointerException
     public static Route from(DocumentSnapshot documentSnapshot) {
-        // try using toObject(this)
-        String userOrGroupName = Objects.requireNonNull(
-                documentSnapshot.getString(DbPathConstants.ROUTE_USER_NAME)
+        return new Route(
+                Objects.requireNonNull(
+                        documentSnapshot.toObject(Route.class)
+                )
         );
-        String routeName = Objects.requireNonNull(
-                documentSnapshot.getString(DbPathConstants.ROUTE_NAME)
-        );
-        List<Point> points = (List<Point>) Objects.requireNonNull(
-                documentSnapshot.get(DbPathConstants.ROUTE_POINTS)
-        );
-        String description = Objects.requireNonNull(
-                documentSnapshot.getString(DbPathConstants.ROUTE_DESCRIPTION)
-        );
-        return new Route(userOrGroupName, routeName, points, description);
     }
 
     public Map<String, Object> toMap() {
@@ -73,7 +64,7 @@ public class Route {
     }
 
     public void setPoints(List<Point> points) {
-        Collections.copy(this.points, points);
+        this.points = List.copyOf(points);
     }
 
     public String getDescription() {
