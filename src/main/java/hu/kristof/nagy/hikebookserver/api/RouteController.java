@@ -1,74 +1,75 @@
 package hu.kristof.nagy.hikebookserver.api;
 
 import hu.kristof.nagy.hikebookserver.model.BrowseListItem;
-import hu.kristof.nagy.hikebookserver.model.Point;
-import hu.kristof.nagy.hikebookserver.model.Route;
-import hu.kristof.nagy.hikebookserver.service.RouteCreateService;
-import hu.kristof.nagy.hikebookserver.service.RouteDeleteService;
-import hu.kristof.nagy.hikebookserver.service.RouteEditService;
-import hu.kristof.nagy.hikebookserver.service.RouteLoadService;
+import hu.kristof.nagy.hikebookserver.model.UserRoute;
+import hu.kristof.nagy.hikebookserver.service.UserRouteCreateService;
+import hu.kristof.nagy.hikebookserver.service.UserRouteDeleteService;
+import hu.kristof.nagy.hikebookserver.service.UserRouteEditService;
+import hu.kristof.nagy.hikebookserver.service.UserRouteLoadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+// TODO: make UserController, and put userRoute specific methods in them
 
 @RequestMapping("routes/")
 @RestController
 public class RouteController {
 
     @Autowired
-    private RouteCreateService routeCreate;
+    private UserRouteCreateService routeCreate;
 
     @Autowired
-    private RouteLoadService routeLoad;
+    private UserRouteLoadService routeLoad;
 
     @Autowired
-    private RouteDeleteService routeDelete;
+    private UserRouteDeleteService routeDelete;
 
     @Autowired
-    private RouteEditService routeEdit;
+    private UserRouteEditService routeEdit;
 
     @PutMapping("{userName}/{routeName}")
-    public boolean createRoute(
+    public boolean createUserRouteForUser(
             @PathVariable String userName,
             @PathVariable String routeName,
-            @RequestBody Route route
+            @RequestBody UserRoute route
             ) {
-        return routeCreate.createRoute(route);
+        return routeCreate.createUserRoute(route);
     }
 
     @GetMapping("{userName}")
-    public List<Route> loadRoutesForUser(@PathVariable String userName) {
-        return routeLoad.loadRoutesForUser(userName);
+    public List<UserRoute> loadRoutesForUser(@PathVariable String userName) {
+        return routeLoad.loadUserRoutesForUser(userName);
     }
 
     @GetMapping("{userName}/{routeName}")
-    public Route loadRoute(
+    public UserRoute loadUserRoute(
             @PathVariable String userName,
             @PathVariable String routeName
     ) {
-        return routeLoad.loadRoute(userName, routeName);
+        return routeLoad.loadUserRoute(userName, routeName);
     }
 
     @GetMapping("")
-    public List<BrowseListItem> listRoutes() {
-        return routeLoad.listRoutes();
+    public List<BrowseListItem> listUserRoutes() {
+        return routeLoad.listUserRoutes();
     }
 
     @DeleteMapping("{userName}/{routeName}")
-    public boolean deleteRoute(
+    public boolean deleteUserRoute(
             @PathVariable String userName,
             @PathVariable String routeName
     ) {
-        return routeDelete.deleteRoute(userName, routeName);
+        return routeDelete.deleteUserRoute(userName, routeName);
     }
 
     @PutMapping("edit/{userName}/{routeName}")
-    public boolean editRoute(
+    public boolean editUserRoute(
             @PathVariable String userName,
             @PathVariable String routeName,
-            @RequestBody Route route
+            @RequestBody UserRoute route
     ) {
-        return routeEdit.editRoute(userName, routeName, route);
+        return routeEdit.editUserRoute(userName, routeName, route);
     }
 }
