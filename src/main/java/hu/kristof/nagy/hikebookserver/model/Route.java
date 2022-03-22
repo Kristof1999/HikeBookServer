@@ -16,7 +16,7 @@ public class Route {
 
     public Route(String routeName, List<Point> points, String description) {
         this.routeName = routeName;
-        this.points = points;
+        this.points = List.copyOf(points);
         this.description = description;
     }
 
