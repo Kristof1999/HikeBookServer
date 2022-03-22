@@ -5,13 +5,13 @@ import com.google.cloud.firestore.*;
 import hu.kristof.nagy.hikebookserver.FirestoreInitilizationException;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.BrowseListItem;
-import hu.kristof.nagy.hikebookserver.model.Point;
 import hu.kristof.nagy.hikebookserver.model.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
@@ -55,8 +55,12 @@ public class RouteLoadService {
         for(DocumentReference docRef : db.collection(DbPathConstants.COLLECTION_ROUTE).listDocuments()) {
             try {
                 DocumentSnapshot doc = docRef.get().get();
-                String userName = doc.get(DbPathConstants.ROUTE_USER_NAME, String.class);
-                String routeName = doc.get(DbPathConstants.ROUTE_NAME, String.class);
+                String userName = Objects.requireNonNull(
+                        doc.get(DbPathConstants.ROUTE_USER_NAME, String.class)
+                );
+                String routeName = Objects.requireNonNull(
+                        doc.get(DbPathConstants.ROUTE_NAME, String.class)
+                );
                 routes.add(new BrowseListItem(userName, routeName));
             } catch (ExecutionException | InterruptedException e) {
                 e.printStackTrace();
