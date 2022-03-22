@@ -35,8 +35,8 @@ public class RouteCreateTest {
     @Test
     void testCorrect() {
         List<Point> points = new ArrayList<>();
-        points.add(new Point(0.0, 0.0, PointType.SET));
-        points.add(new Point(1.0, 1.0, PointType.NEW));
+        points.add(new Point(0.0, 0.0, PointType.SET, ""));
+        points.add(new Point(1.0, 1.0, PointType.NEW, ""));
 
         boolean res = routeCreateService.createRoute("asd", "route", points, "");
 
@@ -47,11 +47,11 @@ public class RouteCreateTest {
     @Test
     void testDuplicateName() {
         List<Point> points = new ArrayList<>();
-        points.add(new Point(0.0, 0.0, PointType.SET));
-        points.add(new Point(1.0, 1.0, PointType.NEW));
+        points.add(new Point(0.0, 0.0, PointType.SET, ""));
+        points.add(new Point(1.0, 1.0, PointType.NEW, ""));
         List<Point> points2 = new ArrayList<>();
-        points2.add(new Point(0.0, 0.0, PointType.SET));
-        points2.add(new Point(1.0, 0.0, PointType.NEW));
+        points2.add(new Point(0.0, 0.0, PointType.SET, ""));
+        points2.add(new Point(1.0, 0.0, PointType.NEW, ""));
 
         routeCreateService.createRoute("asd", "route", points, "");
         boolean res = routeCreateService.createRoute("asd", "route", points2, "");
@@ -62,8 +62,8 @@ public class RouteCreateTest {
     @Test
     void testDuplicatePoints() {
         List<Point> points = new ArrayList<>();
-        points.add(new Point(0.0, 0.0, PointType.SET));
-        points.add(new Point(1.0, 1.0, PointType.NEW));
+        points.add(new Point(0.0, 0.0, PointType.SET, ""));
+        points.add(new Point(1.0, 1.0, PointType.NEW, ""));
 
         routeCreateService.createRoute("asd", "route", points, "");
         boolean res = routeCreateService.createRoute("asd", "route", points, "");
@@ -74,8 +74,8 @@ public class RouteCreateTest {
     @Test
     void testDifferentUserNameSamePoints() {
         List<Point> points = new ArrayList<>();
-        points.add(new Point(0.0, 0.0, PointType.SET));
-        points.add(new Point(1.0, 1.0, PointType.NEW));
+        points.add(new Point(0.0, 0.0, PointType.SET, ""));
+        points.add(new Point(1.0, 1.0, PointType.NEW, ""));
 
         routeCreateService.createRoute("asd", "route", points, "");
         boolean res = routeCreateService.createRoute("user", "route", points, "");

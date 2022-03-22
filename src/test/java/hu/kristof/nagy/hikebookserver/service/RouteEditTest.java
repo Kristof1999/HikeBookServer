@@ -34,8 +34,8 @@ public class RouteEditTest {
     @Test
     void testSameRouteName() {
         List<Point> points = new ArrayList<>();
-        points.add(new Point(0.0, 0.0, PointType.SET));
-        points.add(new Point(1.0, 1.0, PointType.NEW));
+        points.add(new Point(0.0, 0.0, PointType.SET, ""));
+        points.add(new Point(1.0, 1.0, PointType.NEW, ""));
         String userName = "asd";
         String routeName = "route";
         routeCreateService.createRoute(userName, routeName, points, "");
@@ -49,8 +49,8 @@ public class RouteEditTest {
     @Test
     void testDifferentRouteName() {
         List<Point> points = new ArrayList<>();
-        points.add(new Point(0.0, 0.0, PointType.SET));
-        points.add(new Point(1.0, 1.0, PointType.NEW));
+        points.add(new Point(0.0, 0.0, PointType.SET, ""));
+        points.add(new Point(1.0, 1.0, PointType.NEW, ""));
         String userName = "asd";
         String routeName = "route";
         routeCreateService.createRoute(userName, routeName, points, "");
@@ -75,8 +75,8 @@ public class RouteEditTest {
     @Test
     void testSamePoints() {
         List<Point> points = new ArrayList<>();
-        points.add(new Point(0.0, 0.0, PointType.SET));
-        points.add(new Point(1.0, 1.0, PointType.NEW));
+        points.add(new Point(0.0, 0.0, PointType.SET, ""));
+        points.add(new Point(1.0, 1.0, PointType.NEW, ""));
         String userName = "asd";
         String routeName = "route";
         routeCreateService.createRoute(userName, routeName, points, "");
