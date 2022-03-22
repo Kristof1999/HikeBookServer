@@ -3,10 +3,7 @@ package hu.kristof.nagy.hikebookserver.model;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class Route {
     private String routeName;
@@ -61,11 +58,11 @@ public class Route {
     }
 
     public List<Point> getPoints() {
-        return points;
+        return List.copyOf(points);
     }
 
     public void setPoints(List<Point> points) {
-        this.points = points;
+        Collections.copy(this.points, points);
     }
 
     public String getDescription() {
