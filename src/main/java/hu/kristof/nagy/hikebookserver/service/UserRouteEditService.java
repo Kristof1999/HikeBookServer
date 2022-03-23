@@ -39,7 +39,10 @@ public class UserRouteEditService {
 
     private boolean updateUserRouteWithNameChange(String oldRouteName, UserRoute route) {
         if (routeNameExistsForUser(route.getUserName(), route.getRouteName())) {
-            return false;
+            throw new IllegalArgumentException(
+                    "A(z) " + route.getRouteName() + " nevű útvonal már létezik!" +
+                            "Kérem, hogy válasszon másik nevet."
+            );
         } else {
             saveAndWait(oldRouteName, route);
             return true;
@@ -51,7 +54,10 @@ public class UserRouteEditService {
             saveAndWait(oldRouteName, route);
             return true;
         } else {
-            return false;
+            throw new IllegalArgumentException(
+                    "Az útvonal pontjai nem egyediek!" +
+                            "Kérem, hogy más pontokat használjon."
+            );
         }
     }
 
@@ -100,13 +106,7 @@ public class UserRouteEditService {
                 .whereEqualTo(DbPathConstants.ROUTE_POINTS, points)
                 .get();
         try {
-            if (future.get().isEmpty())
-                return true;
-            else
-                throw new IllegalArgumentException(
-                        "Az útvonal pontjai nem egyediek!" +
-                                "Kérem, hogy más pontokat használjon."
-                );
+            return future.get().isEmpty();
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
@@ -122,13 +122,7 @@ public class UserRouteEditService {
                 .whereEqualTo(DbPathConstants.ROUTE_NAME, routeName)
                 .get();
         try {
-           if (future.get().isEmpty())
-               return false;
-           else
-               throw new IllegalArgumentException(
-                       "A(z) " + routeName + " nevű útvonal már létezik!" +
-                               "Kérem, hogy válasszon másik nevet."
-               );
+            return !future.get().isEmpty();
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
