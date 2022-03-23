@@ -1,16 +1,14 @@
-package hu.kristof.nagy.hikebookserver.service;
+package hu.kristof.nagy.hikebookserver.service.userroute;
 
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QuerySnapshot;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
-import hu.kristof.nagy.hikebookserver.model.Point;
 import hu.kristof.nagy.hikebookserver.model.UserRoute;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
@@ -33,35 +31,31 @@ public class UserRouteEditService {
         if (!oldRouteName.equals(route.getRouteName())) {
             return updateUserRouteWithNameChange(oldRouteName, route);
         } else {
-            return updateUserRoute(oldRouteName, route);
+            return updateUserRoute(route);
         }
     }
 
     private boolean updateUserRouteWithNameChange(String oldRouteName, UserRoute route) {
-        if (routeNameExistsForUser(route.getUserName(), route.getRouteName())) {
+        if (UserRouteServiceUtils.routeNameExistsForUser(db, route.getUserName(), route.getRouteName())) {
             throw new IllegalArgumentException(
-                    "A(z) " + route.getRouteName() + " nevű útvonal már létezik!" +
-                            "Kérem, hogy válasszon másik nevet."
+                    UserRouteServiceUtils.getRouteNameNotUniqueForUserString(route.getRouteName())
             );
         } else {
-            saveAndWait(oldRouteName, route);
+            saveChanges(oldRouteName, route);
             return true;
         }
     }
 
-    private boolean updateUserRoute(String oldRouteName, UserRoute route) {
-        if (arePointsUniqueForUser(route.getUserName(), route.getPoints())) {
-            saveAndWait(oldRouteName, route);
+    private boolean updateUserRoute(UserRoute route) {
+        if (UserRouteServiceUtils.arePointsUniqueForUser(db, route.getUserName(), route.getPoints())) {
+            saveChanges(route.getRouteName(), route);
             return true;
         } else {
-            throw new IllegalArgumentException(
-                    "Az útvonal pontjai nem egyediek!" +
-                            "Kérem, hogy más pontokat használjon."
-            );
+            throw new IllegalArgumentException(UserRouteServiceUtils.POINTS_NOT_UNIQE);
         }
     }
 
-    private void saveAndWait(String oldRouteName, UserRoute route) {
+    private void saveChanges(String oldRouteName, UserRoute route) {
         QuerySnapshot querySnapshot = getRouteQuerySnapshot(route.getUserName(), oldRouteName);
         String id = querySnapshot.getDocuments().get(0).getId();
         try {
@@ -94,35 +88,6 @@ public class UserRouteEditService {
             } else {
                 return querySnapshot;
             }
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-        }
-        throw new IllegalArgumentException("Valami hiba történt.");
-    }
-
-    private boolean arePointsUniqueForUser(String userName, List<Point> points) {
-        ApiFuture<QuerySnapshot> future = db.collection(DbPathConstants.COLLECTION_ROUTE)
-                .whereEqualTo(DbPathConstants.ROUTE_USER_NAME, userName)
-                .whereEqualTo(DbPathConstants.ROUTE_POINTS, points)
-                .get();
-        try {
-            return future.get().isEmpty();
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    private boolean routeNameExistsForUser(String userName, String routeName) {
-        ApiFuture<QuerySnapshot> future = db
-                .collection(DbPathConstants.COLLECTION_ROUTE)
-                .select(DbPathConstants.ROUTE_USER_NAME,
-                        DbPathConstants.ROUTE_NAME)
-                .whereEqualTo(DbPathConstants.ROUTE_USER_NAME, userName)
-                .whereEqualTo(DbPathConstants.ROUTE_NAME, routeName)
-                .get();
-        try {
-            return !future.get().isEmpty();
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }

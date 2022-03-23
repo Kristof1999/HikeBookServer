@@ -5,7 +5,6 @@ import com.google.cloud.firestore.Firestore;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.cloud.FirestoreClient;
-import hu.kristof.nagy.hikebookserver.FirestoreInitilizationException;
 import hu.kristof.nagy.hikebookserver.HikeBookServerApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,4 +1,4 @@
-package hu.kristof.nagy.hikebookserver.service;
+package hu.kristof.nagy.hikebookserver.service.userroute;
 
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.CollectionReference;
@@ -42,7 +42,7 @@ public class UserRouteDeleteService {
             }
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
-            return false;
         }
+        throw new IllegalArgumentException(UserRouteServiceUtils.GENERIC_ERROR_MSG);
     }
 }

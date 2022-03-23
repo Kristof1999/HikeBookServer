@@ -1,11 +1,9 @@
-package hu.kristof.nagy.hikebookserver.service;
+package hu.kristof.nagy.hikebookserver.service.userroute;
 
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
-import hu.kristof.nagy.hikebookserver.FirestoreInitilizationException;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.BrowseListItem;
-import hu.kristof.nagy.hikebookserver.model.Route;
 import hu.kristof.nagy.hikebookserver.model.UserRoute;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,7 +43,7 @@ public class UserRouteLoadService {
         } catch (InterruptedException | CancellationException | ExecutionException e) {
             e.printStackTrace();
         }
-        throw new FirestoreInitilizationException();
+        throw new IllegalArgumentException(UserRouteServiceUtils.GENERIC_ERROR_MSG);
     }
 
     /**
@@ -90,6 +88,6 @@ public class UserRouteLoadService {
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
-        return new UserRoute(); // lehet inkább mást kellene visszaadni
+        throw new IllegalArgumentException(UserRouteServiceUtils.GENERIC_ERROR_MSG);
     }
 }

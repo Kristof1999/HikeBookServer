@@ -4,6 +4,8 @@ import com.google.cloud.firestore.Firestore;
 import hu.kristof.nagy.hikebookserver.model.Point;
 import hu.kristof.nagy.hikebookserver.model.PointType;
 import hu.kristof.nagy.hikebookserver.model.UserRoute;
+import hu.kristof.nagy.hikebookserver.service.userroute.UserRouteCreateService;
+import hu.kristof.nagy.hikebookserver.service.userroute.UserRouteEditService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,12 +1,11 @@
 package hu.kristof.nagy.hikebookserver.api;
 
 import hu.kristof.nagy.hikebookserver.model.BrowseListItem;
-import hu.kristof.nagy.hikebookserver.model.Route;
 import hu.kristof.nagy.hikebookserver.model.UserRoute;
-import hu.kristof.nagy.hikebookserver.service.UserRouteCreateService;
-import hu.kristof.nagy.hikebookserver.service.UserRouteDeleteService;
-import hu.kristof.nagy.hikebookserver.service.UserRouteEditService;
-import hu.kristof.nagy.hikebookserver.service.UserRouteLoadService;
+import hu.kristof.nagy.hikebookserver.service.userroute.UserRouteCreateService;
+import hu.kristof.nagy.hikebookserver.service.userroute.UserRouteDeleteService;
+import hu.kristof.nagy.hikebookserver.service.userroute.UserRouteEditService;
+import hu.kristof.nagy.hikebookserver.service.userroute.UserRouteLoadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
