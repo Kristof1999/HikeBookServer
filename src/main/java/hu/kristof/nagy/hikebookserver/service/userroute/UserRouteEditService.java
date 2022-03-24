@@ -25,10 +25,10 @@ public class UserRouteEditService {
      * @return true if the edited route is unique for the given user
      */
     public boolean editUserRoute(String oldRouteName, UserRoute route) {
-        if (!oldRouteName.equals(route.getRouteName())) {
-            return updateUserRouteWithNameChange(oldRouteName, route);
-        } else {
+        if (oldRouteName.equals(route.getRouteName())) {
             return updateUserRoute(route);
+        } else {
+            return updateUserRouteWithNameChange(oldRouteName, route);
         }
     }
 
