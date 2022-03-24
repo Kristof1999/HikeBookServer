@@ -56,12 +56,13 @@ public class Point {
         if (o == null || getClass() != o.getClass()) return false;
         Point point = (Point) o;
         return Double.compare(point.getLatitude(), getLatitude()) == 0 &&
-                Double.compare(point.getLongitude(), getLongitude()) == 0;
+                Double.compare(point.getLongitude(), getLongitude()) == 0 &&
+                getType() == point.getType() && getTitle().equals(point.getTitle());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getLatitude(), getLongitude());
+        return Objects.hash(getLatitude(), getLongitude(), getType(), getTitle());
     }
 
     @Override
