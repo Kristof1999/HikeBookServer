@@ -1,6 +1,7 @@
 package hu.kristof.nagy.hikebookserver.service;
 
 import com.google.cloud.firestore.Firestore;
+import hu.kristof.nagy.hikebookserver.model.EditedUserRoute;
 import hu.kristof.nagy.hikebookserver.model.Point;
 import hu.kristof.nagy.hikebookserver.model.PointType;
 import hu.kristof.nagy.hikebookserver.model.UserRoute;
@@ -40,13 +41,14 @@ public class UserRouteEditTest {
         points.add(new Point(1.0, 1.0, PointType.NEW, ""));
         String userName = "asd";
         String routeName = "route";
-        routeCreateService.createUserRoute(new UserRoute(userName, routeName, points, ""));
+        UserRoute oldUserRoute =new UserRoute(userName, routeName, points, "");
+        routeCreateService.createUserRoute(oldUserRoute);
 
-        UserRoute editedUserRoute = new UserRoute(userName, routeName, points, "");
+        UserRoute newUserRoute = new UserRoute(userName, routeName, points, "");
+        EditedUserRoute editedUserRoute = new EditedUserRoute(newUserRoute, oldUserRoute);
+        boolean res = routeEditService.editUserRoute(editedUserRoute);
 
-        assertThrows(IllegalArgumentException.class,
-                () -> routeEditService.editUserRoute(routeName, editedUserRoute)
-        );
+        assertTrue(res);
     }
 
     @Test
@@ -56,11 +58,13 @@ public class UserRouteEditTest {
         points.add(new Point(1.0, 1.0, PointType.NEW, ""));
         String userName = "asd";
         String routeName = "route";
-        routeCreateService.createUserRoute(new UserRoute(userName, routeName, points, ""));
+        UserRoute oldUserRoute = new UserRoute(userName, routeName, points, "");
+        routeCreateService.createUserRoute(oldUserRoute);
 
         points.add(new Point(2.0, 2.0, PointType.NEW, ""));
-        UserRoute editedUserRoute = new UserRoute(userName, routeName, points, "");
-        boolean res = routeEditService.editUserRoute(routeName, editedUserRoute);
+        UserRoute newUserRoute = new UserRoute(userName, routeName, points, "");
+        EditedUserRoute editedUserRoute = new EditedUserRoute(newUserRoute, oldUserRoute);
+        boolean res = routeEditService.editUserRoute(editedUserRoute);
 
         assertTrue(res);
     }
@@ -72,12 +76,12 @@ public class UserRouteEditTest {
         points.add(new Point(1.0, 1.0, PointType.NEW, ""));
         String userName = "asd";
         String routeName = "route";
-        routeCreateService.createUserRoute(
-                new UserRoute(userName, routeName, points, "")
-        );
+        UserRoute oldUserRoute = new UserRoute(userName, routeName, points, "");
+        routeCreateService.createUserRoute(oldUserRoute);
 
-        UserRoute editedUserRoute = new UserRoute(userName, routeName + "2", points, "");
-        boolean res = routeEditService.editUserRoute(routeName, editedUserRoute);
+        UserRoute newUserRoute = new UserRoute(userName, routeName + "2", points, "");
+        EditedUserRoute editedUserRoute = new EditedUserRoute(newUserRoute, oldUserRoute);
+        boolean res = routeEditService.editUserRoute(editedUserRoute);
 
         assertTrue(res);
     }
@@ -89,23 +93,15 @@ public class UserRouteEditTest {
         points.add(new Point(1.0, 1.0, PointType.NEW, ""));
         String userName = "asd";
         String routeName = "route";
-        routeCreateService.createUserRoute(
-                new UserRoute(userName, routeName, points, "")
-        );
+        UserRoute oldUserRoute = new UserRoute(userName, routeName, points, "");
+        routeCreateService.createUserRoute(oldUserRoute);
 
         points.add(new Point(2.0, 2.0, PointType.NEW, ""));
-        UserRoute editedUserRoute = new UserRoute(userName, routeName + "2", points, "");
-        boolean res = routeEditService.editUserRoute(routeName, editedUserRoute);
+        UserRoute newUserRoute = new UserRoute(userName, routeName + "2", points, "");
+        EditedUserRoute editedUserRoute = new EditedUserRoute(newUserRoute, oldUserRoute);
+        boolean res = routeEditService.editUserRoute(editedUserRoute);
 
         assertTrue(res);
-    }
-
-    @Test
-    void testNonExistentRoute() {
-        assertThrows(IllegalArgumentException.class,
-                () -> routeEditService.editUserRoute("",
-                new UserRoute("", "", new ArrayList<>(), "")
-        ));
     }
 
     @Test
@@ -115,9 +111,8 @@ public class UserRouteEditTest {
         points.add(new Point(1.0, 1.0, PointType.NEW, ""));
         String userName = "asd";
         String routeName = "route";
-        routeCreateService.createUserRoute(
-                new UserRoute(userName, routeName, points, "")
-        );
+        UserRoute oldUserRoute = new UserRoute(userName, routeName, points, "");
+        routeCreateService.createUserRoute(oldUserRoute);
         String routeName2 = routeName + "2";
         List<Point> points2 = new ArrayList<>();
         for (Point p : points) {
@@ -129,10 +124,11 @@ public class UserRouteEditTest {
         );
 
         points.add(new Point(2.0, 2.0, PointType.NEW, ""));
-        UserRoute editedUserRoute = new UserRoute(userName, routeName, points, "");
+        UserRoute newUserRoute = new UserRoute(userName, routeName, points, "");
+        EditedUserRoute editedUserRoute = new EditedUserRoute(newUserRoute, oldUserRoute);
 
         assertThrows(IllegalArgumentException.class,
-                () -> routeEditService.editUserRoute(routeName, editedUserRoute)
+                () -> routeEditService.editUserRoute(editedUserRoute)
         );
     }
 
@@ -143,9 +139,8 @@ public class UserRouteEditTest {
         points.add(new Point(1.0, 1.0, PointType.NEW, ""));
         String userName = "asd";
         String routeName = "route";
-        routeCreateService.createUserRoute(
-                new UserRoute(userName, routeName, points, "")
-        );
+        UserRoute oldUserRoute = new UserRoute(userName, routeName, points, "");
+        routeCreateService.createUserRoute(oldUserRoute);
         String routeName2 = routeName + "2";
         List<Point> points2 = new ArrayList<>();
         for (Point p : points) {
@@ -156,10 +151,21 @@ public class UserRouteEditTest {
                 new UserRoute(userName, routeName2, points2, "")
         );
 
-        UserRoute editedUserRoute = new UserRoute(userName, routeName2, points, "");
+        UserRoute newUserRoute = new UserRoute(userName, routeName2, points, "");
+        EditedUserRoute editedUserRoute = new EditedUserRoute(newUserRoute, oldUserRoute);
 
         assertThrows(IllegalArgumentException.class,
-                () -> routeEditService.editUserRoute(routeName, editedUserRoute)
+                () -> routeEditService.editUserRoute(editedUserRoute)
         );
+    }
+
+    void testPointTypeChange() {
+        //TODO
+        //test if we only change the type of one of the points,
+        //it returns true
+    }
+
+    void testDescriptionChange() {
+        // TODO
     }
 }
