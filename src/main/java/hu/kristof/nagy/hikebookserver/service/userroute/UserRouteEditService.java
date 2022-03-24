@@ -25,9 +25,6 @@ public class UserRouteEditService {
      * @return true if the edited route is unique for the given user
      */
     public boolean editUserRoute(String oldRouteName, UserRoute route) {
-        // szerepkörök miatt érdemes a userName-t hagyni argumentumként, mivel
-        // így a jövőben könnyen megnézhetjük, hogy az adott user-nak van-e engedélye
-        // szerkeszteni csoport útvonalat
         if (!oldRouteName.equals(route.getRouteName())) {
             return updateUserRouteWithNameChange(oldRouteName, route);
         } else {
