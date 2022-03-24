@@ -11,11 +11,11 @@ import java.util.concurrent.ExecutionException;
 
 public class UserRouteServiceUtils {
     public static String GENERIC_ERROR_MSG = "Valami hiba történt.";
-    public static String POINTS_NOT_UNIQE = "Az útvonal pontjai nem egyediek!" +
+    public static String POINTS_NOT_UNIQE = "Az útvonal pontjai nem egyediek! " +
             "Kérem, hogy más pontokat használjon.";
 
     public static String getRouteNameNotUniqueForUserString(String routeName) {
-        return "A(z) " + routeName + " nevű útvonal már létezik!" +
+        return "A(z) " + routeName + " nevű útvonal már létezik! " +
                 "Kérem, hogy válasszon másik nevet.";
     }
 
