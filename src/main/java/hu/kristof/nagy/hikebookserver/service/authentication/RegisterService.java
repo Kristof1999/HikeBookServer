@@ -1,4 +1,4 @@
-package hu.kristof.nagy.hikebookserver.service;
+package hu.kristof.nagy.hikebookserver.service.authentication;
 
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.CollectionReference;
