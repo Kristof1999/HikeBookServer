@@ -7,16 +7,16 @@ import java.util.*;
 public class User {
     private String name;
     private String password;
-    private float avgSpeed;
+    private double avgSpeed;
 
     public User() {
     }
 
     public User(String name, String password) {
-        this(name, password, 0f);
+        this(name, password, 0.0);
     }
 
-    public User(String name, String password, float avgSpeed) {
+    public User(String name, String password, double avgSpeed) {
         this.name = name;
         this.password = password;
         this.avgSpeed = avgSpeed;
@@ -30,11 +30,11 @@ public class User {
         return password;
     }
 
-    public float getAvgSpeed() {
+    public double getAvgSpeed() {
         return avgSpeed;
     }
 
-    public void setAvgSpeed(float avgSpeed) {
+    public void setAvgSpeed(double avgSpeed) {
         this.avgSpeed = avgSpeed;
     }
 
