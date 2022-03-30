@@ -12,8 +12,8 @@ whether distributed in print or electronically.
 package hu.kristof.nagy.hikebookserver.api;
 
 import hu.kristof.nagy.hikebookserver.model.User;
-import hu.kristof.nagy.hikebookserver.service.LoginService;
-import hu.kristof.nagy.hikebookserver.service.RegisterService;
+import hu.kristof.nagy.hikebookserver.service.authentication.LoginService;
+import hu.kristof.nagy.hikebookserver.service.authentication.RegisterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
