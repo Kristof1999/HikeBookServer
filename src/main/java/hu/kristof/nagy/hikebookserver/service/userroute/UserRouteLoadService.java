@@ -51,6 +51,8 @@ public class UserRouteLoadService {
      */
     public List<BrowseListItem> listUserRoutes() {
         List<BrowseListItem> routes = new ArrayList<>();
+        // TODO: select routes which do not belong to the user who requested the listing
+        // use whereNotEqualTo(...)
         for(DocumentReference docRef : db.collection(DbPathConstants.COLLECTION_ROUTE).listDocuments()) {
             try {
                 DocumentSnapshot doc = docRef.get().get();
