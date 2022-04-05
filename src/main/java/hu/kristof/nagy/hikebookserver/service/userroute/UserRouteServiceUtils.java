@@ -5,12 +5,12 @@ import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QuerySnapshot;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.Point;
+import hu.kristof.nagy.hikebookserver.service.Util;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class UserRouteServiceUtils {
-    public static String GENERIC_ERROR_MSG = "Valami hiba történt.";
     public static String POINTS_NOT_UNIQE = "Az útvonal pontjai nem egyediek! " +
             "Kérem, hogy más pontokat használjon.";
 
@@ -30,7 +30,7 @@ public class UserRouteServiceUtils {
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
-        throw new IllegalArgumentException(UserRouteServiceUtils.GENERIC_ERROR_MSG);
+        throw new IllegalArgumentException(Util.GENERIC_ERROR_MSG);
     }
 
     public static boolean routeNameExistsForUser(Firestore db, String userName, String routeName) {
@@ -46,6 +46,6 @@ public class UserRouteServiceUtils {
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
-        throw new IllegalArgumentException(UserRouteServiceUtils.GENERIC_ERROR_MSG);
+        throw new IllegalArgumentException(Util.GENERIC_ERROR_MSG);
     }
 }

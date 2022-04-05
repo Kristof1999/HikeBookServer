@@ -5,6 +5,7 @@ import com.google.cloud.firestore.*;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.BrowseListItem;
 import hu.kristof.nagy.hikebookserver.model.UserRoute;
+import hu.kristof.nagy.hikebookserver.service.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -43,7 +44,7 @@ public class UserRouteLoadService {
         } catch (InterruptedException | CancellationException | ExecutionException e) {
             e.printStackTrace();
         }
-        throw new IllegalArgumentException(UserRouteServiceUtils.GENERIC_ERROR_MSG);
+        throw new IllegalArgumentException(Util.GENERIC_ERROR_MSG);
     }
 
     /**
@@ -90,6 +91,6 @@ public class UserRouteLoadService {
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
-        throw new IllegalArgumentException(UserRouteServiceUtils.GENERIC_ERROR_MSG);
+        throw new IllegalArgumentException(Util.GENERIC_ERROR_MSG);
     }
 }
