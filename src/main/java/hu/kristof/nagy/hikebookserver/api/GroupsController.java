@@ -24,10 +24,10 @@ public class GroupsController {
         return groupsListService.listGroups(userName, isConnectedPage);
     }
 
-    @PutMapping("groups/{groupName}")
+    @PutMapping("groups/{groupName}/{userName}")
     public boolean createGroup(
             @PathVariable String groupName,
-            @RequestBody String userName
+            @PathVariable String userName
     ) {
         return groupCreateService.createGroup(groupName, userName);
     }
