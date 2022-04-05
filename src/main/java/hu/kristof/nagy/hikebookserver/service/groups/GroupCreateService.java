@@ -50,8 +50,8 @@ public class GroupCreateService {
         memberData.put(DbPathConstants.GROUP_DETAILS_MEMBER_NAMES, List.of(userName));
         db.collection(DbPathConstants.COLLECTION_GROUP)
                 .document(groupName)
-                .collection(DbPathConstants.GROUP_DETAILS)
-                .document(DbPathConstants.GROUP_DETAILS)
+                .collection(DbPathConstants.COLLECTION_GROUP_DETAILS)
+                .document(DbPathConstants.GROUP_MEMBER_NAMES_DETAIL_DOC_NAME)
                 .set(memberData)
                 .get();
     }
@@ -60,8 +60,8 @@ public class GroupCreateService {
         DocumentReference groupNamesDoc = db
                 .collection(DbPathConstants.COLLECTION_USER)
                 .document(userName)
-                .collection(DbPathConstants.USER_DETAILS)
-                .document(DbPathConstants.USER_DETAILS);
+                .collection(DbPathConstants.COLLECTION_USER_DETAILS)
+                .document(DbPathConstants.USER_GROUP_NAMES_DETAIL_DOC_NAME);
         ApiFuture<DocumentSnapshot> future = groupNamesDoc.get();
         List<String> groupNames = (List<String>) future.get().get(DbPathConstants.USER_DETAILS_GROUP_NAMES);
         Map<String, Object> groupNamesData = new HashMap<>();

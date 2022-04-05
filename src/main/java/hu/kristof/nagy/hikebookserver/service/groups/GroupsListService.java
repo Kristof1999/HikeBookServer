@@ -33,8 +33,8 @@ public class GroupsListService {
         ApiFuture<DocumentSnapshot> future = db
                 .collection(DbPathConstants.COLLECTION_USER)
                 .document(userName)
-                .collection(DbPathConstants.USER_DETAILS)
-                .document(DbPathConstants.USER_DETAILS)
+                .collection(DbPathConstants.COLLECTION_USER_DETAILS)
+                .document(DbPathConstants.USER_GROUP_NAMES_DETAIL_DOC_NAME)
                 .get();
         // TODO: use generic lamdba to replace future try-catch calls
         try {
