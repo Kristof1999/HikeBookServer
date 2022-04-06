@@ -29,6 +29,7 @@ public class GroupsGeneralConnectService {
     }
 
     private boolean connect(String groupName, String userName) {
+        // TODO: update Group model and move creation logic there or use the object itself for creation
         Map<String, Object> data = new HashMap<>();
         data.put(DbPathConstants.GROUP_NAME, groupName);
         data.put(DbPathConstants.GROUP_MEMBER_NAME, userName);

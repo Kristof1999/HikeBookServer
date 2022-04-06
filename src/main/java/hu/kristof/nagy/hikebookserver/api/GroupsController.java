@@ -3,6 +3,7 @@ package hu.kristof.nagy.hikebookserver.api;
 import hu.kristof.nagy.hikebookserver.service.groups.GroupCreateService;
 import hu.kristof.nagy.hikebookserver.service.groups.GroupsGeneralConnectService;
 import hu.kristof.nagy.hikebookserver.service.groups.GroupsListService;
+import hu.kristof.nagy.hikebookserver.service.groups.GroupsMembersListService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +20,9 @@ public class GroupsController {
 
     @Autowired
     private GroupsGeneralConnectService groupsGeneralConnectService;
+
+    @Autowired
+    private GroupsMembersListService groupsMembersListService;
 
     @GetMapping("groups/{userName}/{isConnectedPage}")
     public List<String> listGroups(
@@ -43,5 +47,12 @@ public class GroupsController {
             @PathVariable boolean isConnectedPage
     ) {
         return groupsGeneralConnectService.generalConnect(groupName, userName, isConnectedPage);
+    }
+
+    @GetMapping("groups/{groupName}")
+    public List<String> listMembers(
+            @PathVariable String groupName
+    ) {
+        return groupsMembersListService.listMembers(groupName);
     }
 }
