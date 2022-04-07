@@ -28,7 +28,7 @@ public class UserRouteLoadService {
      * @return list of routes which belong to the given user
      */
     public List<UserRoute> loadUserRoutesForUser(String userName) {
-        ApiFuture<QuerySnapshot> future =  db
+        var queryFuture =  db
                 .collection(DbPathConstants.COLLECTION_ROUTE)
                 .select(DbPathConstants.ROUTE_USER_NAME,
                         DbPathConstants.ROUTE_NAME,
@@ -37,7 +37,7 @@ public class UserRouteLoadService {
                 .whereEqualTo(DbPathConstants.ROUTE_USER_NAME, userName)
                 .get();
         try {
-            return future.get().getDocuments()
+            return queryFuture.get().getDocuments()
                     .stream()
                     .map(UserRoute::from)
                     .collect(Collectors.toList());
@@ -51,17 +51,17 @@ public class UserRouteLoadService {
      * Lists all the routes' name and associated user name.
      */
     public List<BrowseListItem> listUserRoutes() {
-        List<BrowseListItem> routes = new ArrayList<>();
+        var routes = new ArrayList<BrowseListItem>();
         // TODO: select routes which do not belong to the user who requested the listing
         // use whereNotEqualTo(...)
-        for(DocumentReference docRef : db.collection(DbPathConstants.COLLECTION_ROUTE).listDocuments()) {
+        for(var docRef : db.collection(DbPathConstants.COLLECTION_ROUTE).listDocuments()) {
             try {
-                DocumentSnapshot doc = docRef.get().get();
-                String userName = Objects.requireNonNull(
-                        doc.getString(DbPathConstants.ROUTE_USER_NAME)
+                var documentSnapshot = docRef.get().get();
+                var userName = Objects.requireNonNull(
+                        documentSnapshot.getString(DbPathConstants.ROUTE_USER_NAME)
                 );
-                String routeName = Objects.requireNonNull(
-                        doc.getString(DbPathConstants.ROUTE_NAME)
+                var routeName = Objects.requireNonNull(
+                        documentSnapshot.getString(DbPathConstants.ROUTE_NAME)
                 );
                 routes.add(new BrowseListItem(userName, routeName));
             } catch (ExecutionException | InterruptedException e) {
@@ -77,7 +77,8 @@ public class UserRouteLoadService {
      * @param routeName name of the route for which to load the points
      */
     public UserRoute loadUserRoute(String userName, String routeName) {
-        ApiFuture<QuerySnapshot> future = db.collection(DbPathConstants.COLLECTION_ROUTE)
+        var queryFuture = db
+                .collection(DbPathConstants.COLLECTION_ROUTE)
                 .select(DbPathConstants.ROUTE_POINTS,
                         DbPathConstants.ROUTE_NAME,
                         DbPathConstants.ROUTE_USER_NAME,
@@ -86,8 +87,8 @@ public class UserRouteLoadService {
                 .whereEqualTo(DbPathConstants.ROUTE_NAME, routeName)
                 .get();
         try {
-            QueryDocumentSnapshot doc = future.get().getDocuments().get(0);
-            return UserRoute.from(doc);
+            var queryDocumentSnapshot = queryFuture.get().getDocuments().get(0);
+            return UserRoute.from(queryDocumentSnapshot);
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }

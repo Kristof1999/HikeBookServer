@@ -25,17 +25,16 @@ public class RegisterService {
      * @return true if registration was successful
      */
     public boolean registerUser(User user) {
-        CollectionReference users = db
-                .collection(DbPathConstants.COLLECTION_USER);
-        ApiFuture<QuerySnapshot> future = users
+        var users = db.collection(DbPathConstants.COLLECTION_USER);
+        var queryFuture = users
                 .select(DbPathConstants.USER_NAME)
                 .whereEqualTo(DbPathConstants.USER_NAME, user.getName())
                 .get();
 
         try {
-            if (future.get().isEmpty()) {
+            if (queryFuture.get().isEmpty()) {
                 // userName is unique
-                Map<String, Object> data = new HashMap<>();
+                var data = new HashMap<String, Object>();
                 data.put(DbPathConstants.USER_NAME, user.getName());
                 data.put(DbPathConstants.USER_PASSWORD, user.getPassword());
                 data.put(DbPathConstants.USER_AVG_SPEED, user.getAvgSpeed());

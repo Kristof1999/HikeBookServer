@@ -23,14 +23,13 @@ public class UserRouteDeleteService {
      * @return true if deletion was successful
      */
     public boolean deleteUserRoute(String userName, String routeName) {
-        CollectionReference routes = db
-                .collection(DbPathConstants.COLLECTION_ROUTE);
-        ApiFuture<QuerySnapshot> future = routes
+        var routes = db.collection(DbPathConstants.COLLECTION_ROUTE);
+        var queryFuture = routes
                 .whereEqualTo(DbPathConstants.ROUTE_USER_NAME, userName)
                 .whereEqualTo(DbPathConstants.ROUTE_NAME, routeName)
                 .get();
         try {
-            QuerySnapshot querySnapshot = future.get();
+            var querySnapshot = queryFuture.get();
             if (querySnapshot.isEmpty()) {
                 // route with given name and userName didn't exist
                 return false;

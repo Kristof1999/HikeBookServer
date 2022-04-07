@@ -105,7 +105,7 @@ public class UserRouteEditService {
     }
 
     private void saveChanges(String oldRouteName, UserRoute route) {
-        QuerySnapshot querySnapshot = getRouteQuerySnapshot(route.getUserName(), oldRouteName);
+        var querySnapshot = getRouteQuerySnapshot(route.getUserName(), oldRouteName);
         String id = querySnapshot.getDocuments().get(0).getId();
         try {
             Map<String, Object> data = route.toMap();
@@ -119,16 +119,14 @@ public class UserRouteEditService {
     }
 
     private QuerySnapshot getRouteQuerySnapshot(String userName, String routeName) {
-        CollectionReference routes = db
-                .collection(DbPathConstants.COLLECTION_ROUTE);
-        ApiFuture<QuerySnapshot> future = routes
-                .select(DbPathConstants.ROUTE_USER_NAME,
-                        DbPathConstants.ROUTE_NAME)
+        var routes = db.collection(DbPathConstants.COLLECTION_ROUTE);
+        var queryFuture = routes
+                .select(DbPathConstants.ROUTE_USER_NAME, DbPathConstants.ROUTE_NAME)
                 .whereEqualTo(DbPathConstants.ROUTE_USER_NAME, userName)
                 .whereEqualTo(DbPathConstants.ROUTE_NAME, routeName)
                 .get();
         try {
-            QuerySnapshot querySnapshot = future.get();
+            var querySnapshot = queryFuture.get();
             if (querySnapshot.isEmpty()) {
                 throw new IllegalArgumentException(
                         "Nem létezik útvonal a következő felhasználó névvel: "

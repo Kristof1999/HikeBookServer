@@ -16,26 +16,23 @@ public class GroupsListService {
     @Autowired
     private Firestore db;
 
-    public List<String> listGroups(
-            String userName,
-            boolean isConnectedPage
-    ) {
+    public List<String> listGroups(String userName, boolean isConnectedPage) {
         if (isConnectedPage) {
-            return listConnectedGroups(userName);
+            return listConnectedGroupNames(userName);
         } else {
-            return listNotConnectedGroups(userName);
+            return listNotConnectedGroupNames(userName);
         }
     }
 
-    private List<String> listConnectedGroups(String userName) {
-        var future = db
+    private List<String> listConnectedGroupNames(String userName) {
+        var queryFuture = db
                 .collection(DbPathConstants.COLLECTION_GROUP)
                 .select(DbPathConstants.GROUP_NAME)
                 .whereEqualTo(DbPathConstants.GROUP_MEMBER_NAME, userName)
                 .get();
         // TODO: use generic lamdba to replace future try-catch calls
         try {
-            return new ArrayList<>(future.get().getDocuments().stream()
+            return new ArrayList<>(queryFuture.get().getDocuments().stream()
                     .map(queryDocumentSnapshot ->
                             queryDocumentSnapshot.getString(DbPathConstants.GROUP_NAME)
                     )
@@ -47,18 +44,18 @@ public class GroupsListService {
         return List.of();
     }
 
-    private List<String> listNotConnectedGroups(String userName) {
-        List<String> connectedGroups = listConnectedGroups(userName);
-        if (connectedGroups.isEmpty()) {
+    private List<String> listNotConnectedGroupNames(String userName) {
+        var connectedGroupNames = listConnectedGroupNames(userName);
+        if (connectedGroupNames.isEmpty()) {
             return listAllGroups();
         } else {
-            ApiFuture<QuerySnapshot> future = db
+            var queryFuture = db
                     .collection(DbPathConstants.COLLECTION_GROUP)
                     .select(DbPathConstants.GROUP_NAME)
-                    .whereNotIn(DbPathConstants.GROUP_NAME, connectedGroups)
+                    .whereNotIn(DbPathConstants.GROUP_NAME, connectedGroupNames)
                     .get();
             try {
-                return new ArrayList<>(future.get().getDocuments().stream()
+                return new ArrayList<>(queryFuture.get().getDocuments().stream()
                         .map(queryDocumentSnapshot ->
                                 queryDocumentSnapshot.getString(DbPathConstants.GROUP_NAME)
                         )
@@ -72,12 +69,11 @@ public class GroupsListService {
     }
 
     private List<String> listAllGroups() {
-        CollectionReference groups = db
-                .collection(DbPathConstants.COLLECTION_GROUP);
-        Set<String> res = new HashSet<>(); // distinct substitute
-        for (DocumentReference doc: groups.listDocuments()) {
+        var groups = db.collection(DbPathConstants.COLLECTION_GROUP);
+        var res = new HashSet<String>(); // distinct substitute
+        for (var doc: groups.listDocuments()) {
             try {
-                String groupName = doc.get().get().getString(DbPathConstants.GROUP_NAME);
+                var groupName = doc.get().get().getString(DbPathConstants.GROUP_NAME);
                 res.add(groupName);
             } catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();

@@ -16,13 +16,13 @@ public class GroupsMembersListService {
     private Firestore db;
 
     public List<String> listMembers(String groupName) {
-        var future = db
+        var queryFuture = db
                 .collection(DbPathConstants.COLLECTION_GROUP)
                 .select(DbPathConstants.GROUP_MEMBER_NAME)
                 .whereEqualTo(DbPathConstants.GROUP_NAME, groupName)
                 .get();
         try {
-            return future.get().getDocuments().stream()
+            return queryFuture.get().getDocuments().stream()
                     .map(queryDocumentSnapshot ->
                             queryDocumentSnapshot.getString(DbPathConstants.GROUP_MEMBER_NAME)
                     )

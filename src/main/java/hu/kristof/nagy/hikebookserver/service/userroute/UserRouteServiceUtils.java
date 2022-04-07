@@ -21,12 +21,12 @@ public class UserRouteServiceUtils {
 
 
     public static boolean arePointsUniqueForUser(Firestore db, String userName, List<Point> points) {
-        ApiFuture<QuerySnapshot> future = db.collection(DbPathConstants.COLLECTION_ROUTE)
+        var queryFuture = db.collection(DbPathConstants.COLLECTION_ROUTE)
                 .whereEqualTo(DbPathConstants.ROUTE_USER_NAME, userName)
                 .whereEqualTo(DbPathConstants.ROUTE_POINTS, points)
                 .get();
         try {
-            return future.get().isEmpty();
+            return queryFuture.get().isEmpty();
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
@@ -34,7 +34,7 @@ public class UserRouteServiceUtils {
     }
 
     public static boolean routeNameExistsForUser(Firestore db, String userName, String routeName) {
-        ApiFuture<QuerySnapshot> future = db
+        var queryFuture = db
                 .collection(DbPathConstants.COLLECTION_ROUTE)
                 .select(DbPathConstants.ROUTE_USER_NAME,
                         DbPathConstants.ROUTE_NAME)
@@ -42,7 +42,7 @@ public class UserRouteServiceUtils {
                 .whereEqualTo(DbPathConstants.ROUTE_NAME, routeName)
                 .get();
         try {
-            return !future.get().isEmpty();
+            return !queryFuture.get().isEmpty();
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }

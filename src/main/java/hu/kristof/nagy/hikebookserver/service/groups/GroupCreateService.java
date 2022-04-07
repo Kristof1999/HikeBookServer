@@ -32,7 +32,7 @@ public class GroupCreateService {
     }
 
     private void save(String groupName, String memberName) throws ExecutionException, InterruptedException {
-        Map<String, Object> data = new HashMap<>();
+        var data = new HashMap<String, Object>();
         data.put(DbPathConstants.GROUP_NAME, groupName);
         data.put(DbPathConstants.GROUP_MEMBER_NAME, memberName);
         db.collection(DbPathConstants.COLLECTION_GROUP)
@@ -41,12 +41,12 @@ public class GroupCreateService {
     }
 
     private boolean isNameUnique(String name) {
-        ApiFuture<QuerySnapshot> future = db
+        var queryFuture = db
                 .collection(DbPathConstants.COLLECTION_GROUP)
                 .whereEqualTo(DbPathConstants.GROUP_NAME, name)
                 .get();
         try {
-            return future.get().isEmpty();
+            return queryFuture.get().isEmpty();
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }

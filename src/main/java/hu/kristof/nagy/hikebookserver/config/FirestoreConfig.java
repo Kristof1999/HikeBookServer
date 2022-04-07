@@ -26,11 +26,11 @@ public class FirestoreConfig {
     @Bean
     public Firestore provideFireStore() {
         try {
-            InputStream serviceAccount = new FileInputStream(
+            var serviceAccount = new FileInputStream(
                     "C:\\Users\\36203\\hikebook-595dc-firebase-adminsdk-9nnbq-595a8f1501.json"
             );
-            GoogleCredentials credentials = GoogleCredentials.fromStream(serviceAccount);
-            FirebaseOptions options = new FirebaseOptions.Builder()
+            var credentials = GoogleCredentials.fromStream(serviceAccount);
+            var options = new FirebaseOptions.Builder()
                     .setCredentials(credentials)
                     .build();
             FirebaseApp.initializeApp(options);

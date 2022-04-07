@@ -17,22 +17,22 @@ public class UpdateAvgSpeedService {
 
     public void updateAvgSpeed(String userName, Double avgSpeed) {
         // TODO: test
-        CollectionReference users = db
-                .collection(DbPathConstants.COLLECTION_USER);
-        ApiFuture<QuerySnapshot> future = users
+        var users = db.collection(DbPathConstants.COLLECTION_USER);
+        var queryFuture = users
                 .select(DbPathConstants.USER_AVG_SPEED)
                 .whereEqualTo(DbPathConstants.USER_NAME, userName)
                 .get();
         try {
-            QueryDocumentSnapshot userQueryDoc = future.get()
+            var userQueryDoc = queryFuture.get()
                     .getDocuments()
                     .get(0);
-            double oldAvgSpeed = Objects.requireNonNull(userQueryDoc
-                    .getDouble(DbPathConstants.USER_AVG_SPEED));
+            double oldAvgSpeed = Objects.requireNonNull(
+                    userQueryDoc.getDouble(DbPathConstants.USER_AVG_SPEED)
+            );
             double newAvgSpeed = (oldAvgSpeed + avgSpeed) / 2;
 
             String id = userQueryDoc.getId();
-            DocumentReference userDoc = users.document(id);
+            var userDoc = users.document(id);
             userDoc.update(DbPathConstants.USER_AVG_SPEED, newAvgSpeed)
                     .get(); // wait for write result
         } catch (ExecutionException | InterruptedException e) {

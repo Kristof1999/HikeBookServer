@@ -12,7 +12,7 @@ public abstract class Route {
     protected String description;
 
     public Map<String, Object> toMap() {
-        Map<String, Object> data = new HashMap<>();
+        var data = new HashMap<String, Object>();
         data.put(DbPathConstants.ROUTE_USER_NAME, getOwnerName());
         data.put(DbPathConstants.ROUTE_NAME, getRouteName());
         data.put(DbPathConstants.ROUTE_POINTS, getPoints());

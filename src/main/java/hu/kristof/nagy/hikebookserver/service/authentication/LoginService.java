@@ -22,7 +22,7 @@ public class LoginService {
      * @return true if login was successful
      */
     public boolean loginUser(User user) {
-        ApiFuture<QuerySnapshot> future = db
+        var queryFuture = db
                 .collection(DbPathConstants.COLLECTION_USER)
                 .select(DbPathConstants.USER_NAME, DbPathConstants.USER_PASSWORD)
                 .whereEqualTo(DbPathConstants.USER_NAME, user.getName())
@@ -30,7 +30,7 @@ public class LoginService {
                 .get();
 
         try {
-            if (future.get().isEmpty()) {
+            if (queryFuture.get().isEmpty()) {
                 return false;
             } else {
                 return true;
