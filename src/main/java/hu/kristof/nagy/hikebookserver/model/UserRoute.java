@@ -1,6 +1,7 @@
 package hu.kristof.nagy.hikebookserver.model;
 
 import com.google.cloud.firestore.DocumentSnapshot;
+import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 
 import java.util.List;
 import java.util.Objects;
@@ -42,6 +43,11 @@ public class UserRoute extends Route {
     @Override
     String getOwnerName() {
         return userName;
+    }
+
+    @Override
+    String getOwnerDatabasePath() {
+        return DbPathConstants.ROUTE_USER_NAME;
     }
 
     public String getUserName() {

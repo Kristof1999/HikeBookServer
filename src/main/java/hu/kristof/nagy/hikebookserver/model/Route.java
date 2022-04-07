@@ -13,7 +13,7 @@ public abstract class Route {
 
     public Map<String, Object> toMap() {
         var data = new HashMap<String, Object>();
-        data.put(DbPathConstants.ROUTE_USER_NAME, getOwnerName());
+        data.put(getOwnerDatabasePath(), getOwnerName());
         data.put(DbPathConstants.ROUTE_NAME, getRouteName());
         data.put(DbPathConstants.ROUTE_POINTS, getPoints());
         data.put(DbPathConstants.ROUTE_DESCRIPTION, getDescription());
@@ -21,6 +21,8 @@ public abstract class Route {
     }
 
     abstract String getOwnerName();
+
+    abstract String getOwnerDatabasePath();
 
     public String getRouteName() {
         return routeName;
