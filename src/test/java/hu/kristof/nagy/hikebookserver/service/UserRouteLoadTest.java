@@ -3,9 +3,10 @@ package hu.kristof.nagy.hikebookserver.service;
 import com.google.cloud.firestore.Firestore;
 import hu.kristof.nagy.hikebookserver.model.Point;
 import hu.kristof.nagy.hikebookserver.model.PointType;
-import hu.kristof.nagy.hikebookserver.model.UserRoute;
-import hu.kristof.nagy.hikebookserver.service.userroute.UserRouteCreateService;
-import hu.kristof.nagy.hikebookserver.service.userroute.UserRouteLoadService;
+import hu.kristof.nagy.hikebookserver.model.Route;
+import hu.kristof.nagy.hikebookserver.model.RouteType;
+import hu.kristof.nagy.hikebookserver.service.route.RouteCreateService;
+import hu.kristof.nagy.hikebookserver.service.route.RouteLoadService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +20,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest
 public class UserRouteLoadTest {
     @Autowired
-    private UserRouteLoadService routeLoadService;
+    private RouteLoadService routeLoadService;
 
     @Autowired
-    private UserRouteCreateService routeCreateService;
+    private RouteCreateService routeCreateService;
 
     @Autowired
     private Firestore db;
@@ -34,7 +35,7 @@ public class UserRouteLoadTest {
 
     @Test
     void testLoadRoutesForUserEmpty() {
-        List<UserRoute> routes = routeLoadService.loadUserRoutesForUser("asd");
+        List<Route> routes = routeLoadService.loadRoutes("asd", RouteType.USER);
 
         assertEquals(0, routes.size());
     }
@@ -48,16 +49,14 @@ public class UserRouteLoadTest {
         points.add(p2);
         String userName = "asd";
         String routeName = "route";
-        routeCreateService.createUserRoute(
-                new UserRoute(userName, routeName, points, "")
+        routeCreateService.createRoute(
+                new Route(userName, RouteType.USER,  routeName, points, "")
         );
 
-        List<UserRoute> routes = routeLoadService.loadUserRoutesForUser("asd");
+        List<Route> routes = routeLoadService.loadRoutes("asd", RouteType.USER);
 
         assertEquals(routeName, routes.get(0).getRouteName());
         assertEquals("", routes.get(0).getDescription());
         assertEquals(points, routes.get(0).getPoints());
     }
-
-
 }

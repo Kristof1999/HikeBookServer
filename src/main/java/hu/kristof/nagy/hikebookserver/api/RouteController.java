@@ -1,12 +1,13 @@
 package hu.kristof.nagy.hikebookserver.api;
 
 import hu.kristof.nagy.hikebookserver.model.BrowseListItem;
-import hu.kristof.nagy.hikebookserver.model.EditedUserRoute;
-import hu.kristof.nagy.hikebookserver.model.UserRoute;
-import hu.kristof.nagy.hikebookserver.service.userroute.UserRouteCreateService;
-import hu.kristof.nagy.hikebookserver.service.userroute.UserRouteDeleteService;
-import hu.kristof.nagy.hikebookserver.service.userroute.UserRouteEditService;
-import hu.kristof.nagy.hikebookserver.service.userroute.UserRouteLoadService;
+import hu.kristof.nagy.hikebookserver.model.EditedRoute;
+import hu.kristof.nagy.hikebookserver.model.Route;
+import hu.kristof.nagy.hikebookserver.model.RouteType;
+import hu.kristof.nagy.hikebookserver.service.route.RouteCreateService;
+import hu.kristof.nagy.hikebookserver.service.route.RouteDeleteService;
+import hu.kristof.nagy.hikebookserver.service.route.RouteEditService;
+import hu.kristof.nagy.hikebookserver.service.route.RouteLoadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,37 +20,41 @@ import java.util.List;
 public class RouteController {
 
     @Autowired
-    private UserRouteCreateService routeCreate;
+    private RouteCreateService routeCreate;
 
     @Autowired
-    private UserRouteLoadService routeLoad;
+    private RouteLoadService routeLoad;
 
     @Autowired
-    private UserRouteDeleteService routeDelete;
+    private RouteDeleteService routeDelete;
 
     @Autowired
-    private UserRouteEditService routeEdit;
+    private RouteEditService routeEdit;
 
-    @PutMapping("{userName}/{routeName}")
-    public boolean createUserRouteForUser(
-            @PathVariable String userName,
+    @PutMapping("{ownerName}/{routeName}")
+    public boolean createRoute(
+            @PathVariable String ownerName,
             @PathVariable String routeName,
-            @RequestBody UserRoute route
+            @RequestBody Route route
             ) {
-        return routeCreate.createUserRoute(route);
+        return routeCreate.createRoute(route);
     }
 
-    @GetMapping("{userName}")
-    public List<UserRoute> loadUserRoutesForUser(@PathVariable String userName) {
-        return routeLoad.loadUserRoutesForUser(userName);
-    }
-
-    @GetMapping("{userName}/{routeName}")
-    public UserRoute loadUserRoute(
-            @PathVariable String userName,
-            @PathVariable String routeName
+    @GetMapping("{ownerName}/{routeType}")
+    public List<Route> loadRoutes(
+            @PathVariable String ownerName,
+            @PathVariable RouteType routeType
     ) {
-        return routeLoad.loadUserRoute(userName, routeName);
+        return routeLoad.loadRoutes(ownerName, routeType);
+    }
+
+    @GetMapping("{ownerName}/{routeName}/{routeType}")
+    public Route loadRoute(
+            @PathVariable String ownerName,
+            @PathVariable String routeName,
+            @PathVariable RouteType routeType
+    ) {
+        return routeLoad.loadRoute(ownerName, routeName, routeType);
     }
 
     @GetMapping("")
@@ -57,20 +62,21 @@ public class RouteController {
         return routeLoad.listUserRoutes();
     }
 
-    @DeleteMapping("{userName}/{routeName}")
-    public boolean deleteUserRoute(
-            @PathVariable String userName,
-            @PathVariable String routeName
-    ) {
-        return routeDelete.deleteUserRoute(userName, routeName);
+    @DeleteMapping("{ownerName}/{routeName}/{routeType}")
+    public boolean deleteRoute(
+            @PathVariable String ownerName,
+            @PathVariable String routeName,
+            @PathVariable RouteType routeType
+            ) {
+        return routeDelete.deleteRoute(ownerName, routeName, routeType);
     }
 
-    @PutMapping("edit/{userName}/{routeName}")
-    public boolean editUserRoute(
-            @PathVariable String userName,
+    @PutMapping("edit/{ownerName}/{routeName}")
+    public boolean editRoute(
+            @PathVariable String ownerName,
             @PathVariable String routeName,
-            @RequestBody EditedUserRoute editedUserRoute // TODO: try to make this work with Route
+            @RequestBody EditedRoute editedUserRoute // TODO: try to make this work with Route
     ) {
-        return routeEdit.editUserRoute(editedUserRoute);
+        return routeEdit.editRoute(editedUserRoute);
     }
 }

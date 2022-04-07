@@ -1,13 +1,11 @@
-package hu.kristof.nagy.hikebookserver.service.userroute;
+package hu.kristof.nagy.hikebookserver.service.route;
 
-import com.google.api.core.ApiFuture;
-import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QuerySnapshot;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
-import hu.kristof.nagy.hikebookserver.model.EditedUserRoute;
+import hu.kristof.nagy.hikebookserver.model.EditedRoute;
 import hu.kristof.nagy.hikebookserver.model.Point;
-import hu.kristof.nagy.hikebookserver.model.UserRoute;
+import hu.kristof.nagy.hikebookserver.model.Route;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +14,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 @Service
-public class UserRouteEditService {
+public class RouteEditService {
 
     @Autowired
     private Firestore db;
@@ -27,13 +25,13 @@ public class UserRouteEditService {
      * @param route the edited route
      * @return true if the edited route is unique for the given user
      */
-    public boolean editUserRoute(EditedUserRoute route) {
-        String oldRouteName = route.getOldUserRoute().getRouteName();
-        String newRouteName = route.getNewUserRoute().getRouteName();
-        String oldDescription = route.getOldUserRoute().getDescription();
-        String newDescription = route.getNewUserRoute().getDescription();
-        List<Point> oldPoints = route.getOldUserRoute().getPoints();
-        List<Point> newPoints = route.getNewUserRoute().getPoints();
+    public boolean editRoute(EditedRoute route) {
+        String oldRouteName = route.getOldRoute().getRouteName();
+        String newRouteName = route.getNewRoute().getRouteName();
+        String oldDescription = route.getOldRoute().getDescription();
+        String newDescription = route.getNewRoute().getDescription();
+        List<Point> oldPoints = route.getOldRoute().getPoints();
+        List<Point> newPoints = route.getNewRoute().getPoints();
 
         if (oldRouteName.equals(newRouteName)) {
             if (oldDescription.equals(newDescription)) {
@@ -41,53 +39,59 @@ public class UserRouteEditService {
                     // nothing changed, no need to save
                     return true;
                 } else {
-                    return updateUserRouteWithPointsChange(route.getNewUserRoute());
+                    return updateUserRouteWithPointsChange(route.getNewRoute());
                 }
             } else {
                 if (oldPoints.equals(newPoints)) {
                     // only the description changed
-                    saveChanges(newRouteName, route.getNewUserRoute());
+                    saveChanges(newRouteName, route.getNewRoute());
                     return true;
                 } else {
-                    return updateUserRouteWithPointsChange(route.getNewUserRoute());
+                    return updateUserRouteWithPointsChange(route.getNewRoute());
                 }
             }
         } else {
             if (oldDescription.equals(newDescription)) {
                 if (oldPoints.equals(newPoints)) {
-                    return updateUserRouteWithNameChange(oldRouteName, route.getNewUserRoute());
+                    return updateUserRouteWithNameChange(oldRouteName, route.getNewRoute());
                 } else {
-                    return updateUserRouteWithNameAndPointsChange(oldRouteName, route.getNewUserRoute());
+                    return updateUserRouteWithNameAndPointsChange(oldRouteName, route.getNewRoute());
                 }
             } else {
                 if (oldPoints.equals(newPoints)) {
-                    return updateUserRouteWithNameChange(oldRouteName, route.getNewUserRoute());
+                    return updateUserRouteWithNameChange(oldRouteName, route.getNewRoute());
                 } else {
-                    return updateUserRouteWithNameAndPointsChange(oldRouteName, route.getNewUserRoute());
+                    return updateUserRouteWithNameAndPointsChange(oldRouteName, route.getNewRoute());
                 }
             }
         }
     }
 
-    private boolean updateUserRouteWithNameAndPointsChange(String oldRouteName, UserRoute route) {
-        if (UserRouteServiceUtils.routeNameExistsForUser(db, route.getUserName(), route.getRouteName())) {
+    private boolean updateUserRouteWithNameAndPointsChange(String oldRouteName, Route route) {
+        if (RouteServiceUtils.routeNameExists(
+                db, route.getOwnerName(), route.getRouteName(), route.getRouteType()
+        )) {
             throw new IllegalArgumentException(
-                    UserRouteServiceUtils.getRouteNameNotUniqueForUserString(route.getRouteName())
+                    RouteServiceUtils.getRouteNameNotUniqueString(route.getRouteName())
             );
         } else {
-            if (UserRouteServiceUtils.arePointsUniqueForUser(db, route.getUserName(), route.getPoints())) {
+            if (RouteServiceUtils.arePointsUnique(
+                    db, route.getOwnerName(), route.getPoints(), route.getRouteType()
+            )) {
                 saveChanges(oldRouteName, route);
                 return true;
             } else {
-                throw new IllegalArgumentException(UserRouteServiceUtils.POINTS_NOT_UNIQE);
+                throw new IllegalArgumentException(RouteServiceUtils.POINTS_NOT_UNIQE);
             }
         }
     }
 
-    private boolean updateUserRouteWithNameChange(String oldRouteName, UserRoute route) {
-        if (UserRouteServiceUtils.routeNameExistsForUser(db, route.getUserName(), route.getRouteName())) {
+    private boolean updateUserRouteWithNameChange(String oldRouteName, Route route) {
+        if (RouteServiceUtils.routeNameExists(
+                db, route.getOwnerName(), route.getRouteName(), route.getRouteType()
+        )) {
             throw new IllegalArgumentException(
-                    UserRouteServiceUtils.getRouteNameNotUniqueForUserString(route.getRouteName())
+                    RouteServiceUtils.getRouteNameNotUniqueString(route.getRouteName())
             );
         } else {
             saveChanges(oldRouteName, route);
@@ -95,17 +99,19 @@ public class UserRouteEditService {
         }
     }
 
-    private boolean updateUserRouteWithPointsChange(UserRoute route) {
-        if (UserRouteServiceUtils.arePointsUniqueForUser(db, route.getUserName(), route.getPoints())) {
+    private boolean updateUserRouteWithPointsChange(Route route) {
+        if (RouteServiceUtils.arePointsUnique(
+                db, route.getOwnerName(), route.getPoints(), route.getRouteType()
+        )) {
             saveChanges(route.getRouteName(), route);
             return true;
         } else {
-            throw new IllegalArgumentException(UserRouteServiceUtils.POINTS_NOT_UNIQE);
+            throw new IllegalArgumentException(RouteServiceUtils.POINTS_NOT_UNIQE);
         }
     }
 
-    private void saveChanges(String oldRouteName, UserRoute route) {
-        var querySnapshot = getRouteQuerySnapshot(route.getUserName(), oldRouteName);
+    private void saveChanges(String oldRouteName, Route route) {
+        var querySnapshot = getRouteQuerySnapshot(route.getOwnerName(), oldRouteName);
         String id = querySnapshot.getDocuments().get(0).getId();
         try {
             Map<String, Object> data = route.toMap();

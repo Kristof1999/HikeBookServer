@@ -7,8 +7,9 @@ package hu.kristof.nagy.hikebookserver.service;
 import com.google.cloud.firestore.Firestore;
 import hu.kristof.nagy.hikebookserver.model.Point;
 import hu.kristof.nagy.hikebookserver.model.PointType;
-import hu.kristof.nagy.hikebookserver.model.UserRoute;
-import hu.kristof.nagy.hikebookserver.service.userroute.UserRouteCreateService;
+import hu.kristof.nagy.hikebookserver.model.Route;
+import hu.kristof.nagy.hikebookserver.model.RouteType;
+import hu.kristof.nagy.hikebookserver.service.route.RouteCreateService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class UserRouteCreateTest {
 
     @Autowired
-    private UserRouteCreateService routeCreateService;
+    private RouteCreateService routeCreateService;
 
     @Autowired
     private Firestore db;
@@ -40,8 +41,8 @@ public class UserRouteCreateTest {
         points.add(new Point(0.0, 0.0, PointType.SET, ""));
         points.add(new Point(1.0, 1.0, PointType.NEW, ""));
 
-        boolean res = routeCreateService.createUserRoute(
-                new UserRoute("asd", "route", points, "")
+        boolean res = routeCreateService.createRoute(
+                new Route("asd", RouteType.USER, "route", points, "")
         );
 
         assertTrue(res);
@@ -57,11 +58,11 @@ public class UserRouteCreateTest {
         points2.add(new Point(0.0, 0.0, PointType.SET, ""));
         points2.add(new Point(1.0, 0.0, PointType.NEW, ""));
 
-        routeCreateService.createUserRoute(
-                new UserRoute("asd", "route", points, "")
+        routeCreateService.createRoute(
+                new Route("asd", RouteType.USER,  "route", points, "")
         );
-        boolean res = routeCreateService.createUserRoute(
-                new UserRoute("asd", "route", points2, "")
+        boolean res = routeCreateService.createRoute(
+                new Route("asd", RouteType.USER,  "route", points2, "")
         );
 
         assertFalse(res);
@@ -73,11 +74,11 @@ public class UserRouteCreateTest {
         points.add(new Point(0.0, 0.0, PointType.SET, ""));
         points.add(new Point(1.0, 1.0, PointType.NEW, ""));
 
-        routeCreateService.createUserRoute(
-                new UserRoute("asd", "route", points, "")
+        routeCreateService.createRoute(
+                new Route("asd", RouteType.USER,  "route", points, "")
         );
-        boolean res = routeCreateService.createUserRoute(
-                new UserRoute("asd", "route", points, "")
+        boolean res = routeCreateService.createRoute(
+                new Route("asd", RouteType.USER,  "route", points, "")
         );
 
         assertFalse(res);
@@ -89,11 +90,11 @@ public class UserRouteCreateTest {
         points.add(new Point(0.0, 0.0, PointType.SET, ""));
         points.add(new Point(1.0, 1.0, PointType.NEW, ""));
 
-        routeCreateService.createUserRoute(
-                new UserRoute("asd", "route", points, "")
+        routeCreateService.createRoute(
+                new Route("asd", RouteType.USER,  "route", points, "")
         );
-        boolean res = routeCreateService.createUserRoute(
-                new UserRoute("user", "route", points, "")
+        boolean res = routeCreateService.createRoute(
+                new Route("user", RouteType.USER,  "route", points, "")
         );
 
         assertTrue(res);

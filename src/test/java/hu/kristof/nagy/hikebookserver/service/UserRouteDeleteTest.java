@@ -3,9 +3,10 @@ package hu.kristof.nagy.hikebookserver.service;
 import com.google.cloud.firestore.Firestore;
 import hu.kristof.nagy.hikebookserver.model.Point;
 import hu.kristof.nagy.hikebookserver.model.PointType;
-import hu.kristof.nagy.hikebookserver.model.UserRoute;
-import hu.kristof.nagy.hikebookserver.service.userroute.UserRouteCreateService;
-import hu.kristof.nagy.hikebookserver.service.userroute.UserRouteDeleteService;
+import hu.kristof.nagy.hikebookserver.model.Route;
+import hu.kristof.nagy.hikebookserver.model.RouteType;
+import hu.kristof.nagy.hikebookserver.service.route.RouteCreateService;
+import hu.kristof.nagy.hikebookserver.service.route.RouteDeleteService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +22,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class UserRouteDeleteTest {
 
     @Autowired
-    private UserRouteDeleteService routeDeleteService;
+    private RouteDeleteService routeDeleteService;
 
     @Autowired
-    private UserRouteCreateService routeCreateService;
+    private RouteCreateService routeCreateService;
 
     @Autowired
     private Firestore db;
@@ -41,9 +42,9 @@ public class UserRouteDeleteTest {
         points.add(new Point(1.0, 1.0, PointType.NEW, ""));
         String userName = "asd";
         String routeName = "route";
-        routeCreateService.createUserRoute(new UserRoute(userName, routeName, points, ""));
+        routeCreateService.createRoute(new Route(userName, RouteType.USER, routeName, points, ""));
 
-        boolean res = routeDeleteService.deleteUserRoute(userName, routeName);
+        boolean res = routeDeleteService.deleteRoute(userName, routeName, RouteType.USER);
 
         assertTrue(res);
         // TODO: assert with route loading
@@ -51,7 +52,7 @@ public class UserRouteDeleteTest {
 
     @Test
     void testNonExistent() {
-        boolean res = routeDeleteService.deleteUserRoute("","");
+        boolean res = routeDeleteService.deleteRoute("","", RouteType.USER);
 
         assertFalse(res);
     }

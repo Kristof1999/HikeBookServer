@@ -1,10 +1,9 @@
-package hu.kristof.nagy.hikebookserver.service.userroute;
+package hu.kristof.nagy.hikebookserver.service.route;
 
-import com.google.api.core.ApiFuture;
-import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.Firestore;
-import com.google.cloud.firestore.QuerySnapshot;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
+import hu.kristof.nagy.hikebookserver.model.Route;
+import hu.kristof.nagy.hikebookserver.model.RouteType;
 import hu.kristof.nagy.hikebookserver.service.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,20 +11,21 @@ import org.springframework.stereotype.Service;
 import java.util.concurrent.ExecutionException;
 
 @Service
-public class UserRouteDeleteService {
+public class RouteDeleteService {
 
     @Autowired
     private Firestore db;
 
     /**
-     * @param userName name of user who requested deletion
+     * @param ownerName name of user who requested deletion
      * @param routeName name of route which to delete for the given user
      * @return true if deletion was successful
      */
-    public boolean deleteUserRoute(String userName, String routeName) {
+    public boolean deleteRoute(String ownerName, String routeName, RouteType routeType) {
+        String ownerPath = Route.getOwnerDatabasePath(routeType);
         var routes = db.collection(DbPathConstants.COLLECTION_ROUTE);
         var queryFuture = routes
-                .whereEqualTo(DbPathConstants.ROUTE_USER_NAME, userName)
+                .whereEqualTo(ownerPath, ownerName)
                 .whereEqualTo(DbPathConstants.ROUTE_NAME, routeName)
                 .get();
         try {
