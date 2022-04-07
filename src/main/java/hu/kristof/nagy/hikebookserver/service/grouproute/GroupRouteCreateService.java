@@ -3,7 +3,6 @@ package hu.kristof.nagy.hikebookserver.service.grouproute;
 import com.google.cloud.firestore.Firestore;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.GroupRoute;
-import hu.kristof.nagy.hikebookserver.model.UserRoute;
 import hu.kristof.nagy.hikebookserver.service.Util;
 import hu.kristof.nagy.hikebookserver.service.userroute.UserRouteServiceUtils;
 import org.springframework.beans.factory.annotation.Autowired;
