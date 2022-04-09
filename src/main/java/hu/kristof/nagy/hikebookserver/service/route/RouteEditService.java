@@ -111,7 +111,7 @@ public class RouteEditService {
     }
 
     private void saveChanges(String oldRouteName, Route route) {
-        var querySnapshot = getRouteQuerySnapshot(route.getOwnerName(), oldRouteName);
+        var querySnapshot = getRouteQuerySnapshot(route.getOwnerName(), oldRouteName, route);
         String id = querySnapshot.getDocuments().get(0).getId();
         try {
             Map<String, Object> data = route.toMap();
@@ -124,19 +124,26 @@ public class RouteEditService {
         }
     }
 
-    private QuerySnapshot getRouteQuerySnapshot(String userName, String routeName) {
+    private QuerySnapshot getRouteQuerySnapshot(String ownerName, String routeName, Route route) {
+        String ownerPath = Route.getOwnerDatabasePath(route.getRouteType());
         var routes = db.collection(DbPathConstants.COLLECTION_ROUTE);
         var queryFuture = routes
-                .select(DbPathConstants.ROUTE_USER_NAME, DbPathConstants.ROUTE_NAME)
-                .whereEqualTo(DbPathConstants.ROUTE_USER_NAME, userName)
+                .whereEqualTo(ownerPath, ownerName)
                 .whereEqualTo(DbPathConstants.ROUTE_NAME, routeName)
                 .get();
         try {
             var querySnapshot = queryFuture.get();
             if (querySnapshot.isEmpty()) {
+                String owner;
+                switch(route.getRouteType()) {
+                    case USER: owner = "felhasználó"; break;
+                    case GROUP: owner = "csoport"; break;
+                    case GROUP_HIKE: owner = "csoport túra"; break;
+                    default: throw new IllegalArgumentException("Ismeretlen típus: " + route.getRouteType());
+                }
                 throw new IllegalArgumentException(
-                        "Nem létezik útvonal a következő felhasználó névvel: "
-                                + userName + ", és útvonal névvel: " + routeName
+                        "Nem létezik útvonal a következő " + owner + " névvel: "
+                                + ownerName + ", és útvonal névvel: " + routeName
                 );
             } else {
                 return querySnapshot;

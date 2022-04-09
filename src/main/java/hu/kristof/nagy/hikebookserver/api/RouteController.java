@@ -13,8 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-// TODO: make UserController, and put userRoute specific methods in them
-
 @RequestMapping("routes/")
 @RestController
 public class RouteController {
@@ -75,8 +73,8 @@ public class RouteController {
     public boolean editRoute(
             @PathVariable String ownerName,
             @PathVariable String routeName,
-            @RequestBody EditedRoute editedUserRoute // TODO: try to make this work with Route
+            @RequestBody EditedRoute editedRoute
     ) {
-        return routeEdit.editRoute(editedUserRoute);
+        return routeEdit.editRoute(editedRoute);
     }
 }
