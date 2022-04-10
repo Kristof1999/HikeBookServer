@@ -6,6 +6,7 @@ import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.EditedRoute;
 import hu.kristof.nagy.hikebookserver.model.Point;
 import hu.kristof.nagy.hikebookserver.model.Route;
+import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -113,15 +114,13 @@ public class RouteEditService {
     private void saveChanges(String oldRouteName, Route route) {
         var querySnapshot = getRouteQuerySnapshot(route.getOwnerName(), oldRouteName, route);
         String id = querySnapshot.getDocuments().get(0).getId();
-        try {
-            Map<String, Object> data = route.toMap();
-            db.collection(DbPathConstants.COLLECTION_ROUTE)
-                    .document(id)
-                    .set(data)
-                    .get(); // wait for write result
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-        }
+        Map<String, Object> data = route.toMap();
+        FutureUtil.handleFutureGet(() ->
+                db.collection(DbPathConstants.COLLECTION_ROUTE)
+                        .document(id)
+                        .set(data)
+                        .get() // wait for write result
+        );
     }
 
     private QuerySnapshot getRouteQuerySnapshot(String ownerName, String routeName, Route route) {
@@ -131,26 +130,21 @@ public class RouteEditService {
                 .whereEqualTo(ownerPath, ownerName)
                 .whereEqualTo(DbPathConstants.ROUTE_NAME, routeName)
                 .get();
-        try {
-            var querySnapshot = queryFuture.get();
-            if (querySnapshot.isEmpty()) {
-                String owner;
-                switch(route.getRouteType()) {
-                    case USER: owner = "felhasználó"; break;
-                    case GROUP: owner = "csoport"; break;
-                    case GROUP_HIKE: owner = "csoport túra"; break;
-                    default: throw new IllegalArgumentException("Ismeretlen típus: " + route.getRouteType());
-                }
-                throw new IllegalArgumentException(
-                        "Nem létezik útvonal a következő " + owner + " névvel: "
-                                + ownerName + ", és útvonal névvel: " + routeName
-                );
-            } else {
-                return querySnapshot;
+        QuerySnapshot querySnapshot = FutureUtil.handleFutureGet(queryFuture::get);
+        if (querySnapshot.isEmpty()) {
+            String owner;
+            switch(route.getRouteType()) {
+                case USER: owner = "felhasználó"; break;
+                case GROUP: owner = "csoport"; break;
+                case GROUP_HIKE: owner = "csoport túra"; break;
+                default: throw new IllegalArgumentException("Ismeretlen típus: " + route.getRouteType());
             }
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
+            throw new IllegalArgumentException(
+                    "Nem létezik útvonal a következő " + owner + " névvel: "
+                            + ownerName + ", és útvonal névvel: " + routeName
+            );
+        } else {
+            return querySnapshot;
         }
-        throw new IllegalArgumentException("Valami hiba történt.");
     }
 }

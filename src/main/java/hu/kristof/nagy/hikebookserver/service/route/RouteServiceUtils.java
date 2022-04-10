@@ -5,6 +5,7 @@ import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.Point;
 import hu.kristof.nagy.hikebookserver.model.Route;
 import hu.kristof.nagy.hikebookserver.model.RouteType;
+import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import hu.kristof.nagy.hikebookserver.service.Util;
 
 import java.util.List;
@@ -31,12 +32,9 @@ public class RouteServiceUtils {
                 .whereEqualTo(ownerPath, ownerName)
                 .whereEqualTo(DbPathConstants.ROUTE_POINTS, points)
                 .get();
-        try {
-            return queryFuture.get().isEmpty();
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-        }
-        throw new IllegalArgumentException(Util.GENERIC_ERROR_MSG);
+        return FutureUtil.handleFutureGet(() ->
+                queryFuture.get().isEmpty()
+        );
     }
 
     public static boolean routeNameExists(
@@ -53,11 +51,8 @@ public class RouteServiceUtils {
                 .whereEqualTo(ownerPath, ownerName)
                 .whereEqualTo(DbPathConstants.ROUTE_NAME, routeName)
                 .get();
-        try {
-            return !queryFuture.get().isEmpty();
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-        }
-        throw new IllegalArgumentException(Util.GENERIC_ERROR_MSG);
+        return FutureUtil.handleFutureGet(() ->
+                !queryFuture.get().isEmpty()
+        );
     }
 }

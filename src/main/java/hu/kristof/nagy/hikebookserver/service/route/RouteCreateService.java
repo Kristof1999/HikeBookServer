@@ -3,6 +3,7 @@ package hu.kristof.nagy.hikebookserver.service.route;
 import com.google.cloud.firestore.Firestore;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.Route;
+import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +24,7 @@ public class RouteCreateService {
      * @return true if route is unique
      */
     public boolean createRoute(Route route) {
+        // TODO: handle group route create with transactions
         if (RouteServiceUtils.routeNameExists(
                 db, route.getOwnerName(), route.getRouteName(), route.getRouteType()
         )) {
@@ -34,13 +36,11 @@ public class RouteCreateService {
                     db, route.getOwnerName(), route.getPoints(), route.getRouteType()
             )) {
                 Map<String, Object> data = route.toMap();
-                try {
-                    db.collection(DbPathConstants.COLLECTION_ROUTE)
-                            .add(data)
-                            .get(); // wait for write result
-                } catch (ExecutionException | InterruptedException e) {
-                    e.printStackTrace();
-                }
+                FutureUtil.handleFutureGet(() ->
+                        db.collection(DbPathConstants.COLLECTION_ROUTE)
+                                .add(data)
+                                .get() // wait for write result
+                );
                 return true;
             } else {
                 throw new IllegalArgumentException(RouteServiceUtils.POINTS_NOT_UNIQE);

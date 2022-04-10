@@ -2,6 +2,7 @@ package hu.kristof.nagy.hikebookserver.service.groups;
 
 import com.google.cloud.firestore.Firestore;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
+import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,15 +22,12 @@ public class GroupsMembersListService {
                 .select(DbPathConstants.GROUP_MEMBER_NAME)
                 .whereEqualTo(DbPathConstants.GROUP_NAME, groupName)
                 .get();
-        try {
-            return queryFuture.get().getDocuments().stream()
-                    .map(queryDocumentSnapshot ->
-                            queryDocumentSnapshot.getString(DbPathConstants.GROUP_MEMBER_NAME)
-                    )
-                    .collect(Collectors.toList());
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-        return List.of();
+        return FutureUtil.handleFutureGet(() ->
+                queryFuture.get().getDocuments().stream()
+                .map(queryDocumentSnapshot ->
+                        queryDocumentSnapshot.getString(DbPathConstants.GROUP_MEMBER_NAME)
+                )
+                .collect(Collectors.toList())
+        );
     }
 }

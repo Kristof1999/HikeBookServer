@@ -2,11 +2,11 @@ package hu.kristof.nagy.hikebookserver.service.groups;
 
 import com.google.cloud.firestore.Firestore;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
+import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 @Service
@@ -32,15 +32,12 @@ public class GroupsGeneralConnectService {
         var data = new HashMap<String, Object>();
         data.put(DbPathConstants.GROUP_NAME, groupName);
         data.put(DbPathConstants.GROUP_MEMBER_NAME, userName);
-        try {
+        return FutureUtil.handleFutureGet(() -> {
             db.collection(DbPathConstants.COLLECTION_GROUP)
-                   .add(data)
-                   .get();
+                    .add(data)
+                    .get();
             return true;
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-        return false;
+        });
     }
 
     private boolean disconnect(String groupName, String userName) {
@@ -49,16 +46,13 @@ public class GroupsGeneralConnectService {
                 .whereEqualTo(DbPathConstants.GROUP_NAME, groupName)
                 .whereEqualTo(DbPathConstants.GROUP_MEMBER_NAME, userName)
                 .get();
-        try {
+        return FutureUtil.handleFutureGet(() -> {
             String id = queryFuture.get().getDocuments().get(0).getId();
             db.collection(DbPathConstants.COLLECTION_GROUP)
                     .document(id)
                     .delete()
                     .get();
             return true;
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-        return false;
+        });
     }
 }

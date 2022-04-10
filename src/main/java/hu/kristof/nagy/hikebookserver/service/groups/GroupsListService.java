@@ -3,6 +3,7 @@ package hu.kristof.nagy.hikebookserver.service.groups;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
+import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,18 +31,13 @@ public class GroupsListService {
                 .select(DbPathConstants.GROUP_NAME)
                 .whereEqualTo(DbPathConstants.GROUP_MEMBER_NAME, userName)
                 .get();
-        // TODO: use generic lamdba to replace future try-catch calls
-        try {
-            return new ArrayList<>(queryFuture.get().getDocuments().stream()
-                    .map(queryDocumentSnapshot ->
-                            queryDocumentSnapshot.getString(DbPathConstants.GROUP_NAME)
-                    )
-                    .collect(Collectors.toSet()) // distinct substitute
-            );
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-        }
-        return List.of();
+        return FutureUtil.handleFutureGet(() -> new ArrayList<>(
+                queryFuture.get().getDocuments().stream()
+                .map(queryDocumentSnapshot ->
+                        queryDocumentSnapshot.getString(DbPathConstants.GROUP_NAME)
+                )
+                .collect(Collectors.toSet()) // distinct substitute
+        ));
     }
 
     private List<String> listNotConnectedGroupNames(String userName) {
@@ -54,30 +50,24 @@ public class GroupsListService {
                     .select(DbPathConstants.GROUP_NAME)
                     .whereNotIn(DbPathConstants.GROUP_NAME, connectedGroupNames)
                     .get();
-            try {
-                return new ArrayList<>(queryFuture.get().getDocuments().stream()
-                        .map(queryDocumentSnapshot ->
-                                queryDocumentSnapshot.getString(DbPathConstants.GROUP_NAME)
-                        )
-                        .collect(Collectors.toSet()) // distinct substitute
-                );
-            } catch (ExecutionException | InterruptedException e) {
-                e.printStackTrace();
-            }
+            return FutureUtil.handleFutureGet(() -> new ArrayList<>(
+                    queryFuture.get().getDocuments().stream()
+                    .map(queryDocumentSnapshot ->
+                            queryDocumentSnapshot.getString(DbPathConstants.GROUP_NAME)
+                    )
+                    .collect(Collectors.toSet()) // distinct substitute
+            ));
         }
-        return List.of(); //de lehet inkább hibát kellene dobni
     }
 
     private List<String> listAllGroups() {
         var groups = db.collection(DbPathConstants.COLLECTION_GROUP);
         var res = new HashSet<String>(); // distinct substitute
         for (var doc: groups.listDocuments()) {
-            try {
-                var groupName = doc.get().get().getString(DbPathConstants.GROUP_NAME);
-                res.add(groupName);
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
-            }
+            String groupName = FutureUtil.handleFutureGet(() ->
+                    doc.get().get().getString(DbPathConstants.GROUP_NAME)
+            );
+            res.add(groupName);
         }
         return new ArrayList<>(res);
     }

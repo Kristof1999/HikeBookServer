@@ -6,6 +6,7 @@ import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QuerySnapshot;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.User;
+import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +32,7 @@ public class RegisterService {
                 .whereEqualTo(DbPathConstants.USER_NAME, user.getName())
                 .get();
 
-        try {
+        return FutureUtil.handleFutureGet(() -> {
             if (queryFuture.get().isEmpty()) {
                 // userName is unique
                 var data = new HashMap<String, Object>();
@@ -46,9 +47,6 @@ public class RegisterService {
             } else {
                 return false;
             }
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-        return false;
+        });
     }
 }

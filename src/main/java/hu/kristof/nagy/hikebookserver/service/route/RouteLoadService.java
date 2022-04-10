@@ -5,6 +5,7 @@ import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.BrowseListItem;
 import hu.kristof.nagy.hikebookserver.model.Route;
 import hu.kristof.nagy.hikebookserver.model.RouteType;
+import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import hu.kristof.nagy.hikebookserver.service.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,17 +38,14 @@ public class RouteLoadService {
                         DbPathConstants.ROUTE_DESCRIPTION)
                 .whereEqualTo(ownerPath, ownerName)
                 .get();
-        try {
-            return queryFuture.get().getDocuments()
-                    .stream()
-                    .map(queryDocumentSnapshot ->
-                            Route.from(queryDocumentSnapshot, routeType)
-                    )
-                    .collect(Collectors.toList());
-        } catch (InterruptedException | CancellationException | ExecutionException e) {
-            e.printStackTrace();
-        }
-        throw new IllegalArgumentException(Util.GENERIC_ERROR_MSG);
+        return FutureUtil.handleFutureGet(() ->
+                queryFuture.get().getDocuments()
+                        .stream()
+                        .map(queryDocumentSnapshot ->
+                                Route.from(queryDocumentSnapshot, routeType)
+                        )
+                        .collect(Collectors.toList())
+        );
     }
 
     /**
@@ -58,18 +56,16 @@ public class RouteLoadService {
         // TODO: select routes which do not belong to the user who requested the listing
         // use whereNotEqualTo(...)
         for(var docRef : db.collection(DbPathConstants.COLLECTION_ROUTE).listDocuments()) {
-            try {
-                var documentSnapshot = docRef.get().get();
-                var userName = Objects.requireNonNull(
-                        documentSnapshot.getString(DbPathConstants.ROUTE_USER_NAME)
-                );
-                var routeName = Objects.requireNonNull(
-                        documentSnapshot.getString(DbPathConstants.ROUTE_NAME)
-                );
-                routes.add(new BrowseListItem(userName, routeName));
-            } catch (ExecutionException | InterruptedException e) {
-                e.printStackTrace();
-            }
+            DocumentSnapshot documentSnapshot = FutureUtil.handleFutureGet(() ->
+                    docRef.get().get()
+            );
+            var userName = Objects.requireNonNull(
+                    documentSnapshot.getString(DbPathConstants.ROUTE_USER_NAME)
+            );
+            var routeName = Objects.requireNonNull(
+                    documentSnapshot.getString(DbPathConstants.ROUTE_NAME)
+            );
+            routes.add(new BrowseListItem(userName, routeName));
         }
         return routes;
     }
@@ -90,12 +86,10 @@ public class RouteLoadService {
                 .whereEqualTo(ownerPath, ownerName)
                 .whereEqualTo(DbPathConstants.ROUTE_NAME, routeName)
                 .get();
-        try {
-            var queryDocumentSnapshot = queryFuture.get().getDocuments().get(0);
-            return Route.from(queryDocumentSnapshot, routeType);
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-        }
-        throw new IllegalArgumentException(Util.GENERIC_ERROR_MSG);
+
+        QueryDocumentSnapshot queryDocumentSnapshot = FutureUtil.handleFutureGet(() ->
+                queryFuture.get().getDocuments().get(0)
+        );
+        return Route.from(queryDocumentSnapshot, routeType);
     }
 }
