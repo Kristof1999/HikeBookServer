@@ -1,10 +1,11 @@
-package hu.kristof.nagy.hikebookserver.model.routes;
+package hu.kristof.nagy.hikebookserver.service.route;
 
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.BrowseListItem;
+import hu.kristof.nagy.hikebookserver.model.routes.UserRoute;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import hu.kristof.nagy.hikebookserver.service.route.RouteLoadService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -4,10 +4,6 @@ public class EditedUserRoute extends EditedRoute {
     private UserRoute newUserRoute;
     private UserRoute oldUserRoute;
 
-    public EditedUserRoute() {
-        super();
-    }
-
     public EditedUserRoute(UserRoute newUserRoute, UserRoute oldUserRoute) {
         super(newUserRoute, oldUserRoute);
         this.newUserRoute = newUserRoute;

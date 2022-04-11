@@ -7,10 +7,6 @@ public class Point {
     private PointType type;
     private String title;
 
-    public Point() {
-        this(0.0, 0.0, PointType.NEW, "");
-    }
-
     public Point(double latitude, double longitude, PointType type, String title) {
         this.latitude = latitude;
         this.longitude = longitude;

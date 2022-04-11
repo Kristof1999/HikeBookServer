@@ -5,10 +5,6 @@ import java.util.Objects;
 public class BrowseListItem {
     private String userName, routeName;
 
-    public BrowseListItem() {
-        this("", "");
-    }
-
     public BrowseListItem(String userName, String routeName) {
         this.userName = userName;
         this.routeName = routeName;

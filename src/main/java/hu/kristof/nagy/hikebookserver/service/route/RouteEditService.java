@@ -141,7 +141,7 @@ public class RouteEditService {
             String oldRouteName,
             Route route
     ) {
-        var querySnapshot = getRouteQuerySnapshot(ownerName, ownerPath, oldRouteName, route);
+        var querySnapshot = getRouteQuerySnapshot(ownerName, ownerPath, oldRouteName);
         String id = querySnapshot.getDocuments().get(0).getId();
         Map<String, Object> data = route.toMap();
         FutureUtil.handleFutureGet(() ->
@@ -155,8 +155,7 @@ public class RouteEditService {
     private QuerySnapshot getRouteQuerySnapshot(
             String ownerName,
             String ownerPath,
-            String routeName,
-            Route route
+            String routeName
     ) {
         var routes = db.collection(DbPathConstants.COLLECTION_ROUTE);
         var queryFuture = routes

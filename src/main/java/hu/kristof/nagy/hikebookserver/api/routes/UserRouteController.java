@@ -2,19 +2,16 @@ package hu.kristof.nagy.hikebookserver.api.routes;
 
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.BrowseListItem;
-import hu.kristof.nagy.hikebookserver.model.RouteType;
 import hu.kristof.nagy.hikebookserver.model.routes.EditedUserRoute;
 import hu.kristof.nagy.hikebookserver.model.routes.UserRoute;
-import hu.kristof.nagy.hikebookserver.model.routes.UserRouteLoadService;
+import hu.kristof.nagy.hikebookserver.service.route.UserRouteLoadService;
 import hu.kristof.nagy.hikebookserver.service.route.RouteCreateService;
 import hu.kristof.nagy.hikebookserver.service.route.RouteDeleteService;
 import hu.kristof.nagy.hikebookserver.service.route.RouteEditService;
-import hu.kristof.nagy.hikebookserver.service.route.RouteLoadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("users/routes/")
@@ -64,7 +61,7 @@ public class UserRouteController {
         return routeDelete.deleteRoute(userName, DbPathConstants.ROUTE_USER_NAME, routeName);
     }
 
-    @PutMapping("edit/{userName}/{routeName}")
+    @PutMapping("edit/{userName}/{oldRouteName}")
     public boolean editUserRoute(
         @PathVariable String userName,
         @PathVariable String oldRouteName,

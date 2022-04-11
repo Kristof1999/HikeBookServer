@@ -3,9 +3,6 @@ package hu.kristof.nagy.hikebookserver.model.routes;
 public class EditedRoute {
     private Route newRoute, oldRoute;
 
-    public EditedRoute() {
-    }
-
     public EditedRoute(Route newRoute, Route oldRoute) {
         this.newRoute = newRoute;
         this.oldRoute = oldRoute;

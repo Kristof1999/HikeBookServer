@@ -1,20 +1,16 @@
 package hu.kristof.nagy.hikebookserver.api.routes;
 
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
-import hu.kristof.nagy.hikebookserver.model.RouteType;
 import hu.kristof.nagy.hikebookserver.model.routes.EditedGroupRoute;
 import hu.kristof.nagy.hikebookserver.model.routes.GroupRoute;
-import hu.kristof.nagy.hikebookserver.model.routes.GroupRouteLoadService;
-import hu.kristof.nagy.hikebookserver.model.routes.UserRoute;
+import hu.kristof.nagy.hikebookserver.service.route.GroupRouteLoadService;
 import hu.kristof.nagy.hikebookserver.service.route.RouteCreateService;
 import hu.kristof.nagy.hikebookserver.service.route.RouteDeleteService;
 import hu.kristof.nagy.hikebookserver.service.route.RouteEditService;
-import hu.kristof.nagy.hikebookserver.service.route.RouteLoadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("groups/routes/")
@@ -56,7 +52,7 @@ public class GroupRouteController {
         return routeDelete.deleteRoute(groupName, DbPathConstants.ROUTE_GROUP_NAME, routeName);
     }
 
-    @PutMapping("edit/{groupName}/{routeName}")
+    @PutMapping("edit/{groupName}/{oldRouteName}")
     public boolean editGroupRoute(
             @PathVariable String groupName,
             @PathVariable String oldRouteName,

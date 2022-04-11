@@ -1,6 +1,7 @@
-package hu.kristof.nagy.hikebookserver.model.routes;
+package hu.kristof.nagy.hikebookserver.service.route;
 
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
+import hu.kristof.nagy.hikebookserver.model.routes.GroupRoute;
 import hu.kristof.nagy.hikebookserver.service.route.RouteLoadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

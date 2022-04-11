@@ -4,10 +4,6 @@ public class EditedGroupRoute extends EditedRoute {
     private GroupRoute newGroupRoute;
     private GroupRoute oldGroupRoute;
 
-    public EditedGroupRoute() {
-        super();
-    }
-
     public EditedGroupRoute(GroupRoute newGroupRoute, GroupRoute oldGroupRoute) {
         super(newGroupRoute, oldGroupRoute);
         this.newGroupRoute = newGroupRoute;

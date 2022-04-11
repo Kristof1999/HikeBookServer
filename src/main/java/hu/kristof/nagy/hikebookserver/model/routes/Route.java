@@ -15,9 +15,6 @@ public class Route {
     private List<Point> points;
     private String description;
 
-    public Route() {
-    }
-
     public Route(Route route) {
         this(route.getRouteName(), route.getPoints(), route.getDescription());
     }

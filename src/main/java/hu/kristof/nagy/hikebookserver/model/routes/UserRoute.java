@@ -9,10 +9,7 @@ import java.util.Map;
 import java.util.Objects;
 
 public class UserRoute extends Route {
-    private String userName;
-
-    public UserRoute() {
-    }
+    private final String userName;
 
     public UserRoute(Route route, String userName) {
         this(route.getRouteName(), route.getPoints(), route.getDescription(), userName);
