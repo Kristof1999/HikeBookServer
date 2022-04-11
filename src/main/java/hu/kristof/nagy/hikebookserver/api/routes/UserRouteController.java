@@ -5,6 +5,7 @@ import hu.kristof.nagy.hikebookserver.model.BrowseListItem;
 import hu.kristof.nagy.hikebookserver.model.RouteType;
 import hu.kristof.nagy.hikebookserver.model.routes.EditedUserRoute;
 import hu.kristof.nagy.hikebookserver.model.routes.UserRoute;
+import hu.kristof.nagy.hikebookserver.model.routes.UserRouteLoadService;
 import hu.kristof.nagy.hikebookserver.service.route.RouteCreateService;
 import hu.kristof.nagy.hikebookserver.service.route.RouteDeleteService;
 import hu.kristof.nagy.hikebookserver.service.route.RouteEditService;
@@ -23,7 +24,7 @@ public class UserRouteController {
     private RouteCreateService routeCreate;
 
     @Autowired
-    private RouteLoadService routeLoad;
+    private UserRouteLoadService userRouteLoadService;
 
     @Autowired
     private RouteDeleteService routeDelete;
@@ -44,10 +45,7 @@ public class UserRouteController {
     public List<UserRoute> loadUserRoutes(
             @PathVariable String userName
     ) {
-        return routeLoad.loadRoutes(userName, DbPathConstants.ROUTE_USER_NAME)
-                .stream()
-                .map(route -> (UserRoute) route)
-                .collect(Collectors.toList());
+        return userRouteLoadService.loadUserRoutes(userName);
     }
 
     @GetMapping("{userName}/{routeName}")
@@ -55,7 +53,7 @@ public class UserRouteController {
             @PathVariable String userName,
             @PathVariable String routeName
     ) {
-        return (UserRoute) routeLoad.loadRoute(userName, DbPathConstants.ROUTE_USER_NAME, routeName);
+        return userRouteLoadService.loadUserRoute(userName, routeName);
     }
 
     @DeleteMapping("{userName}/{routeName}")
@@ -77,6 +75,6 @@ public class UserRouteController {
 
     @GetMapping("")
     public List<BrowseListItem> listUserRoutes() {
-        return routeLoad.listUserRoutes();
+        return userRouteLoadService.listUserRoutes();
     }
 }
