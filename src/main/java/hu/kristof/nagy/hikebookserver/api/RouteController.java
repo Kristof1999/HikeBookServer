@@ -1,8 +1,8 @@
 package hu.kristof.nagy.hikebookserver.api;
 
 import hu.kristof.nagy.hikebookserver.model.BrowseListItem;
-import hu.kristof.nagy.hikebookserver.model.EditedRoute;
-import hu.kristof.nagy.hikebookserver.model.Route;
+import hu.kristof.nagy.hikebookserver.model.routes.EditedUserRoute;
+import hu.kristof.nagy.hikebookserver.model.routes.Route;
 import hu.kristof.nagy.hikebookserver.model.RouteType;
 import hu.kristof.nagy.hikebookserver.service.route.RouteCreateService;
 import hu.kristof.nagy.hikebookserver.service.route.RouteDeleteService;
@@ -73,7 +73,7 @@ public class RouteController {
     public boolean editRoute(
             @PathVariable String ownerName,
             @PathVariable String routeName,
-            @RequestBody EditedRoute editedRoute
+            @RequestBody EditedUserRoute editedRoute
     ) {
         return routeEdit.editRoute(editedRoute);
     }

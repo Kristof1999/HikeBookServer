@@ -3,13 +3,11 @@ package hu.kristof.nagy.hikebookserver.service.route;
 import com.google.cloud.firestore.Firestore;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.Point;
-import hu.kristof.nagy.hikebookserver.model.Route;
+import hu.kristof.nagy.hikebookserver.model.routes.Route;
 import hu.kristof.nagy.hikebookserver.model.RouteType;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
-import hu.kristof.nagy.hikebookserver.service.Util;
 
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public class RouteServiceUtils {
     public static String POINTS_NOT_UNIQE = "Az útvonal pontjai nem egyediek! " +

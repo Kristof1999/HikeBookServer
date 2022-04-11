@@ -3,16 +3,15 @@ package hu.kristof.nagy.hikebookserver.service.route;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QuerySnapshot;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
-import hu.kristof.nagy.hikebookserver.model.EditedRoute;
+import hu.kristof.nagy.hikebookserver.model.routes.EditedUserRoute;
 import hu.kristof.nagy.hikebookserver.model.Point;
-import hu.kristof.nagy.hikebookserver.model.Route;
+import hu.kristof.nagy.hikebookserver.model.routes.Route;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 @Service
 public class RouteEditService {
@@ -26,7 +25,7 @@ public class RouteEditService {
      * @param route the edited route
      * @return true if the edited route is unique for the given user
      */
-    public boolean editRoute(EditedRoute route) {
+    public boolean editRoute(EditedUserRoute route) {
         String oldRouteName = route.getOldRoute().getRouteName();
         String newRouteName = route.getNewRoute().getRouteName();
         String oldDescription = route.getOldRoute().getDescription();

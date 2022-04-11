@@ -1,7 +1,9 @@
-package hu.kristof.nagy.hikebookserver.model;
+package hu.kristof.nagy.hikebookserver.model.routes;
 
 import com.google.cloud.firestore.DocumentSnapshot;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
+import hu.kristof.nagy.hikebookserver.model.Point;
+import hu.kristof.nagy.hikebookserver.model.RouteType;
 
 import java.util.HashMap;
 import java.util.List;
@@ -9,8 +11,6 @@ import java.util.Map;
 import java.util.Objects;
 
 public class Route {
-    private String ownerName;
-    private RouteType routeType;
     private String routeName;
     private List<Point> points;
     private String description;
@@ -18,15 +18,7 @@ public class Route {
     public Route() {
     }
 
-    public Route(
-            String ownerName,
-            RouteType routeType,
-            String routeName,
-            List<Point> points,
-            String description
-    ) {
-        this.ownerName = ownerName;
-        this.routeType = routeType;
+    public Route(String routeName, List<Point> points, String description) {
         this.routeName = routeName;
         this.points = points;
         this.description = description;
@@ -34,18 +26,13 @@ public class Route {
 
     public Map<String, Object> toMap() {
         var data = new HashMap<String, Object>();
-        data.put(getOwnerDatabasePath(routeType), getOwnerName());
         data.put(DbPathConstants.ROUTE_NAME, getRouteName());
         data.put(DbPathConstants.ROUTE_POINTS, getPoints());
         data.put(DbPathConstants.ROUTE_DESCRIPTION, getDescription());
         return data;
     }
 
-    public static Route from(DocumentSnapshot documentSnapshot, RouteType routeType) {
-        String ownerpath = getOwnerDatabasePath(routeType);
-        var owneName = Objects.requireNonNull(
-                documentSnapshot.getString(ownerpath)
-        );
+    public static Route from(DocumentSnapshot documentSnapshot) {
         var routeName = Objects.requireNonNull(
                 documentSnapshot.getString(DbPathConstants.ROUTE_NAME)
         );
@@ -55,20 +42,7 @@ public class Route {
         var description = Objects.requireNonNull(
                 documentSnapshot.getString(DbPathConstants.ROUTE_DESCRIPTION)
         );
-        return new Route(owneName, routeType, routeName, points, description);
-    }
-
-    public String getOwnerName() {
-        return ownerName;
-    }
-
-    public static String getOwnerDatabasePath(RouteType routeType) {
-        switch (routeType) {
-            case USER: return DbPathConstants.ROUTE_USER_NAME;
-            case GROUP: return DbPathConstants.ROUTE_GROUP_NAME;
-            case GROUP_HIKE: return DbPathConstants.ROUTE_GROUP_HIKE_NAME;
-            default: throw new IllegalArgumentException("Route type " + routeType + " is not allowed.");
-        }
+        return new Route(routeName, points, description);
     }
 
     public String getRouteName() {
@@ -93,13 +67,5 @@ public class Route {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public RouteType getRouteType() {
-        return routeType;
-    }
-
-    public void setRouteType(RouteType routeType) {
-        this.routeType = routeType;
     }
 }

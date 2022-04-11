@@ -2,6 +2,8 @@ package hu.kristof.nagy.hikebookserver.service;
 
 import com.google.cloud.firestore.Firestore;
 import hu.kristof.nagy.hikebookserver.model.*;
+import hu.kristof.nagy.hikebookserver.model.routes.EditedUserRoute;
+import hu.kristof.nagy.hikebookserver.model.routes.Route;
 import hu.kristof.nagy.hikebookserver.service.route.RouteCreateService;
 import hu.kristof.nagy.hikebookserver.service.route.RouteEditService;
 import org.junit.jupiter.api.BeforeEach;
@@ -41,7 +43,7 @@ public class UserRouteEditTest {
         routeCreateService.createRoute(oldRoute);
 
         Route newRoute = new Route(userName, RouteType.USER,  routeName, points, "");
-        EditedRoute editedRoute = new EditedRoute(newRoute, oldRoute);
+        EditedUserRoute editedRoute = new EditedUserRoute(newRoute, oldRoute);
         boolean res = routeEditService.editRoute(editedRoute);
 
         assertTrue(res);
@@ -59,7 +61,7 @@ public class UserRouteEditTest {
 
         points.add(new Point(2.0, 2.0, PointType.NEW, ""));
         Route newRoute = new Route(userName, RouteType.USER,  routeName, points, "");
-        EditedRoute editedRoute = new EditedRoute(newRoute, oldRoute);
+        EditedUserRoute editedRoute = new EditedUserRoute(newRoute, oldRoute);
         boolean res = routeEditService.editRoute(editedRoute);
 
         assertTrue(res);
@@ -76,7 +78,7 @@ public class UserRouteEditTest {
         routeCreateService.createRoute(oldRoute);
 
         Route newRoute = new Route(userName, RouteType.USER,  routeName + "2", points, "");
-        EditedRoute editedRoute = new EditedRoute(newRoute, oldRoute);
+        EditedUserRoute editedRoute = new EditedUserRoute(newRoute, oldRoute);
         boolean res = routeEditService.editRoute(editedRoute);
 
         assertTrue(res);
@@ -94,7 +96,7 @@ public class UserRouteEditTest {
 
         points.add(new Point(2.0, 2.0, PointType.NEW, ""));
         Route newRoute = new Route(userName, RouteType.USER,  routeName + "2", points, "");
-        EditedRoute editedRoute = new EditedRoute(newRoute, oldRoute);
+        EditedUserRoute editedRoute = new EditedUserRoute(newRoute, oldRoute);
         boolean res = routeEditService.editRoute(editedRoute);
 
         assertTrue(res);
@@ -121,7 +123,7 @@ public class UserRouteEditTest {
 
         points.add(new Point(2.0, 2.0, PointType.NEW, ""));
         Route newRoute = new Route(userName, RouteType.USER,  routeName, points, "");
-        EditedRoute editedRoute = new EditedRoute(newRoute, oldRoute);
+        EditedUserRoute editedRoute = new EditedUserRoute(newRoute, oldRoute);
 
         assertThrows(IllegalArgumentException.class,
                 () -> routeEditService.editRoute(editedRoute)
@@ -148,7 +150,7 @@ public class UserRouteEditTest {
         );
 
         Route newRoute = new Route(userName, RouteType.USER,  routeName2, points, "");
-        EditedRoute editedRoute = new EditedRoute(newRoute, oldRoute);
+        EditedUserRoute editedRoute = new EditedUserRoute(newRoute, oldRoute);
 
         assertThrows(IllegalArgumentException.class,
                 () -> routeEditService.editRoute(editedRoute)

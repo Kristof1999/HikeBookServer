@@ -7,7 +7,7 @@ package hu.kristof.nagy.hikebookserver.service;
 import com.google.cloud.firestore.Firestore;
 import hu.kristof.nagy.hikebookserver.model.Point;
 import hu.kristof.nagy.hikebookserver.model.PointType;
-import hu.kristof.nagy.hikebookserver.model.Route;
+import hu.kristof.nagy.hikebookserver.model.routes.Route;
 import hu.kristof.nagy.hikebookserver.model.RouteType;
 import hu.kristof.nagy.hikebookserver.service.route.RouteCreateService;
 import org.junit.jupiter.api.BeforeEach;
