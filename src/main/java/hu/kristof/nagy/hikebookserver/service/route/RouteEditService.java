@@ -3,6 +3,7 @@ package hu.kristof.nagy.hikebookserver.service.route;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QuerySnapshot;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
+import hu.kristof.nagy.hikebookserver.model.routes.EditedRoute;
 import hu.kristof.nagy.hikebookserver.model.routes.EditedUserRoute;
 import hu.kristof.nagy.hikebookserver.model.Point;
 import hu.kristof.nagy.hikebookserver.model.routes.Route;
@@ -25,7 +26,11 @@ public class RouteEditService {
      * @param route the edited route
      * @return true if the edited route is unique for the given user
      */
-    public boolean editRoute(EditedUserRoute route) {
+    public boolean editRoute(
+            EditedRoute route,
+            String ownerName,
+            String ownerPath
+    ) {
         String oldRouteName = route.getOldRoute().getRouteName();
         String newRouteName = route.getNewRoute().getRouteName();
         String oldDescription = route.getOldRoute().getDescription();
@@ -39,46 +44,61 @@ public class RouteEditService {
                     // nothing changed, no need to save
                     return true;
                 } else {
-                    return updateUserRouteWithPointsChange(route.getNewRoute());
+                    return updateUserRouteWithPointsChange(
+                            ownerName, ownerPath, route.getNewRoute()
+                    );
                 }
             } else {
                 if (oldPoints.equals(newPoints)) {
                     // only the description changed
-                    saveChanges(newRouteName, route.getNewRoute());
+                    saveChanges(
+                            ownerName, ownerPath, newRouteName, route.getNewRoute()
+                    );
                     return true;
                 } else {
-                    return updateUserRouteWithPointsChange(route.getNewRoute());
+                    return updateUserRouteWithPointsChange(
+                            ownerName, ownerPath, route.getNewRoute()
+                    );
                 }
             }
         } else {
             if (oldDescription.equals(newDescription)) {
                 if (oldPoints.equals(newPoints)) {
-                    return updateUserRouteWithNameChange(oldRouteName, route.getNewRoute());
+                    return updateUserRouteWithNameChange(
+                            ownerName, ownerPath, oldRouteName, route.getNewRoute()
+                    );
                 } else {
-                    return updateUserRouteWithNameAndPointsChange(oldRouteName, route.getNewRoute());
+                    return updateUserRouteWithNameAndPointsChange(
+                            ownerName, ownerPath, oldRouteName, route.getNewRoute()
+                    );
                 }
             } else {
                 if (oldPoints.equals(newPoints)) {
-                    return updateUserRouteWithNameChange(oldRouteName, route.getNewRoute());
+                    return updateUserRouteWithNameChange(
+                            ownerName, ownerPath, oldRouteName, route.getNewRoute()
+                    );
                 } else {
-                    return updateUserRouteWithNameAndPointsChange(oldRouteName, route.getNewRoute());
+                    return updateUserRouteWithNameAndPointsChange(
+                            ownerName, ownerPath, oldRouteName, route.getNewRoute()
+                    );
                 }
             }
         }
     }
 
-    private boolean updateUserRouteWithNameAndPointsChange(String oldRouteName, Route route) {
-        if (RouteServiceUtils.routeNameExists(
-                db, route.getOwnerName(), route.getRouteName(), route.getRouteType()
-        )) {
+    private boolean updateUserRouteWithNameAndPointsChange(
+            String ownerName,
+            String ownerPath,
+            String oldRouteName,
+            Route route
+    ) {
+        if (RouteServiceUtils.routeNameExists(db, ownerName, route.getRouteName(), ownerPath)) {
             throw new IllegalArgumentException(
                     RouteServiceUtils.getRouteNameNotUniqueString(route.getRouteName())
             );
         } else {
-            if (RouteServiceUtils.arePointsUnique(
-                    db, route.getOwnerName(), route.getPoints(), route.getRouteType()
-            )) {
-                saveChanges(oldRouteName, route);
+            if (RouteServiceUtils.arePointsUnique(db, ownerName, route.getPoints(), ownerPath)) {
+                saveChanges(ownerName, ownerPath, oldRouteName, route);
                 return true;
             } else {
                 throw new IllegalArgumentException(RouteServiceUtils.POINTS_NOT_UNIQE);
@@ -86,32 +106,42 @@ public class RouteEditService {
         }
     }
 
-    private boolean updateUserRouteWithNameChange(String oldRouteName, Route route) {
-        if (RouteServiceUtils.routeNameExists(
-                db, route.getOwnerName(), route.getRouteName(), route.getRouteType()
-        )) {
+    private boolean updateUserRouteWithNameChange(
+            String ownerName,
+            String ownerPath,
+            String oldRouteName,
+            Route route
+    ) {
+        if (RouteServiceUtils.routeNameExists(db, ownerName, route.getRouteName(), ownerPath)) {
             throw new IllegalArgumentException(
                     RouteServiceUtils.getRouteNameNotUniqueString(route.getRouteName())
             );
         } else {
-            saveChanges(oldRouteName, route);
+            saveChanges(ownerName, ownerPath, oldRouteName, route);
             return true;
         }
     }
 
-    private boolean updateUserRouteWithPointsChange(Route route) {
-        if (RouteServiceUtils.arePointsUnique(
-                db, route.getOwnerName(), route.getPoints(), route.getRouteType()
-        )) {
-            saveChanges(route.getRouteName(), route);
+    private boolean updateUserRouteWithPointsChange(
+            String ownerName,
+            String ownerPath,
+            Route route
+    ) {
+        if (RouteServiceUtils.arePointsUnique(db, ownerName, route.getPoints(), ownerPath)) {
+            saveChanges(ownerName, ownerPath, route.getRouteName(), route);
             return true;
         } else {
             throw new IllegalArgumentException(RouteServiceUtils.POINTS_NOT_UNIQE);
         }
     }
 
-    private void saveChanges(String oldRouteName, Route route) {
-        var querySnapshot = getRouteQuerySnapshot(route.getOwnerName(), oldRouteName, route);
+    private void saveChanges(
+            String ownerName,
+            String ownerPath,
+            String oldRouteName,
+            Route route
+    ) {
+        var querySnapshot = getRouteQuerySnapshot(ownerName, ownerPath, oldRouteName, route);
         String id = querySnapshot.getDocuments().get(0).getId();
         Map<String, Object> data = route.toMap();
         FutureUtil.handleFutureGet(() ->
@@ -122,8 +152,12 @@ public class RouteEditService {
         );
     }
 
-    private QuerySnapshot getRouteQuerySnapshot(String ownerName, String routeName, Route route) {
-        String ownerPath = Route.getOwnerDatabasePath(route.getRouteType());
+    private QuerySnapshot getRouteQuerySnapshot(
+            String ownerName,
+            String ownerPath,
+            String routeName,
+            Route route
+    ) {
         var routes = db.collection(DbPathConstants.COLLECTION_ROUTE);
         var queryFuture = routes
                 .whereEqualTo(ownerPath, ownerName)
@@ -131,16 +165,8 @@ public class RouteEditService {
                 .get();
         QuerySnapshot querySnapshot = FutureUtil.handleFutureGet(queryFuture::get);
         if (querySnapshot.isEmpty()) {
-            String owner;
-            switch(route.getRouteType()) {
-                case USER: owner = "felhasználó"; break;
-                case GROUP: owner = "csoport"; break;
-                case GROUP_HIKE: owner = "csoport túra"; break;
-                default: throw new IllegalArgumentException("Ismeretlen típus: " + route.getRouteType());
-            }
             throw new IllegalArgumentException(
-                    "Nem létezik útvonal a következő " + owner + " névvel: "
-                            + ownerName + ", és útvonal névvel: " + routeName
+                    "Nem létezik útvonal a következő útvonal névvel: " + routeName
             );
         } else {
             return querySnapshot;

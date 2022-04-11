@@ -1,30 +1,32 @@
 package hu.kristof.nagy.hikebookserver.model.routes;
 
-public class EditedGroupRoute {
-    private GroupRoute newRoute;
-    private GroupRoute oldRoute;
+public class EditedGroupRoute extends EditedRoute {
+    private GroupRoute newGroupRoute;
+    private GroupRoute oldGroupRoute;
 
     public EditedGroupRoute() {
+        super();
     }
 
-    public EditedGroupRoute(GroupRoute newRoute, GroupRoute oldRoute) {
-        this.newRoute = newRoute;
-        this.oldRoute = oldRoute;
+    public EditedGroupRoute(GroupRoute newGroupRoute, GroupRoute oldGroupRoute) {
+        super(newGroupRoute, oldGroupRoute);
+        this.newGroupRoute = newGroupRoute;
+        this.oldGroupRoute = oldGroupRoute;
     }
 
-    public GroupRoute getNewRoute() {
-        return newRoute;
+    public GroupRoute getNewGroupRoute() {
+        return newGroupRoute;
     }
 
-    public void setNewRoute(GroupRoute newRoute) {
-        this.newRoute = newRoute;
+    public void setNewGroupRoute(GroupRoute newGroupRoute) {
+        this.newGroupRoute = newGroupRoute;
     }
 
-    public GroupRoute getOldRoute() {
-        return oldRoute;
+    public GroupRoute getOldGroupRoute() {
+        return oldGroupRoute;
     }
 
-    public void setOldRoute(GroupRoute oldRoute) {
-        this.oldRoute = oldRoute;
+    public void setOldGroupRoute(GroupRoute oldGroupRoute) {
+        this.oldGroupRoute = oldGroupRoute;
     }
 }

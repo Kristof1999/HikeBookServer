@@ -23,9 +23,8 @@ public class RouteServiceUtils {
             Firestore db,
             String ownerName,
             List<Point> points,
-            RouteType routeType
+            String ownerPath
     ) {
-        String ownerPath = Route.getOwnerDatabasePath(routeType);
         var queryFuture = db.collection(DbPathConstants.COLLECTION_ROUTE)
                 .whereEqualTo(ownerPath, ownerName)
                 .whereEqualTo(DbPathConstants.ROUTE_POINTS, points)
@@ -39,9 +38,8 @@ public class RouteServiceUtils {
             Firestore db,
             String ownerName,
             String routeName,
-            RouteType routeType
+            String ownerPath
     ) {
-        String ownerPath = Route.getOwnerDatabasePath(routeType);
         var queryFuture = db
                 .collection(DbPathConstants.COLLECTION_ROUTE)
                 .select(ownerPath,

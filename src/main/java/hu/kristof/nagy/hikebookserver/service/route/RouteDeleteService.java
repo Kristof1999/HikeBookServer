@@ -20,8 +20,7 @@ public class RouteDeleteService {
      * @param routeName name of route which to delete for the given user
      * @return true if deletion was successful
      */
-    public boolean deleteRoute(String ownerName, String routeName, RouteType routeType) {
-        String ownerPath = Route.getOwnerDatabasePath(routeType);
+    public boolean deleteRoute(String ownerName, String ownerPath, String routeName) {
         var routes = db.collection(DbPathConstants.COLLECTION_ROUTE);
         var queryFuture = routes
                 .whereEqualTo(ownerPath, ownerName)

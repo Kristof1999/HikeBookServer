@@ -1,30 +1,32 @@
 package hu.kristof.nagy.hikebookserver.model.routes;
 
-public class EditedUserRoute {
-    private UserRoute newRoute;
-    private UserRoute oldRoute;
+public class EditedUserRoute extends EditedRoute {
+    private UserRoute newUserRoute;
+    private UserRoute oldUserRoute;
 
     public EditedUserRoute() {
+        super();
     }
 
-    public EditedUserRoute(UserRoute newRoute, UserRoute oldRoute) {
-        this.newRoute = newRoute;
-        this.oldRoute = oldRoute;
+    public EditedUserRoute(UserRoute newUserRoute, UserRoute oldUserRoute) {
+        super(newUserRoute, oldUserRoute);
+        this.newUserRoute = newUserRoute;
+        this.oldUserRoute = oldUserRoute;
     }
 
-    public UserRoute getNewRoute() {
-        return newRoute;
+    public UserRoute getNewUserRoute() {
+        return newUserRoute;
     }
 
-    public void setNewRoute(UserRoute newRoute) {
-        this.newRoute = newRoute;
+    public void setNewUserRoute(UserRoute newUserRoute) {
+        this.newUserRoute = newUserRoute;
     }
 
-    public UserRoute getOldRoute() {
-        return oldRoute;
+    public UserRoute getOldUserRoute() {
+        return oldUserRoute;
     }
 
-    public void setOldRoute(UserRoute oldRoute) {
-        this.oldRoute = oldRoute;
+    public void setOldUserRoute(UserRoute oldUserRoute) {
+        this.oldUserRoute = oldUserRoute;
     }
 }

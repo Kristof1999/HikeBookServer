@@ -25,8 +25,10 @@ public class RouteLoadService {
      * @param ownerName the user's name for who to load the routes
      * @return list of routes which belong to the given user
      */
-    public List<Route> loadRoutes(String ownerName, RouteType routeType) {
-        String ownerPath = Route.getOwnerDatabasePath(routeType);
+    public List<Route> loadRoutes(
+            String ownerName,
+            String ownerPath
+    ) {
         var queryFuture =  db
                 .collection(DbPathConstants.COLLECTION_ROUTE)
                 .select(ownerPath,
@@ -38,9 +40,7 @@ public class RouteLoadService {
         return FutureUtil.handleFutureGet(() ->
                 queryFuture.get().getDocuments()
                         .stream()
-                        .map(queryDocumentSnapshot ->
-                                Route.from(queryDocumentSnapshot, routeType)
-                        )
+                        .map(Route::from)
                         .collect(Collectors.toList())
         );
     }
@@ -72,8 +72,11 @@ public class RouteLoadService {
      * @param ownerName name of the user who requested the load
      * @param routeName name of the route for which to load the points
      */
-    public Route loadRoute(String ownerName, String routeName, RouteType routeType) {
-        String ownerPath = Route.getOwnerDatabasePath(routeType);
+    public Route loadRoute(
+            String ownerName,
+            String ownerPath,
+            String routeName
+    ) {
         var queryFuture = db
                 .collection(DbPathConstants.COLLECTION_ROUTE)
                 .select(DbPathConstants.ROUTE_POINTS,
@@ -87,6 +90,6 @@ public class RouteLoadService {
         QueryDocumentSnapshot queryDocumentSnapshot = FutureUtil.handleFutureGet(() ->
                 queryFuture.get().getDocuments().get(0)
         );
-        return Route.from(queryDocumentSnapshot, routeType);
+        return Route.from(queryDocumentSnapshot);
     }
 }
