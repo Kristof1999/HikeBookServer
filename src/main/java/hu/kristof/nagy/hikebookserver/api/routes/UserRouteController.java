@@ -4,7 +4,7 @@ import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.BrowseListItem;
 import hu.kristof.nagy.hikebookserver.model.routes.EditedUserRoute;
 import hu.kristof.nagy.hikebookserver.model.routes.UserRoute;
-import hu.kristof.nagy.hikebookserver.service.route.UserRouteLoadService;
+import hu.kristof.nagy.hikebookserver.service.route.userroute.UserRouteLoadService;
 import hu.kristof.nagy.hikebookserver.service.route.RouteCreateService;
 import hu.kristof.nagy.hikebookserver.service.route.RouteDeleteService;
 import hu.kristof.nagy.hikebookserver.service.route.RouteEditService;

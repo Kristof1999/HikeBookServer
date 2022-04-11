@@ -26,17 +26,12 @@ public class RouteCreateService {
      * @return true if route is unique
      */
     public boolean createRoute(Route route, String ownerName, String ownerPath) {
-        // TODO: handle group route create with transactions
-        if (RouteServiceUtils.routeNameExists(
-                db, ownerName, route.getRouteName(), ownerPath
-        )) {
+        if (RouteServiceUtils.routeNameExists(db, ownerName, route.getRouteName(), ownerPath)) {
             throw new IllegalArgumentException(
                     RouteServiceUtils.getRouteNameNotUniqueString(route.getRouteName())
             );
         } else {
-            if (RouteServiceUtils.arePointsUnique(
-                    db, ownerName, route.getPoints(), ownerPath
-            )) {
+            if (RouteServiceUtils.arePointsUnique(db, ownerName, route.getPoints(), ownerPath)) {
                 Map<String, Object> data = route.toMap();
                 FutureUtil.handleFutureGet(() ->
                         db.collection(DbPathConstants.COLLECTION_ROUTE)

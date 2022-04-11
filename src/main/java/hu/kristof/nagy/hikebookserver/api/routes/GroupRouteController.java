@@ -3,7 +3,7 @@ package hu.kristof.nagy.hikebookserver.api.routes;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.routes.EditedGroupRoute;
 import hu.kristof.nagy.hikebookserver.model.routes.GroupRoute;
-import hu.kristof.nagy.hikebookserver.service.route.GroupRouteLoadService;
+import hu.kristof.nagy.hikebookserver.service.route.grouproute.GroupRouteLoadService;
 import hu.kristof.nagy.hikebookserver.service.route.RouteCreateService;
 import hu.kristof.nagy.hikebookserver.service.route.RouteDeleteService;
 import hu.kristof.nagy.hikebookserver.service.route.RouteEditService;

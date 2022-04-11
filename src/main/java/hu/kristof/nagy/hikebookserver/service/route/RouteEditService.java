@@ -141,6 +141,7 @@ public class RouteEditService {
             String oldRouteName,
             Route route
     ) {
+        // TODO: run as a transaction when it's a group route
         var querySnapshot = getRouteQuerySnapshot(ownerName, ownerPath, oldRouteName);
         String id = querySnapshot.getDocuments().get(0).getId();
         Map<String, Object> data = route.toMap();
