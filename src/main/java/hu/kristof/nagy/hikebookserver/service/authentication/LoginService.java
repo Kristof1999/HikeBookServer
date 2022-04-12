@@ -6,6 +6,7 @@ import com.google.cloud.firestore.QuerySnapshot;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.User;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
+import hu.kristof.nagy.hikebookserver.service.route.QueryException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,8 +31,9 @@ public class LoginService {
                 .whereEqualTo(DbPathConstants.USER_PASSWORD, user.getPassword())
                 .get();
 
-        return FutureUtil.handleFutureGet(() ->
-                !queryFuture.get().isEmpty()
-        );
+        return FutureUtil.handleFutureGet(() -> {
+            var queryDocs = queryFuture.get().getDocuments();
+            return queryDocs.size() == 1;
+        });
     }
 }

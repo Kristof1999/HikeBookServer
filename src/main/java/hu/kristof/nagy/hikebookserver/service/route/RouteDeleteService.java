@@ -32,13 +32,22 @@ public class RouteDeleteService {
             // route with given name and userName didn't
             return false;
         } else {
-            String id = querySnapshot.getDocuments().get(0).getId();
-            FutureUtil.handleFutureGet(() ->
-                    routes.document(id)
-                            .delete()
-                            .get() // wait for write result
-            );
-            return true;
+            var queryDocs = querySnapshot.getDocuments();
+            if (queryDocs.size() > 1) {
+                throw new QueryException("Got more than 1 query document snapshot, but was only expecting 1. " +
+                        "Route name: " + routeName + ", owner name:" + ownerName);
+            } else if (queryDocs.size() == 0) {
+                throw new QueryException("Got no query document snapshot, but was only expecting 1. " +
+                        "Route name: " + routeName + ", owner name:" + ownerName);
+            } else {
+                String id = queryDocs.get(0).getId();
+                FutureUtil.handleFutureGet(() ->
+                        routes.document(id)
+                                .delete()
+                                .get() // wait for write result
+                );
+                return true;
+            }
         }
     }
 }
