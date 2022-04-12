@@ -37,16 +37,9 @@ public class Route {
     }
 
     public static Route from(DocumentSnapshot documentSnapshot) {
-        var routeName = Objects.requireNonNull(
-                documentSnapshot.getString(DbPathConstants.ROUTE_NAME)
+        return Objects.requireNonNull(
+                documentSnapshot.toObject(Route.class)
         );
-        var points= Objects.requireNonNull(
-                (List<Point>) documentSnapshot.get(DbPathConstants.ROUTE_POINTS)
-        );
-        var description = Objects.requireNonNull(
-                documentSnapshot.getString(DbPathConstants.ROUTE_DESCRIPTION)
-        );
-        return new Route(routeName, points, description);
     }
 
     public String getRouteName() {
