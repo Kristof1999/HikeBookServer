@@ -35,9 +35,7 @@ public final class GroupRoute extends Route {
         var groupName = Objects.requireNonNull(
                 documentSnapshot.getString(DbPathConstants.ROUTE_GROUP_NAME)
         );
-        return new GroupRoute(
-                route.getRouteName(), route.getPoints(), route.getDescription(), groupName
-        );
+        return new GroupRoute(route, groupName);
     }
 
     public String getGroupName() {

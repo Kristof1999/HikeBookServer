@@ -29,9 +29,8 @@ public class UserRouteLoadService {
 
     public List<UserRoute> loadUserRoutes(String userName) {
         return routeLoadService.loadRoutes(userName, DbPathConstants.ROUTE_USER_NAME)
-                .stream().map(route ->
-                        new UserRoute(route, userName)
-                )
+                .stream()
+                .map(route -> new UserRoute(route, userName))
                 .collect(Collectors.toList());
     }
 

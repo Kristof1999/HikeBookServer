@@ -14,13 +14,10 @@ public class GroupRouteLoadService {
     @Autowired
     private RouteLoadService routeLoadService;
 
-    public List<GroupRoute> loadGroupRoutes(
-            String groupName
-    ) {
+    public List<GroupRoute> loadGroupRoutes(String groupName) {
         return routeLoadService.loadRoutes(groupName, DbPathConstants.ROUTE_GROUP_NAME)
-                .stream().map(route ->
-                        new GroupRoute(route, groupName)
-                )
+                .stream()
+                .map(route -> new GroupRoute(route, groupName))
                 .collect(Collectors.toList());
     }
 }

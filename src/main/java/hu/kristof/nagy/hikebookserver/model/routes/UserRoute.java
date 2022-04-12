@@ -35,9 +35,7 @@ public final class UserRoute extends Route {
         var userName = Objects.requireNonNull(
                 documentSnapshot.getString(DbPathConstants.ROUTE_USER_NAME)
         );
-        return new UserRoute(
-                route.getRouteName(), route.getPoints(), route.getDescription(), userName
-        );
+        return new UserRoute(route, userName);
     }
 
     public String getUserName() {
