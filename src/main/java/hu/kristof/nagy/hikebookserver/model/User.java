@@ -4,7 +4,7 @@ import com.google.common.primitives.Bytes;
 
 import java.util.*;
 
-public class User {
+public final class User {
     private String name;
     private String password;
     private double avgSpeed;

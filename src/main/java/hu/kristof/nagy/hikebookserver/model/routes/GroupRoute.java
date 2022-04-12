@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class GroupRoute extends Route {
+public final class GroupRoute extends Route {
     private final String groupName;
 
     public GroupRoute(Route route, String groupName) {

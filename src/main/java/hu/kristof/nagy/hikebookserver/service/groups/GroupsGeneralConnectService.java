@@ -2,12 +2,12 @@ package hu.kristof.nagy.hikebookserver.service.groups;
 
 import com.google.cloud.firestore.Firestore;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
+import hu.kristof.nagy.hikebookserver.model.Group;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.concurrent.ExecutionException;
+import java.util.Map;
 
 @Service
 public class GroupsGeneralConnectService {
@@ -23,15 +23,12 @@ public class GroupsGeneralConnectService {
         if (isConnectedPage) {
             return disconnect(groupName, userName);
         } else {
-            return connect(groupName, userName);
+            return connect(new Group(groupName, userName));
         }
     }
 
-    private boolean connect(String groupName, String userName) {
-        // TODO: update Group model and move creation logic there or use the object itself for creation
-        var data = new HashMap<String, Object>();
-        data.put(DbPathConstants.GROUP_NAME, groupName);
-        data.put(DbPathConstants.GROUP_MEMBER_NAME, userName);
+    private boolean connect(Group group) {
+        Map<String, Object> data = group.toMap();
         return FutureUtil.handleFutureGet(() -> {
             db.collection(DbPathConstants.COLLECTION_GROUP)
                     .add(data)

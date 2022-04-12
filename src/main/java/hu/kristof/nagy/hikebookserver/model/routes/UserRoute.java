@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class UserRoute extends Route {
+public final class UserRoute extends Route {
     private final String userName;
 
     public UserRoute(Route route, String userName) {

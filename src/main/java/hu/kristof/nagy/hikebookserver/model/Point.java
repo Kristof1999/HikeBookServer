@@ -2,7 +2,7 @@ package hu.kristof.nagy.hikebookserver.model;
 
 import java.util.Objects;
 
-public class Point {
+public final class Point {
     private double latitude, longitude;
     private PointType type;
     private String title;

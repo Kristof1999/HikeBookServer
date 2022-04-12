@@ -2,7 +2,7 @@ package hu.kristof.nagy.hikebookserver.model;
 
 import java.util.Objects;
 
-public class BrowseListItem {
+public final class BrowseListItem {
     private String userName, routeName;
 
     public BrowseListItem(String userName, String routeName) {

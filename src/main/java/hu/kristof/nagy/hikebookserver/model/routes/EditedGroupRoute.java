@@ -1,6 +1,6 @@
 package hu.kristof.nagy.hikebookserver.model.routes;
 
-public class EditedGroupRoute extends EditedRoute {
+public final class EditedGroupRoute extends EditedRoute {
     private GroupRoute newGroupRoute;
     private GroupRoute oldGroupRoute;
 

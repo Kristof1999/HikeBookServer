@@ -1,31 +1,31 @@
 package hu.kristof.nagy.hikebookserver.model;
 
-import com.google.cloud.firestore.DocumentReference;
+import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 
-import java.util.List;
-import java.util.Objects;
+import java.util.HashMap;
+import java.util.Map;
 
-public class Group {
-    private String name;
+public final class Group {
+    private final String groupName;
+    private final String memberName;
 
-    public Group(String name) {
-        this.name = name;
+    public Group(String groupName, String memberName) {
+        this.groupName = groupName;
+        this.memberName = memberName;
     }
 
-    public String getName() {
-        return name;
+    public Map<String, Object> toMap() {
+        var data = new HashMap<String, Object>();
+        data.put(DbPathConstants.GROUP_NAME, groupName);
+        data.put(DbPathConstants.GROUP_MEMBER_NAME, memberName);
+        return data;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Group group = (Group) o;
-        return getName().equals(group.getName());
+    public String getGroupName() {
+        return groupName;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(getName());
+    public String getMemberName() {
+        return memberName;
     }
 }

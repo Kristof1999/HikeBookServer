@@ -5,6 +5,7 @@ import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QuerySnapshot;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
+import hu.kristof.nagy.hikebookserver.model.Group;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import hu.kristof.nagy.hikebookserver.service.Util;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,17 +23,15 @@ public class GroupCreateService {
 
     public boolean createGroup(String groupName, String userName) {
         if (isNameUnique(groupName)) {
-            save(groupName, userName);
+            save(new Group(groupName, userName));
             return true;
         } else {
             throw new IllegalArgumentException("A " + groupName + " már létezik! Kérem, hogy válasszon másikat.");
         }
     }
 
-    private void save(String groupName, String memberName) {
-        var data = new HashMap<String, Object>();
-        data.put(DbPathConstants.GROUP_NAME, groupName);
-        data.put(DbPathConstants.GROUP_MEMBER_NAME, memberName);
+    private void save(Group group) {
+        Map<String, Object> data = group.toMap();
         FutureUtil.handleFutureGet(() ->
                 db.collection(DbPathConstants.COLLECTION_GROUP)
                         .add(data)
