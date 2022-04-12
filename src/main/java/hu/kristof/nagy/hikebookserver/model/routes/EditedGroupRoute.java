@@ -22,4 +22,20 @@ public final class EditedGroupRoute extends EditedRoute {
     public GroupRoute getOldRoute() {
         return oldGroupRoute;
     }
+
+    public GroupRoute getNewGroupRoute() {
+        return newGroupRoute;
+    }
+
+    public void setNewGroupRoute(GroupRoute newGroupRoute) {
+        this.newGroupRoute = newGroupRoute;
+    }
+
+    public GroupRoute getOldGroupRoute() {
+        return oldGroupRoute;
+    }
+
+    public void setOldGroupRoute(GroupRoute oldGroupRoute) {
+        this.oldGroupRoute = oldGroupRoute;
+    }
 }

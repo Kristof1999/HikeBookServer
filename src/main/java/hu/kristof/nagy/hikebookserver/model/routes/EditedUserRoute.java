@@ -22,4 +22,20 @@ public final class EditedUserRoute extends EditedRoute {
     public UserRoute getOldRoute() {
         return oldUserRoute;
     }
+
+    public UserRoute getNewUserRoute() {
+        return newUserRoute;
+    }
+
+    public void setNewUserRoute(UserRoute newUserRoute) {
+        this.newUserRoute = newUserRoute;
+    }
+
+    public UserRoute getOldUserRoute() {
+        return oldUserRoute;
+    }
+
+    public void setOldUserRoute(UserRoute oldUserRoute) {
+        this.oldUserRoute = oldUserRoute;
+    }
 }

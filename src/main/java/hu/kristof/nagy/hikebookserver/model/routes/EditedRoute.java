@@ -16,7 +16,15 @@ public class EditedRoute {
         return newRoute;
     }
 
+    public void setNewRoute(Route newRoute) {
+        this.newRoute = newRoute;
+    }
+
     public Route getOldRoute() {
         return oldRoute;
+    }
+
+    public void setOldRoute(Route oldRoute) {
+        this.oldRoute = oldRoute;
     }
 }
