@@ -1,12 +1,14 @@
 package hu.kristof.nagy.hikebookserver.service.route;
 
+import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
-import com.google.cloud.firestore.QuerySnapshot;
+import com.google.cloud.firestore.Query;
+import com.google.cloud.firestore.QueryDocumentSnapshot;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.routes.EditedRoute;
-import hu.kristof.nagy.hikebookserver.model.routes.EditedUserRoute;
 import hu.kristof.nagy.hikebookserver.model.Point;
 import hu.kristof.nagy.hikebookserver.model.routes.Route;
+import hu.kristof.nagy.hikebookserver.model.routes.UserRoute;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,7 +46,7 @@ public class RouteEditService {
                     // nothing changed, no need to save
                     return true;
                 } else {
-                    return updateUserRouteWithPointsChange(
+                    return updateRouteWithPointsChange(
                             ownerName, ownerPath, route.getNewRoute()
                     );
                 }
@@ -56,7 +58,7 @@ public class RouteEditService {
                     );
                     return true;
                 } else {
-                    return updateUserRouteWithPointsChange(
+                    return updateRouteWithPointsChange(
                             ownerName, ownerPath, route.getNewRoute()
                     );
                 }
@@ -64,21 +66,21 @@ public class RouteEditService {
         } else {
             if (oldDescription.equals(newDescription)) {
                 if (oldPoints.equals(newPoints)) {
-                    return updateUserRouteWithNameChange(
+                    return updateRouteWithNameChange(
                             ownerName, ownerPath, oldRouteName, route.getNewRoute()
                     );
                 } else {
-                    return updateUserRouteWithNameAndPointsChange(
+                    return updateRouteWithNameAndPointsChange(
                             ownerName, ownerPath, oldRouteName, route.getNewRoute()
                     );
                 }
             } else {
                 if (oldPoints.equals(newPoints)) {
-                    return updateUserRouteWithNameChange(
+                    return updateRouteWithNameChange(
                             ownerName, ownerPath, oldRouteName, route.getNewRoute()
                     );
                 } else {
-                    return updateUserRouteWithNameAndPointsChange(
+                    return updateRouteWithNameAndPointsChange(
                             ownerName, ownerPath, oldRouteName, route.getNewRoute()
                     );
                 }
@@ -86,7 +88,7 @@ public class RouteEditService {
         }
     }
 
-    private boolean updateUserRouteWithNameAndPointsChange(
+    private boolean updateRouteWithNameAndPointsChange(
             String ownerName,
             String ownerPath,
             String oldRouteName,
@@ -106,7 +108,7 @@ public class RouteEditService {
         }
     }
 
-    private boolean updateUserRouteWithNameChange(
+    private boolean updateRouteWithNameChange(
             String ownerName,
             String ownerPath,
             String oldRouteName,
@@ -122,7 +124,7 @@ public class RouteEditService {
         }
     }
 
-    private boolean updateUserRouteWithPointsChange(
+    private boolean updateRouteWithPointsChange(
             String ownerName,
             String ownerPath,
             Route route
@@ -141,35 +143,62 @@ public class RouteEditService {
             String oldRouteName,
             Route route
     ) {
-        // TODO: run as a transaction when it's a group route
-        var querySnapshot = getRouteQuerySnapshot(ownerName, ownerPath, oldRouteName);
-        String id = querySnapshot.getDocuments().get(0).getId();
-        Map<String, Object> data = route.toMap();
-        FutureUtil.handleFutureGet(() ->
-                db.collection(DbPathConstants.COLLECTION_ROUTE)
-                        .document(id)
-                        .set(data)
-                        .get() // wait for write result
-        );
+        if (route instanceof UserRoute) {
+            var queryFuture = getRouteQuery(ownerName, ownerPath, oldRouteName).get();
+            var querySnapshot = FutureUtil.handleFutureGet(queryFuture::get);
+
+            var queryDocs = querySnapshot.getDocuments();
+            if (queryDocs.size() > 1) {
+                throw new QueryException("Got more than 1 query document snapshot, but was only expecting 1. " +
+                        "Route name: " + oldRouteName + ", owner name:" + ownerName);
+            } else if (queryDocs.size() == 0) {
+                throw new QueryException("Got no query document snapshot, but was only expecting 1. " +
+                        "Route name: " + oldRouteName + ", owner name:" + ownerName);
+            } else {
+                var docRef = getDocToUpdate(queryDocs);
+                Map<String, Object> data = route.toMap();
+                FutureUtil.handleFutureGet(() ->
+                        docRef.set(data)
+                                .get() // wait for write result
+                );
+            }
+        } else {
+            var transactionFuture = db.runTransaction(transaction -> {
+                var query = getRouteQuery(ownerName, ownerPath, oldRouteName);
+                var queryFuture = transaction.get(query);
+
+                var queryDocs = queryFuture.get().getDocuments();
+                if (queryDocs.size() > 1) {
+                    throw new QueryException("Got more than 1 query document snapshot, but was only expecting 1. " +
+                            "Route name: " + oldRouteName + ", owner name:" + ownerName);
+                } else if (queryDocs.size() == 0) {
+                    throw new QueryException("Got no query document snapshot, but was only expecting 1. " +
+                            "Route name: " + oldRouteName + ", owner name:" + ownerName);
+                } else {
+                    var docRef = getDocToUpdate(queryDocs);
+                    Map<String, Object> data = route.toMap();
+                    transaction.set(docRef, data);
+                }
+                return null;
+            });
+            // wait for write to finish
+            FutureUtil.handleFutureGet(transactionFuture::get);
+        }
     }
 
-    private QuerySnapshot getRouteQuerySnapshot(
+    private DocumentReference getDocToUpdate(List<QueryDocumentSnapshot> queryDocs) {
+        String id = queryDocs.get(0).getId();
+        return db.collection(DbPathConstants.COLLECTION_ROUTE)
+                .document(id);
+    }
+
+    private Query getRouteQuery(
             String ownerName,
             String ownerPath,
-            String routeName
+            String oldRouteName
     ) {
-        var routes = db.collection(DbPathConstants.COLLECTION_ROUTE);
-        var queryFuture = routes
+        return db.collection(DbPathConstants.COLLECTION_ROUTE)
                 .whereEqualTo(ownerPath, ownerName)
-                .whereEqualTo(DbPathConstants.ROUTE_NAME, routeName)
-                .get();
-        QuerySnapshot querySnapshot = FutureUtil.handleFutureGet(queryFuture::get);
-        if (querySnapshot.isEmpty()) {
-            throw new IllegalArgumentException(
-                    "Nem létezik útvonal a következő útvonal névvel: " + routeName
-            );
-        } else {
-            return querySnapshot;
-        }
+                .whereEqualTo(DbPathConstants.ROUTE_NAME, oldRouteName);
     }
 }
