@@ -20,10 +20,7 @@ public class RouteLoadService {
     @Autowired
     private Firestore db;
 
-    public List<Route> loadRoutes(
-            String ownerName,
-            String ownerPath
-    ) {
+    public List<Route> loadRoutes(String ownerName, String ownerPath) {
         var queryFuture =  db
                 .collection(DbPathConstants.COLLECTION_ROUTE)
                 .select(ownerPath,
