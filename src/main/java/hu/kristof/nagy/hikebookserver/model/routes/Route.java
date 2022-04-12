@@ -15,6 +15,9 @@ public class Route {
     private List<Point> points;
     private String description;
 
+    public Route() {
+    }
+
     public Route(Route route) {
         this(route.getRouteName(), route.getPoints(), route.getDescription());
     }
@@ -68,5 +71,14 @@ public class Route {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Override
+    public String toString() {
+        return "Route{" +
+                "routeName='" + routeName + '\'' +
+                ", points=" + points +
+                ", description='" + description + '\'' +
+                '}';
     }
 }

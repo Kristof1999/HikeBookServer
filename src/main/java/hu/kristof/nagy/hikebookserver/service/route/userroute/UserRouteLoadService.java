@@ -9,6 +9,8 @@ import hu.kristof.nagy.hikebookserver.model.routes.UserRoute;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import hu.kristof.nagy.hikebookserver.service.route.QueryException;
 import hu.kristof.nagy.hikebookserver.service.route.RouteLoadService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,9 +27,7 @@ public class UserRouteLoadService {
     @Autowired
     private RouteLoadService routeLoadService;
 
-    public List<UserRoute> loadUserRoutes(
-            String userName
-    ) {
+    public List<UserRoute> loadUserRoutes(String userName) {
         return routeLoadService.loadRoutes(userName, DbPathConstants.ROUTE_USER_NAME)
                 .stream().map(route ->
                         new UserRoute(route, userName)
@@ -35,10 +35,7 @@ public class UserRouteLoadService {
                 .collect(Collectors.toList());
     }
 
-    public UserRoute loadUserRoute(
-            String userName,
-            String routeName
-    ) {
+    public UserRoute loadUserRoute(String userName, String routeName) {
         var queryFuture = db
                 .collection(DbPathConstants.COLLECTION_ROUTE)
                 .select(DbPathConstants.ROUTE_POINTS,

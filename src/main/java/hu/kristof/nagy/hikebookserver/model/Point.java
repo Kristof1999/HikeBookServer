@@ -7,6 +7,9 @@ public final class Point {
     private PointType type;
     private String title;
 
+    public Point() {
+    }
+
     public Point(double latitude, double longitude, PointType type, String title) {
         this.latitude = latitude;
         this.longitude = longitude;

@@ -9,7 +9,10 @@ import java.util.Map;
 import java.util.Objects;
 
 public final class GroupRoute extends Route {
-    private final String groupName;
+    private String groupName;
+
+    public GroupRoute() {
+    }
 
     public GroupRoute(Route route, String groupName) {
         this(route.getRouteName(), route.getPoints(), route.getDescription(), groupName);

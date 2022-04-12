@@ -9,6 +9,8 @@ public final class User {
     private String password;
     private double avgSpeed;
 
+    public User() {}
+
     public User(String name, String password) {
         this(name, password, 0.0);
     }

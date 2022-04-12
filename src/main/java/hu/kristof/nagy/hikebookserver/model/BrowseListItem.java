@@ -5,6 +5,9 @@ import java.util.Objects;
 public final class BrowseListItem {
     private String userName, routeName;
 
+    public BrowseListItem() {
+    }
+
     public BrowseListItem(String userName, String routeName) {
         this.userName = userName;
         this.routeName = routeName;

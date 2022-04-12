@@ -6,8 +6,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public final class Group {
-    private final String groupName;
-    private final String memberName;
+    private String groupName;
+    private String memberName;
+
+    public Group() {
+    }
 
     public Group(String groupName, String memberName) {
         this.groupName = groupName;
