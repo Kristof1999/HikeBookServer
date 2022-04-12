@@ -1,7 +1,11 @@
 package hu.kristof.nagy.hikebookserver.model.routes;
 
 public class EditedRoute {
-    private Route newRoute, oldRoute;
+    private Route newRoute;
+    private Route oldRoute;
+
+    public EditedRoute() {
+    }
 
     public EditedRoute(Route newRoute, Route oldRoute) {
         this.newRoute = newRoute;
@@ -12,15 +16,7 @@ public class EditedRoute {
         return newRoute;
     }
 
-    public void setNewRoute(Route newRoute) {
-        this.newRoute = newRoute;
-    }
-
     public Route getOldRoute() {
         return oldRoute;
-    }
-
-    public void setOldRoute(Route oldRoute) {
-        this.oldRoute = oldRoute;
     }
 }
