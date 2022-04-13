@@ -16,6 +16,7 @@ public class GroupCreateService {
     private Firestore db;
 
     public boolean createGroup(String groupName, String userName) {
+        // TODO: run as transaction
         if (isNameUnique(groupName)) {
             save(new Group(groupName, userName));
             return true;

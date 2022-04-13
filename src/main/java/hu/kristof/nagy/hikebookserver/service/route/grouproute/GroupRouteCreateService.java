@@ -19,7 +19,7 @@ public class GroupRouteCreateService {
     public boolean createGroupRoute(GroupRoute route) {
         var transactionFuture = db.runTransaction(transaction -> {
             if (RouteServiceUtils.routeNameExistsForOwner(
-                    transaction, db, route.getGroupName(), route.getGroupName(), DbPathConstants.ROUTE_GROUP_NAME
+                    transaction, db, route.getGroupName(), route.getRouteName(), DbPathConstants.ROUTE_GROUP_NAME
             )) {
                 throw new IllegalArgumentException(
                         RouteServiceUtils.getRouteNameNotUniqueString(route.getRouteName())
