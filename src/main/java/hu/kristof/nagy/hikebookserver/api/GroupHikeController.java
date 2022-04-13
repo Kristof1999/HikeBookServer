@@ -2,6 +2,7 @@ package hu.kristof.nagy.hikebookserver.api;
 
 import hu.kristof.nagy.hikebookserver.model.GroupHikeCreateHelper;
 import hu.kristof.nagy.hikebookserver.model.routes.Route;
+import hu.kristof.nagy.hikebookserver.service.grouphike.GroupHikeCreateService;
 import hu.kristof.nagy.hikebookserver.service.grouphike.GroupHikeListService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +16,9 @@ public class GroupHikeController {
 
     @Autowired
     private GroupHikeListService groupHikeListService;
+
+    @Autowired
+    private GroupHikeCreateService groupHikeCreateService;
 
     @GetMapping("{userName}/{isConnectedPage}")
     public List<String> listGroupHikes(
@@ -30,6 +34,6 @@ public class GroupHikeController {
             @PathVariable String groupHikeName,
             @RequestBody GroupHikeCreateHelper helper
     ) {
-        return true;
+        return groupHikeCreateService.createGroupHike(userName, groupHikeName, helper);
     }
 }

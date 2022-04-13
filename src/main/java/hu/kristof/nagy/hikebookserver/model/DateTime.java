@@ -1,5 +1,10 @@
 package hu.kristof.nagy.hikebookserver.model;
 
+import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class DateTime {
     private int year, month, dayOfMonth, hourOfDay, minute;
 
@@ -12,6 +17,16 @@ public class DateTime {
         this.dayOfMonth = dayOfMonth;
         this.hourOfDay = hourOfDay;
         this.minute = minute;
+    }
+
+    public Map<String, Object> toMap() {
+        var data = new HashMap<String, Object>();
+        data.put(DbPathConstants.GROUP_HIKE_YEAR, year);
+        data.put(DbPathConstants.GROUP_HIKE_MONTH, month);
+        data.put(DbPathConstants.GROUP_HIKE_DAY_OF_MONTH, dayOfMonth);
+        data.put(DbPathConstants.GROUP_HIKE_HOUR_OF_DAY, hourOfDay);
+        data.put(DbPathConstants.GROUP_HIKE_MINUTE, minute);
+        return data;
     }
 
     public int getYear() {
