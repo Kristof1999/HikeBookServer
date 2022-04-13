@@ -1,19 +1,18 @@
-package hu.kristof.nagy.hikebookserver.service.route;
+package hu.kristof.nagy.hikebookserver.service.route.userroute;
 
 import com.google.cloud.firestore.Firestore;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
-import hu.kristof.nagy.hikebookserver.model.User;
-import hu.kristof.nagy.hikebookserver.model.routes.GroupRoute;
 import hu.kristof.nagy.hikebookserver.model.routes.Route;
 import hu.kristof.nagy.hikebookserver.model.routes.UserRoute;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
+import hu.kristof.nagy.hikebookserver.service.route.RouteServiceUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
 @Service
-public class RouteCreateService {
+public class UserRouteCreateService {
 
     @Autowired
     private Firestore db;
@@ -25,13 +24,17 @@ public class RouteCreateService {
      * @param route the created route
      * @return true if route is unique
      */
-    public boolean createRoute(Route route, String ownerName, String ownerPath) {
-        if (RouteServiceUtils.routeNameExists(db, ownerName, route.getRouteName(), ownerPath)) {
+    public boolean createUserRoute(UserRoute route) {
+        if (RouteServiceUtils.routeNameExistsForOwner(
+                db, route.getUserName(), route.getRouteName(), DbPathConstants.ROUTE_USER_NAME)
+        ) {
             throw new IllegalArgumentException(
                     RouteServiceUtils.getRouteNameNotUniqueString(route.getRouteName())
             );
         } else {
-            if (RouteServiceUtils.arePointsUnique(db, ownerName, route.getPoints(), ownerPath)) {
+            if (RouteServiceUtils.arePointsUniqueForOwner(
+                    db, route.getUserName(), route.getPoints(), DbPathConstants.ROUTE_USER_NAME)
+            ) {
                 Map<String, Object> data = route.toMap();
                 FutureUtil.handleFutureGet(() ->
                         db.collection(DbPathConstants.COLLECTION_ROUTE)

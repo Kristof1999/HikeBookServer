@@ -4,10 +4,10 @@ import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.BrowseListItem;
 import hu.kristof.nagy.hikebookserver.model.routes.EditedUserRoute;
 import hu.kristof.nagy.hikebookserver.model.routes.UserRoute;
+import hu.kristof.nagy.hikebookserver.service.route.userroute.UserRouteCreateService;
+import hu.kristof.nagy.hikebookserver.service.route.userroute.UserRouteDeleteService;
+import hu.kristof.nagy.hikebookserver.service.route.userroute.UserRouteEditService;
 import hu.kristof.nagy.hikebookserver.service.route.userroute.UserRouteLoadService;
-import hu.kristof.nagy.hikebookserver.service.route.RouteCreateService;
-import hu.kristof.nagy.hikebookserver.service.route.RouteDeleteService;
-import hu.kristof.nagy.hikebookserver.service.route.RouteEditService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,16 +18,16 @@ import java.util.List;
 public class UserRouteController {
 
     @Autowired
-    private RouteCreateService routeCreate;
+    private UserRouteCreateService userRouteCreateService;
 
     @Autowired
     private UserRouteLoadService userRouteLoadService;
 
     @Autowired
-    private RouteDeleteService routeDelete;
+    private UserRouteDeleteService routeDelete;
 
     @Autowired
-    private RouteEditService routeEdit;
+    private UserRouteEditService routeEdit;
 
     @PutMapping("{userName}/{routeName}")
     public boolean createUserRoute(
@@ -35,7 +35,7 @@ public class UserRouteController {
             @PathVariable String routeName,
             @RequestBody UserRoute userRoute
     ) {
-        return routeCreate.createRoute(userRoute, userName, DbPathConstants.ROUTE_USER_NAME);
+        return userRouteCreateService.createUserRoute(userRoute);
     }
 
     @GetMapping("{userName}")
@@ -58,7 +58,7 @@ public class UserRouteController {
             @PathVariable String userName,
             @PathVariable String routeName
     ) {
-        return routeDelete.deleteRoute(userName, DbPathConstants.ROUTE_USER_NAME, routeName);
+        return routeDelete.deleteUserRoute(userName, routeName);
     }
 
     @PutMapping("edit/{userName}/{oldRouteName}")

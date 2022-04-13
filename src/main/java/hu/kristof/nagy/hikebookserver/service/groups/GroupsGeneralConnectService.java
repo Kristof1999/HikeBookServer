@@ -46,6 +46,7 @@ public class GroupsGeneralConnectService {
                 .get();
         return FutureUtil.handleFutureGet(() -> {
             var queryDocs = queryFuture.get().getDocuments();
+            // TODO: refactor with lambda, like with FutureUtil
             if (queryDocs.size() > 1) {
                 throw new QueryException("Got more than 1 query document snapshot, but was only expecting 1. " +
                         "Group name: " + groupName + ", member name: " + userName);
