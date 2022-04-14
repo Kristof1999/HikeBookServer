@@ -54,7 +54,7 @@ public class GroupHikeController {
         return groupHikeParticipantsListService.listParticipants(groupHikeName);
     }
 
-    @PutMapping("groups/{groupHikeName}/{userName}/{isConnectedPage}")
+    @PutMapping("{groupHikeName}/{userName}/{isConnectedPage}")
     public boolean generalGroupHikeConnect(
             @PathVariable String groupHikeName,
             @PathVariable String userName,
