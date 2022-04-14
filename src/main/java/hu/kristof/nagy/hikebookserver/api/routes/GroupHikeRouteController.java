@@ -13,7 +13,7 @@ public class GroupHikeRouteController {
     @Autowired
     private GroupHikeRouteLoadService groupHikeRouteLoadService;
 
-    @GetMapping("groupHike/{groupHikeName}")
+    @GetMapping("groupHike/routes/{groupHikeName}")
     public Route loadGroupHikeRoute(
             @PathVariable String groupHikeName
     ) {
