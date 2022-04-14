@@ -68,4 +68,9 @@ public class DateTime {
     public void setMinute(int minute) {
         this.minute = minute;
     }
+
+    @Override
+    public String toString() {
+        return year + "-" + month + "-" + dayOfMonth + ", " + hourOfDay + ":" + minute;
+    }
 }

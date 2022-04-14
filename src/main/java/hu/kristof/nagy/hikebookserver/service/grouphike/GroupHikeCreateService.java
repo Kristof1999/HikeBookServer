@@ -26,7 +26,7 @@ public class GroupHikeCreateService {
         var transactionFuture = db.runTransaction(transaction -> {
             if (isGroupHikeNameUnique(transaction, groupHikeName)) {
                 var groupHikeRoute = new GroupHikeRoute(helper.getRoute(), groupHikeName);
-                createGroupHikeRoute(transaction, groupHikeName, groupHikeRoute);
+                createGroupHikeRoute(transaction, groupHikeName, groupHikeRoute, helper.getDateTime());
                 createGroupHike(transaction, userName, groupHikeName, helper.getDateTime());
             } else {
                 throw new IllegalArgumentException("A csoport túra neve nem egyedi! Kérem, hogy válasszon másik nevet.");
@@ -54,7 +54,8 @@ public class GroupHikeCreateService {
     ) {
         Map<String, Object> data = dateTime.toMap();
         data.put(DbPathConstants.GROUP_HIKE_PARTICIPANT_NAME, participantName);
-        data.put(DbPathConstants.GROUP_NAME, groupHikeName);
+        data.put(DbPathConstants.GROUP_HIKE_NAME, groupHikeName);
+        data.put(DbPathConstants.GROUP_HIKE_DATE_TIME, dateTime.toString());
         var docRef = db.collection(DbPathConstants.COLLECTION_GROUP_HIKE)
                 .document();
         transaction.create(docRef, data);
@@ -63,7 +64,8 @@ public class GroupHikeCreateService {
     private void createGroupHikeRoute(
             Transaction transaction,
             String groupHikeName,
-            GroupHikeRoute groupHikeRoute
+            GroupHikeRoute groupHikeRoute,
+            DateTime dateTime
     ) {
         if (RouteServiceUtils.routeNameExistsForOwner(
                 transaction, db, groupHikeName, groupHikeRoute.getRouteName(), DbPathConstants.ROUTE_GROUP_HIKE_NAME
@@ -76,6 +78,9 @@ public class GroupHikeCreateService {
                     transaction, db, groupHikeName, groupHikeRoute.getPoints(), DbPathConstants.ROUTE_GROUP_HIKE_NAME
             )) {
                 Map<String, Object> data = groupHikeRoute.toMap();
+                var description = (String) data.get(DbPathConstants.ROUTE_DESCRIPTION);
+                description = dateTime.toString() + "/n" + description;
+                data.put(DbPathConstants.ROUTE_DESCRIPTION, description);
                 var docRef = db
                         .collection(DbPathConstants.COLLECTION_ROUTE)
                         .document();

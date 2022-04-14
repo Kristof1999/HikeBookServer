@@ -22,6 +22,7 @@ public class DbPathConstants {
 
     public static final String GROUP_HIKE_NAME = "name";
     public static final String GROUP_HIKE_PARTICIPANT_NAME = "participantName";
+    public static final String GROUP_HIKE_DATE_TIME = "dateTime";
     public static final String GROUP_HIKE_YEAR = "year";
     public static final String GROUP_HIKE_MONTH = "month";
     public static final String GROUP_HIKE_DAY_OF_MONTH = "dayOfMonth";
