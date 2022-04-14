@@ -79,7 +79,7 @@ public class GroupHikeCreateService {
             )) {
                 Map<String, Object> data = groupHikeRoute.toMap();
                 var description = (String) data.get(DbPathConstants.ROUTE_DESCRIPTION);
-                description = dateTime.toString() + "/n" + description;
+                description = dateTime.toString() + "\n" + description;
                 data.put(DbPathConstants.ROUTE_DESCRIPTION, description);
                 var docRef = db
                         .collection(DbPathConstants.COLLECTION_ROUTE)
