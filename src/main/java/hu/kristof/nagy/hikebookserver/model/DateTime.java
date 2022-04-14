@@ -1,9 +1,12 @@
 package hu.kristof.nagy.hikebookserver.model;
 
+import com.google.cloud.firestore.DocumentSnapshot;
+import com.google.cloud.firestore.QueryDocumentSnapshot;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class DateTime {
     private int year, month, dayOfMonth, hourOfDay, minute;
@@ -27,6 +30,25 @@ public class DateTime {
         data.put(DbPathConstants.GROUP_HIKE_HOUR_OF_DAY, hourOfDay);
         data.put(DbPathConstants.GROUP_HIKE_MINUTE, minute);
         return data;
+    }
+
+    public static DateTime from(DocumentSnapshot documentSnapshot) {
+        var year = Objects.requireNonNull(
+                documentSnapshot.getLong(DbPathConstants.GROUP_HIKE_YEAR)
+        ).intValue();
+        var month = Objects.requireNonNull(
+                documentSnapshot.getLong(DbPathConstants.GROUP_HIKE_MONTH)
+        ).intValue();
+        var dayOfMonth = Objects.requireNonNull(
+                documentSnapshot.getLong(DbPathConstants.GROUP_HIKE_DAY_OF_MONTH)
+        ).intValue();
+        var hourOfDay = Objects.requireNonNull(
+                documentSnapshot.getLong(DbPathConstants.GROUP_HIKE_HOUR_OF_DAY)
+        ).intValue();
+        var minute = Objects.requireNonNull(
+                documentSnapshot.getLong(DbPathConstants.GROUP_HIKE_MINUTE)
+        ).intValue();
+        return new DateTime(year, month, dayOfMonth, hourOfDay, minute);
     }
 
     public int getYear() {

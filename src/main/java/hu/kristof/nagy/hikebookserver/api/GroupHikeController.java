@@ -2,6 +2,7 @@ package hu.kristof.nagy.hikebookserver.api;
 
 import hu.kristof.nagy.hikebookserver.model.DateTime;
 import hu.kristof.nagy.hikebookserver.model.GroupHikeCreateHelper;
+import hu.kristof.nagy.hikebookserver.model.GroupHikeListHelper;
 import hu.kristof.nagy.hikebookserver.model.routes.Route;
 import hu.kristof.nagy.hikebookserver.service.grouphike.GroupHikeCreateService;
 import hu.kristof.nagy.hikebookserver.service.grouphike.GroupHikeGeneralConnectService;
@@ -30,7 +31,7 @@ public class GroupHikeController {
     private GroupHikeGeneralConnectService groupHikeGeneralConnectService;
 
     @GetMapping("{userName}/{isConnectedPage}")
-    public List<String> listGroupHikes(
+    public List<GroupHikeListHelper> listGroupHikes(
             @PathVariable String userName,
             @PathVariable boolean isConnectedPage
     ) {
