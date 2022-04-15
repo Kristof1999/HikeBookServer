@@ -24,6 +24,7 @@ public class LoginService {
      * @return true if login was successful
      */
     public boolean loginUser(User user) {
+        // TODO: introduce new errors: no such user, and: password is incorrect
         var queryFuture = db
                 .collection(DbPathConstants.COLLECTION_USER)
                 .select(DbPathConstants.USER_NAME, DbPathConstants.USER_PASSWORD)
