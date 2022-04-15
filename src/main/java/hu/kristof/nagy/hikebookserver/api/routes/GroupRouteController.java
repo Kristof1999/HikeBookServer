@@ -3,6 +3,7 @@ package hu.kristof.nagy.hikebookserver.api.routes;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.routes.EditedGroupRoute;
 import hu.kristof.nagy.hikebookserver.model.routes.GroupRoute;
+import hu.kristof.nagy.hikebookserver.model.routes.UserRoute;
 import hu.kristof.nagy.hikebookserver.service.route.grouproute.GroupRouteCreateService;
 import hu.kristof.nagy.hikebookserver.service.route.grouproute.GroupRouteDeleteService;
 import hu.kristof.nagy.hikebookserver.service.route.grouproute.GroupRouteEditService;
@@ -42,6 +43,14 @@ public class GroupRouteController {
             @PathVariable String groupName
     ) {
         return groupRouteLoadService.loadGroupRoutes(groupName);
+    }
+
+    @GetMapping("{groupName}/{routeName}")
+    public GroupRoute loadUserRoute(
+            @PathVariable String groupName,
+            @PathVariable String routeName
+    ) {
+        return groupRouteLoadService.loadGroupRoute(groupName, routeName);
     }
 
     @DeleteMapping("{groupName}/{routeName}")

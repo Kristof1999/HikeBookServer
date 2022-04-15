@@ -1,7 +1,12 @@
 package hu.kristof.nagy.hikebookserver.service.route.grouproute;
 
+import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.QueryDocumentSnapshot;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.routes.GroupRoute;
+import hu.kristof.nagy.hikebookserver.model.routes.UserRoute;
+import hu.kristof.nagy.hikebookserver.service.FutureUtil;
+import hu.kristof.nagy.hikebookserver.service.route.QueryException;
 import hu.kristof.nagy.hikebookserver.service.route.RouteLoadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,6 +17,9 @@ import java.util.stream.Collectors;
 @Service
 public class GroupRouteLoadService {
     @Autowired
+    private Firestore db;
+
+    @Autowired
     private RouteLoadService routeLoadService;
 
     public List<GroupRoute> loadGroupRoutes(String groupName) {
@@ -19,5 +27,29 @@ public class GroupRouteLoadService {
                 .stream()
                 .map(route -> new GroupRoute(route, groupName))
                 .collect(Collectors.toList());
+    }
+
+    public GroupRoute loadGroupRoute(String groupName, String routeName) {
+        var queryFuture = db
+                .collection(DbPathConstants.COLLECTION_ROUTE)
+                .select(DbPathConstants.ROUTE_POINTS,
+                        DbPathConstants.ROUTE_NAME,
+                        DbPathConstants.ROUTE_GROUP_NAME,
+                        DbPathConstants.ROUTE_DESCRIPTION)
+                .whereEqualTo(DbPathConstants.ROUTE_GROUP_NAME, groupName)
+                .whereEqualTo(DbPathConstants.ROUTE_NAME, routeName)
+                .get();
+
+        QueryDocumentSnapshot queryDocumentSnapshot = FutureUtil.handleFutureGet(() -> {
+            var queryDocs = queryFuture.get().getDocuments();
+            if (queryDocs.size() > 1) {
+                throw new QueryException("Got more than one query result, when only expecting one.");
+            } else if (queryDocs.size() == 0) {
+                throw new QueryException("Got more no query result, when only expecting one.");
+            } else {
+                return queryDocs.get(0);
+            }
+        });
+        return GroupRoute.from(queryDocumentSnapshot);
     }
 }
