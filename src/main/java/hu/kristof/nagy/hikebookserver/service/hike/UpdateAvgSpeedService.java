@@ -1,15 +1,14 @@
 package hu.kristof.nagy.hikebookserver.service.hike;
 
-import com.google.api.core.ApiFuture;
-import com.google.cloud.firestore.*;
+import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.QueryDocumentSnapshot;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
-import hu.kristof.nagy.hikebookserver.service.route.QueryException;
+import hu.kristof.nagy.hikebookserver.service.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
-import java.util.concurrent.ExecutionException;
 
 @Service
 public class UpdateAvgSpeedService {
@@ -27,15 +26,9 @@ public class UpdateAvgSpeedService {
 
         QueryDocumentSnapshot userQueryDoc = FutureUtil.handleFutureGet(() -> {
             var queryDocs = queryFuture.get().getDocuments();
-            if (queryDocs.size() > 1) {
-                throw new QueryException("Got more than 1 query document snapshot, but was expecting only 1. " +
-                        "User name: " + userName);
-            } else if (queryDocs.size() == 0) {
-                throw new QueryException("Got no query document snapshot, but was expecting only 1. " +
-                        "User name: " + userName);
-            } else {
-                return queryDocs.get(0);
-            }
+            return Util.handleListSize(queryDocs, documentSnapshots ->
+                    (QueryDocumentSnapshot) documentSnapshots.get(0)
+            );
         });
         double oldAvgSpeed = Objects.requireNonNull(
                 userQueryDoc.getDouble(DbPathConstants.USER_AVG_SPEED)

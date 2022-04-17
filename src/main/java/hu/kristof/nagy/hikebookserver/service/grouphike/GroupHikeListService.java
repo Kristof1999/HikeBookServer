@@ -1,9 +1,7 @@
 package hu.kristof.nagy.hikebookserver.service.grouphike;
 
 import com.google.cloud.firestore.Firestore;
-import com.google.cloud.firestore.QueryDocumentSnapshot;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
-import hu.kristof.nagy.hikebookserver.model.DateTime;
 import hu.kristof.nagy.hikebookserver.model.GroupHikeListHelper;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import org.springframework.beans.factory.annotation.Autowired;

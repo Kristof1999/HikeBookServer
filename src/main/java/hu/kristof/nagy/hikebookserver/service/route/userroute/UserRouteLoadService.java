@@ -7,6 +7,7 @@ import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.BrowseListItem;
 import hu.kristof.nagy.hikebookserver.model.routes.UserRoute;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
+import hu.kristof.nagy.hikebookserver.service.Util;
 import hu.kristof.nagy.hikebookserver.service.route.QueryException;
 import hu.kristof.nagy.hikebookserver.service.route.RouteLoadService;
 import org.slf4j.Logger;
@@ -47,15 +48,9 @@ public class UserRouteLoadService {
 
         QueryDocumentSnapshot queryDocumentSnapshot = FutureUtil.handleFutureGet(() -> {
             var queryDocs = queryFuture.get().getDocuments();
-            if (queryDocs.size() > 1) {
-                throw new QueryException("Got more than one query result, when only expecting one. " +
-                        "User name:" + userName + ", route name:" + routeName);
-            } else if (queryDocs.size() == 0) {
-                throw new QueryException("Got more no query result, when only expecting one. " +
-                        "User name:" + userName + ", route name:" + routeName);
-            } else {
-                return queryDocs.get(0);
-            }
+            return Util.handleListSize(queryDocs, documentSnapshots ->
+                    (QueryDocumentSnapshot) documentSnapshots.get(0)
+            );
         });
         return UserRoute.from(queryDocumentSnapshot);
     }

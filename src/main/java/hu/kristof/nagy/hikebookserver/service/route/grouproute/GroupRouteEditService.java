@@ -5,6 +5,7 @@ import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.Point;
 import hu.kristof.nagy.hikebookserver.model.routes.*;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
+import hu.kristof.nagy.hikebookserver.service.Util;
 import hu.kristof.nagy.hikebookserver.service.route.QueryException;
 import hu.kristof.nagy.hikebookserver.service.route.RouteServiceUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -144,17 +145,11 @@ public class GroupRouteEditService {
         var queryDocs = FutureUtil.handleFutureGet(() ->
                 queryFuture.get().getDocuments()
         );
-        if (queryDocs.size() > 1) {
-            throw new QueryException("Got more than 1 query document snapshot, but was only expecting 1. " +
-                    "Route name: " + oldRouteName + ", owner name:" + groupRoute.getGroupName());
-        } else if (queryDocs.size() == 0) {
-            throw new QueryException("Got no query document snapshot, but was only expecting 1. " +
-                    "Route name: " + oldRouteName + ", owner name:" + groupRoute.getGroupName());
-        } else {
+        Util.handleListSize(queryDocs, documentSnapshots -> {
             var docRef = getDocToUpdate(queryDocs);
             Map<String, Object> data = groupRoute.toMap();
-            transaction.set(docRef, data);
-        }
+            return transaction.set(docRef, data);
+        });
     }
 
     private DocumentReference getDocToUpdate(List<QueryDocumentSnapshot> queryDocs) {

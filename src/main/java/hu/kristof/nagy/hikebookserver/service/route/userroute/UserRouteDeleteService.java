@@ -4,7 +4,7 @@ import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QuerySnapshot;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
-import hu.kristof.nagy.hikebookserver.service.route.QueryException;
+import hu.kristof.nagy.hikebookserver.service.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,20 +32,15 @@ public class UserRouteDeleteService {
             return false;
         } else {
             var queryDocs = querySnapshot.getDocuments();
-            if (queryDocs.size() > 1) {
-                throw new QueryException("Got more than 1 query document snapshot, but was only expecting 1. " +
-                        "Route name: " + routeName + ", owner name:" + userName);
-            } else if (queryDocs.size() == 0) {
-                throw new QueryException("Got no query document snapshot, but was only expecting 1. " +
-                        "Route name: " + routeName + ", owner name:" + userName);
-            } else {
-                String id = queryDocs.get(0).getId();
+            return Util.handleListSize(queryDocs, documentSnapshots -> {
+                String id = documentSnapshots.get(0).getId();
                 FutureUtil.handleFutureGet(() ->
                         routes.document(id)
                                 .delete()
                                 .get() // wait for write result
                 );
                 return true;
-            }
-        }    }
+            });
+        }
+    }
 }

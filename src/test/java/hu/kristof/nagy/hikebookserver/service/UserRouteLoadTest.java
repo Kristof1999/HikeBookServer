@@ -1,11 +1,12 @@
 package hu.kristof.nagy.hikebookserver.service;
 
 import com.google.cloud.firestore.Firestore;
+import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.Point;
 import hu.kristof.nagy.hikebookserver.model.PointType;
 import hu.kristof.nagy.hikebookserver.model.routes.Route;
-import hu.kristof.nagy.hikebookserver.model.RouteType;
-import hu.kristof.nagy.hikebookserver.service.route.RouteCreateService;
+import hu.kristof.nagy.hikebookserver.model.routes.UserRoute;
+import hu.kristof.nagy.hikebookserver.service.route.userroute.UserRouteCreateService;
 import hu.kristof.nagy.hikebookserver.service.route.RouteLoadService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,7 +24,7 @@ public class UserRouteLoadTest {
     private RouteLoadService routeLoadService;
 
     @Autowired
-    private RouteCreateService routeCreateService;
+    private UserRouteCreateService userRouteCreateService;
 
     @Autowired
     private Firestore db;
@@ -35,7 +36,7 @@ public class UserRouteLoadTest {
 
     @Test
     void testLoadRoutesForUserEmpty() {
-        List<Route> routes = routeLoadService.loadRoutes("asd", RouteType.USER);
+        List<Route> routes = routeLoadService.loadRoutes("asd", DbPathConstants.ROUTE_USER_NAME);
 
         assertEquals(0, routes.size());
     }
@@ -49,11 +50,11 @@ public class UserRouteLoadTest {
         points.add(p2);
         String userName = "asd";
         String routeName = "route";
-        routeCreateService.createRoute(
-                new Route(userName, RouteType.USER,  routeName, points, "")
+        userRouteCreateService.createUserRoute(
+                new UserRoute(routeName, points, "", userName)
         );
 
-        List<Route> routes = routeLoadService.loadRoutes("asd", RouteType.USER);
+        List<Route> routes = routeLoadService.loadRoutes("asd", DbPathConstants.ROUTE_USER_NAME);
 
         assertEquals(routeName, routes.get(0).getRouteName());
         assertEquals("", routes.get(0).getDescription());

@@ -5,7 +5,7 @@ import com.google.cloud.firestore.Transaction;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.DateTime;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
-import hu.kristof.nagy.hikebookserver.service.route.QueryException;
+import hu.kristof.nagy.hikebookserver.service.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -52,24 +52,17 @@ public class GroupHikeGeneralConnectService {
             var queryDocs = FutureUtil.handleFutureGet(() ->
                     queryFuture.get().getDocuments()
             );
-            // TODO: refactor with lambda, like with FutureUtil
-            if (queryDocs.size() > 1) {
-                throw new QueryException("Got more than 1 query document snapshot, but was only expecting 1. " +
-                        "Group name: " + groupHikeName + ", member name: " + userName);
-            } else if (queryDocs.size() == 0) {
-                throw new QueryException("Got no query document snapshot, but was only expecting 1. " +
-                        "Group name: " + groupHikeName + ", member name: " + userName);
-            } else {
+            return Util.handleListSize(queryDocs, documentSnapshots -> {
                 if (participantNumber(transaction, groupHikeName) == 1) {
                     deleteGroupHikeRoute(transaction, groupHikeName);
                 }
 
-                String id = queryDocs.get(0).getId();
+                String id = documentSnapshots.get(0).getId();
                 var docRef = db.collection(DbPathConstants.COLLECTION_GROUP_HIKE)
                         .document(id);
                 transaction.delete(docRef);
                 return true;
-            }
+            });
         });
         return FutureUtil.handleFutureGet(transactionFuture::get);
     }
@@ -79,16 +72,12 @@ public class GroupHikeGeneralConnectService {
                 .whereEqualTo(DbPathConstants.ROUTE_GROUP_HIKE_NAME, groupHikeName);
         var queryFuture = transaction.get(query);
         var queryDocs = FutureUtil.handleFutureGet(() -> queryFuture.get().getDocuments());
-        if (queryDocs.size() > 1) {
-            throw new QueryException("Got more than 1 query document snapshot, but was only expecting 1.");
-        } else if (queryDocs.size() == 0) {
-            throw new QueryException("Got no query document snapshot, but was only expecting 1.");
-        } else {
-            String id = queryDocs.get(0).getId();
+        Util.handleListSize(queryDocs, documentSnapshots -> {
+            String id = documentSnapshots.get(0).getId();
             var docRef = db.collection(DbPathConstants.COLLECTION_ROUTE)
                     .document(id);
-            transaction.delete(docRef);
-        }
+            return transaction.delete(docRef);
+        });
     }
 
     private int participantNumber(Transaction transaction, String groupHikeName) {
