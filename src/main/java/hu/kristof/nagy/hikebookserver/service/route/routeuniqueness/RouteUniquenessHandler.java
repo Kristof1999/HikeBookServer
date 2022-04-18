@@ -9,19 +9,26 @@ import hu.kristof.nagy.hikebookserver.service.route.RouteServiceUtils;
 import java.util.List;
 
 public abstract class RouteUniquenessHandler {
+    protected String ownerName;
+    protected String ownerPath;
     protected String routeName;
     protected List<Point> points;
     protected Firestore db;
 
-    public abstract String getOwnerName();
-    public abstract String getOwnerPath();
+    public String getOwnerName() {
+        return ownerName;
+    }
+
+    public String getOwnerPath() {
+        return ownerPath;
+    }
 
     public void handleRouteUniqueness() {
-        handlePointUniqueness();
+        handlePointsUniqueness();
         handleRouteNameUniqueness();
     }
 
-    public void handlePointUniqueness() {
+    public void handlePointsUniqueness() {
         if (!arePointsUnique())
             throw new IllegalArgumentException(RouteServiceUtils.POINTS_NOT_UNIQE);
     }
@@ -36,7 +43,7 @@ public abstract class RouteUniquenessHandler {
     protected abstract boolean arePointsUnique();
 
     protected Query arePointsUniqueQuery() {
-        return  db.collection(DbPathConstants.COLLECTION_ROUTE)
+        return db.collection(DbPathConstants.COLLECTION_ROUTE)
                 .whereEqualTo(getOwnerPath(), getOwnerName())
                 .whereEqualTo(DbPathConstants.ROUTE_POINTS, points);
     }

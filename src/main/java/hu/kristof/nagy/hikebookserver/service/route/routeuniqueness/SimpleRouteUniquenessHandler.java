@@ -1,35 +1,24 @@
 package hu.kristof.nagy.hikebookserver.service.route.routeuniqueness;
 
 import com.google.cloud.firestore.Firestore;
-import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.Point;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 
 import java.util.List;
 
-public class UserRouteUniquenessHandler extends RouteUniquenessHandler {
-    private final String userName;
-
-    public UserRouteUniquenessHandler(
+public class SimpleRouteUniquenessHandler extends RouteUniquenessHandler {
+    public SimpleRouteUniquenessHandler(
             Firestore db,
-            String userName,
+            String ownerName,
+            String ownerPath,
             String routeName,
             List<Point> points
     ) {
         this.db = db;
-        this.userName = userName;
+        this.ownerName = ownerName;
+        this.ownerPath = ownerPath;
         this.routeName = routeName;
         this.points = points;
-    }
-
-    @Override
-    public String getOwnerName() {
-        return userName;
-    }
-
-    @Override
-    public String getOwnerPath() {
-        return DbPathConstants.ROUTE_USER_NAME;
     }
 
     @Override

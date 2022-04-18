@@ -10,7 +10,7 @@ import hu.kristof.nagy.hikebookserver.model.routes.Route;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import hu.kristof.nagy.hikebookserver.service.Util;
 import hu.kristof.nagy.hikebookserver.service.route.RouteEdit;
-import hu.kristof.nagy.hikebookserver.service.route.routeuniqueness.GroupRouteUniquenessHandler;
+import hu.kristof.nagy.hikebookserver.service.route.routeuniqueness.TransactionRouteUniquenessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,7 +30,7 @@ public class GroupRouteEditService implements RouteEdit {
         String newDescription = route.getNewRoute().getDescription();
         List<Point> oldPoints = route.getOldRoute().getPoints();
         List<Point> newPoints = route.getNewRoute().getPoints();
-        String ownerName = ((GroupRoute) route.getNewRoute()).getGroupName();
+        GroupRoute newGroupRoute = ((EditedGroupRoute) route).getNewGroupRoute();
 
         var transactionFuture = db.runTransaction(transaction -> {
             if (oldRouteName.equals(newRouteName)) {
@@ -39,18 +39,18 @@ public class GroupRouteEditService implements RouteEdit {
                         // nothing changed, no need to save
                         return true;
                     } else {
-                        return updateRouteWithPointsChange(transaction, ownerName, route.getNewRoute());
+                        return updateRouteWithPointsChange(transaction, newGroupRoute);
                     }
                 } else {
                     if (oldPoints.equals(newPoints)) {
                         // only the description changed
                         saveChanges(
-                                transaction, newRouteName, route.getNewRoute()
+                                transaction, newRouteName, newGroupRoute
                         );
                         return true;
                     } else {
                         return updateRouteWithPointsChange(
-                                transaction, ownerName, route.getNewRoute()
+                                transaction, newGroupRoute
                         );
                     }
                 }
@@ -58,21 +58,21 @@ public class GroupRouteEditService implements RouteEdit {
                 if (oldDescription.equals(newDescription)) {
                     if (oldPoints.equals(newPoints)) {
                         return updateRouteWithNameChange(
-                                transaction, ownerName, oldRouteName, route.getNewRoute()
+                                transaction, oldRouteName, newGroupRoute
                         );
                     } else {
                         return updateRouteWithNameAndPointsChange(
-                                transaction, ownerName, oldRouteName, route.getNewRoute()
+                                transaction, oldRouteName, newGroupRoute
                         );
                     }
                 } else {
                     if (oldPoints.equals(newPoints)) {
                         return updateRouteWithNameChange(
-                                transaction, ownerName, oldRouteName, route.getNewRoute()
+                                transaction, oldRouteName, newGroupRoute
                         );
                     } else {
                         return updateRouteWithNameAndPointsChange(
-                                transaction, ownerName, oldRouteName, route.getNewRoute()
+                                transaction, oldRouteName, newGroupRoute
                         );
                     }
                 }
@@ -83,18 +83,10 @@ public class GroupRouteEditService implements RouteEdit {
 
     private boolean updateRouteWithNameAndPointsChange(
             Transaction transaction,
-            String ownerName,
             String oldRouteName,
-            Route newRoute
+            GroupRoute newRoute
     ) {
-        var handler = new GroupRouteUniquenessHandler(
-                transaction,
-                db,
-                ownerName,
-                newRoute.getRouteName(),
-                newRoute.getPoints()
-        );
-        newRoute.handleRouteUniqueness(handler);
+        newRoute.handleRouteUniqueness(transaction, db);
 
         saveChanges(transaction, oldRouteName, newRoute);
         return true;
@@ -102,18 +94,10 @@ public class GroupRouteEditService implements RouteEdit {
 
     private boolean updateRouteWithNameChange(
             Transaction transaction,
-            String ownerName,
             String oldRouteName,
-            Route newRoute
+            GroupRoute newRoute
     ) {
-        var handler = new GroupRouteUniquenessHandler(
-                transaction,
-                db,
-                ownerName,
-                newRoute.getRouteName(),
-                newRoute.getPoints()
-        );
-        newRoute.handleRouteNameUniqueness(handler);
+        newRoute.handleRouteNameUniqueness(transaction, db);
 
         saveChanges(transaction, oldRouteName, newRoute);
         return true;
@@ -121,17 +105,9 @@ public class GroupRouteEditService implements RouteEdit {
 
     private boolean updateRouteWithPointsChange(
             Transaction transaction,
-            String ownerName,
-            Route newRoute
+            GroupRoute newRoute
     ) {
-        var handler = new GroupRouteUniquenessHandler(
-                transaction,
-                db,
-                ownerName,
-                newRoute.getRouteName(),
-                newRoute.getPoints()
-        );
-        newRoute.handlePointUniqueness(handler);
+        newRoute.handlePointsUniqueness(transaction, db);
 
         saveChanges(transaction, newRoute.getRouteName(), newRoute);
         return true;
@@ -140,10 +116,10 @@ public class GroupRouteEditService implements RouteEdit {
     private void saveChanges(
             Transaction transaction,
             String oldRouteName,
-            Route newRoute
+            GroupRoute newRoute
     ) {
         var query = getRouteQuery(
-                ((GroupRoute) newRoute).getGroupName(),
+                newRoute.getGroupName(),
                 oldRouteName
         );
         var queryFuture = transaction.get(query);

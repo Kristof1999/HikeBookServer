@@ -1,8 +1,12 @@
 package hu.kristof.nagy.hikebookserver.model.routes;
 
 import com.google.cloud.firestore.DocumentSnapshot;
+import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.Transaction;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.Point;
+import hu.kristof.nagy.hikebookserver.service.route.routeuniqueness.SimpleRouteUniquenessHandler;
+import hu.kristof.nagy.hikebookserver.service.route.routeuniqueness.TransactionRouteUniquenessHandler;
 
 import java.util.Arrays;
 import java.util.List;
@@ -44,6 +48,51 @@ public final class GroupRoute extends Route {
         );
         groupRouteSelectPaths[groupRouteSelectPaths.length - 1] = DbPathConstants.ROUTE_GROUP_NAME;
         return groupRouteSelectPaths;
+    }
+
+    public void handleRouteUniqueness(
+            Transaction transaction,
+            Firestore db
+    ) {
+        var handler = new TransactionRouteUniquenessHandler(
+                transaction,
+                db,
+                groupName,
+                DbPathConstants.ROUTE_GROUP_NAME,
+                routeName,
+                points
+        );
+        handler.handleRouteUniqueness();
+    }
+
+    public void handleRouteNameUniqueness(
+            Transaction transaction,
+            Firestore db
+    ) {
+        var handler = new TransactionRouteUniquenessHandler(
+                transaction,
+                db,
+                groupName,
+                DbPathConstants.ROUTE_GROUP_NAME,
+                routeName,
+                points
+        );
+        handler.handleRouteNameUniqueness();
+    }
+
+    public void handlePointsUniqueness(
+            Transaction transaction,
+            Firestore db
+    ) {
+        var handler = new TransactionRouteUniquenessHandler(
+                transaction,
+                db,
+                groupName,
+                DbPathConstants.ROUTE_GROUP_NAME,
+                routeName,
+                points
+        );
+        handler.handlePointsUniqueness();
     }
 
     public String getGroupName() {

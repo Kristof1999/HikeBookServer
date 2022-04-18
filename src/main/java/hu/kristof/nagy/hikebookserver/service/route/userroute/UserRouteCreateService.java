@@ -6,7 +6,7 @@ import hu.kristof.nagy.hikebookserver.model.routes.Route;
 import hu.kristof.nagy.hikebookserver.model.routes.UserRoute;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import hu.kristof.nagy.hikebookserver.service.route.RouteCreate;
-import hu.kristof.nagy.hikebookserver.service.route.routeuniqueness.UserRouteUniquenessHandler;
+import hu.kristof.nagy.hikebookserver.service.route.routeuniqueness.SimpleRouteUniquenessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,13 +20,7 @@ public class UserRouteCreateService implements RouteCreate {
 
     @Override
     public boolean createRoute(Route route) {
-        var handler = new UserRouteUniquenessHandler(
-                db,
-                ((UserRoute) route).getUserName(),
-                route.getRouteName(),
-                route.getPoints()
-        );
-        route.handleRouteUniqueness(handler);
+        ((UserRoute) route).handleRouteUniqueness(db);
 
         Map<String, Object> data = route.toMap();
         FutureUtil.handleFutureGet(() ->

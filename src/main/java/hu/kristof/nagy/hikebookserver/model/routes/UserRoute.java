@@ -1,8 +1,10 @@
 package hu.kristof.nagy.hikebookserver.model.routes;
 
 import com.google.cloud.firestore.DocumentSnapshot;
+import com.google.cloud.firestore.Firestore;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.Point;
+import hu.kristof.nagy.hikebookserver.service.route.routeuniqueness.SimpleRouteUniquenessHandler;
 
 import java.util.Arrays;
 import java.util.List;
@@ -44,6 +46,39 @@ public final class UserRoute extends Route {
         );
         userRouteSelectPaths[userRouteSelectPaths.length - 1] = DbPathConstants.ROUTE_USER_NAME;
         return userRouteSelectPaths;
+    }
+
+    public void handleRouteUniqueness(Firestore db) {
+        var handler = new SimpleRouteUniquenessHandler(
+                db,
+                userName,
+                DbPathConstants.ROUTE_USER_NAME,
+                routeName,
+                points
+        );
+        handler.handleRouteUniqueness();
+    }
+
+    public void handleRouteNameUniqueness(Firestore db) {
+        var handler = new SimpleRouteUniquenessHandler(
+                db,
+                userName,
+                DbPathConstants.ROUTE_USER_NAME,
+                routeName,
+                points
+        );
+        handler.handleRouteNameUniqueness();
+    }
+
+    public void handlePointsUniqueness(Firestore db) {
+        var handler = new SimpleRouteUniquenessHandler(
+                db,
+                userName,
+                DbPathConstants.ROUTE_USER_NAME,
+                routeName,
+                points
+        );
+        handler.handlePointsUniqueness();
     }
 
     public String getUserName() {

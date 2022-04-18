@@ -12,7 +12,7 @@ import hu.kristof.nagy.hikebookserver.model.routes.Route;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import hu.kristof.nagy.hikebookserver.service.Util;
 import hu.kristof.nagy.hikebookserver.service.route.RouteEdit;
-import hu.kristof.nagy.hikebookserver.service.route.routeuniqueness.UserRouteUniquenessHandler;
+import hu.kristof.nagy.hikebookserver.service.route.routeuniqueness.SimpleRouteUniquenessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -88,7 +88,7 @@ public class UserRouteEditService implements RouteEdit {
             String oldRouteName,
             Route newRoute
     ) {
-        var handler = new UserRouteUniquenessHandler(
+        var handler = new SimpleRouteUniquenessHandler(
                 db,
                 ownerName,
                 newRoute.getRouteName(),
@@ -105,7 +105,7 @@ public class UserRouteEditService implements RouteEdit {
             String oldRouteName,
             Route newRoute
     ) {
-        var handler = new UserRouteUniquenessHandler(
+        var handler = new SimpleRouteUniquenessHandler(
                 db,
                 ownerName,
                 newRoute.getRouteName(),
@@ -121,7 +121,7 @@ public class UserRouteEditService implements RouteEdit {
             String ownerName,
             Route newRoute
     ) {
-        var handler = new UserRouteUniquenessHandler(
+        var handler = new SimpleRouteUniquenessHandler(
                 db,
                 ownerName,
                 newRoute.getRouteName(),

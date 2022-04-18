@@ -7,8 +7,7 @@ import hu.kristof.nagy.hikebookserver.model.DateTime;
 import hu.kristof.nagy.hikebookserver.model.GroupHikeCreateHelper;
 import hu.kristof.nagy.hikebookserver.model.routes.GroupHikeRoute;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
-import hu.kristof.nagy.hikebookserver.service.route.RouteServiceUtils;
-import hu.kristof.nagy.hikebookserver.service.route.routeuniqueness.GroupHikeRouteUniquenessHandler;
+import hu.kristof.nagy.hikebookserver.service.route.routeuniqueness.TransactionRouteUniquenessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -68,10 +67,11 @@ public class GroupHikeCreateService {
             GroupHikeRoute groupHikeRoute,
             DateTime dateTime
     ) {
-        var handler = new GroupHikeRouteUniquenessHandler(
+        var handler = new TransactionRouteUniquenessHandler(
                 transaction,
                 db,
                 groupHikeName,
+                DbPathConstants.ROUTE_GROUP_HIKE_NAME,
                 groupHikeRoute.getRouteName(),
                 groupHikeRoute.getPoints()
         );

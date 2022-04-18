@@ -3,7 +3,6 @@ package hu.kristof.nagy.hikebookserver.model.routes;
 import com.google.cloud.firestore.DocumentSnapshot;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.Point;
-import hu.kristof.nagy.hikebookserver.service.route.routeuniqueness.RouteUniquenessHandler;
 
 import java.util.HashMap;
 import java.util.List;
@@ -11,9 +10,9 @@ import java.util.Map;
 import java.util.Objects;
 
 public class Route {
-    private String routeName;
-    private List<Point> points;
-    private String description;
+    protected String routeName;
+    protected List<Point> points;
+    protected String description;
 
     public Route() {
     }
@@ -48,18 +47,6 @@ public class Route {
                 DbPathConstants.ROUTE_POINTS,
                 DbPathConstants.ROUTE_DESCRIPTION
         };
-    }
-
-    public void handleRouteUniqueness(RouteUniquenessHandler handler) {
-        handler.handleRouteUniqueness();
-    }
-
-    public void handlePointUniqueness(RouteUniquenessHandler handler) {
-        handler.handlePointUniqueness();
-    }
-
-    public void handleRouteNameUniqueness(RouteUniquenessHandler handler) {
-        handler.handleRouteNameUniqueness();
     }
 
     public String getRouteName() {
