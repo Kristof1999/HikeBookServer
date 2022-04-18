@@ -55,4 +55,35 @@ public abstract class RouteUniquenessHandler {
                 .whereEqualTo(getOwnerPath(), getOwnerName())
                 .whereEqualTo(DbPathConstants.ROUTE_NAME, routeName);
     }
+
+    public abstract static class Builder<T extends Builder<T>> {
+        protected String ownerName;
+        protected String ownerPath;
+        protected String routeName;
+        protected List<Point> points;
+        protected Firestore db;
+
+        public T setOwnerName(String ownerName) {
+            this.ownerName = ownerName;
+            return self();
+        }
+
+        public T setOwnerPath(String ownerPath) {
+            this.ownerPath = ownerPath;
+            return self();
+        }
+
+        public T setRouteName(String routeName) {
+            this.routeName = routeName;
+            return self();
+        }
+
+        public T setPoints(List<Point> points) {
+            this.points = points;
+            return self();
+        }
+
+        public abstract RouteUniquenessHandler build();
+        protected abstract T self();
+    }
 }

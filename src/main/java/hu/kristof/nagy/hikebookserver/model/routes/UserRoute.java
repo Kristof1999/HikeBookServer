@@ -4,6 +4,7 @@ import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.Point;
+import hu.kristof.nagy.hikebookserver.service.route.routeuniqueness.RouteUniquenessHandler;
 import hu.kristof.nagy.hikebookserver.service.route.routeuniqueness.SimpleRouteUniquenessHandler;
 
 import java.util.Arrays;
@@ -48,37 +49,28 @@ public final class UserRoute extends Route {
         return userRouteSelectPaths;
     }
 
-    public void handleRouteUniqueness(Firestore db) {
-        var handler = new SimpleRouteUniquenessHandler(
-                db,
-                userName,
-                DbPathConstants.ROUTE_USER_NAME,
-                routeName,
-                points
+    @Override
+    public void handleRouteUniqueness(RouteUniquenessHandler.Builder<?> builder) {
+        super.handleRouteUniqueness(
+                builder.setOwnerName(userName)
+                        .setOwnerPath(DbPathConstants.ROUTE_USER_NAME)
         );
-        handler.handleRouteUniqueness();
     }
 
-    public void handleRouteNameUniqueness(Firestore db) {
-        var handler = new SimpleRouteUniquenessHandler(
-                db,
-                userName,
-                DbPathConstants.ROUTE_USER_NAME,
-                routeName,
-                points
+    @Override
+    public void handleRoutePointsUniqueness(RouteUniquenessHandler.Builder<?> builder) {
+        super.handleRoutePointsUniqueness(
+                builder.setOwnerName(userName)
+                        .setOwnerPath(DbPathConstants.ROUTE_USER_NAME)
         );
-        handler.handleRouteNameUniqueness();
     }
 
-    public void handlePointsUniqueness(Firestore db) {
-        var handler = new SimpleRouteUniquenessHandler(
-                db,
-                userName,
-                DbPathConstants.ROUTE_USER_NAME,
-                routeName,
-                points
+    @Override
+    public void handleRouteNameUniqueness(RouteUniquenessHandler.Builder<?> builder) {
+        super.handleRouteNameUniqueness(
+                builder.setOwnerName(userName)
+                        .setOwnerPath(DbPathConstants.ROUTE_USER_NAME)
         );
-        handler.handlePointsUniqueness();
     }
 
     public String getUserName() {

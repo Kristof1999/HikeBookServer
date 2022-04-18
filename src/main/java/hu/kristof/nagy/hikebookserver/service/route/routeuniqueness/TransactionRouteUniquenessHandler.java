@@ -10,6 +10,17 @@ import java.util.List;
 public class TransactionRouteUniquenessHandler extends RouteUniquenessHandler {
     private final Transaction transaction;
 
+    public TransactionRouteUniquenessHandler(Builder builder) {
+        this(
+                builder.transaction,
+                builder.db,
+                builder.ownerName,
+                builder.ownerPath,
+                builder.routeName,
+                builder.points
+        );
+    }
+
     public TransactionRouteUniquenessHandler(
             Transaction transaction,
             Firestore db,
@@ -39,5 +50,24 @@ public class TransactionRouteUniquenessHandler extends RouteUniquenessHandler {
         var queryFuture = transaction.get(query);
         var queryRes = FutureUtil.handleFutureGet(queryFuture::get);
         return queryRes.isEmpty();
+    }
+
+    public static class Builder extends RouteUniquenessHandler.Builder<Builder> {
+        private final Transaction transaction;
+
+        public Builder(Firestore db, Transaction transaction) {
+            this.db = db;
+            this.transaction = transaction;
+        }
+
+        @Override
+        public TransactionRouteUniquenessHandler build() {
+            return new TransactionRouteUniquenessHandler(this);
+        }
+
+        @Override
+        protected Builder self() {
+            return this;
+        }
     }
 }

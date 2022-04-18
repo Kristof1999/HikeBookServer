@@ -66,7 +66,9 @@ public class GroupHikeCreateService {
             GroupHikeRoute groupHikeRoute,
             DateTime dateTime
     ) {
-        groupHikeRoute.handleRouteUniqueness(transaction, db);
+        groupHikeRoute.handleRouteUniqueness(new TransactionRouteUniquenessHandler
+                .Builder(db, transaction)
+        );
 
         Map<String, Object> data = groupHikeRoute.toMap();
         var description = (String) data.get(DbPathConstants.ROUTE_DESCRIPTION);

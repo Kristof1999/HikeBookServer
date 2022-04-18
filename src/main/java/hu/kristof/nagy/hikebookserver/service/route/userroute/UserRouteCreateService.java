@@ -20,7 +20,9 @@ public class UserRouteCreateService implements RouteCreate {
 
     @Override
     public boolean createRoute(Route route) {
-        ((UserRoute) route).handleRouteUniqueness(db);
+        route.handleRouteUniqueness(new SimpleRouteUniquenessHandler
+                .Builder(db)
+        );
 
         Map<String, Object> data = route.toMap();
         FutureUtil.handleFutureGet(() ->

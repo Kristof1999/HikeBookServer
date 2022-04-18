@@ -5,6 +5,7 @@ import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.Transaction;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.Point;
+import hu.kristof.nagy.hikebookserver.service.route.routeuniqueness.RouteUniquenessHandler;
 import hu.kristof.nagy.hikebookserver.service.route.routeuniqueness.SimpleRouteUniquenessHandler;
 import hu.kristof.nagy.hikebookserver.service.route.routeuniqueness.TransactionRouteUniquenessHandler;
 
@@ -50,49 +51,28 @@ public final class GroupRoute extends Route {
         return groupRouteSelectPaths;
     }
 
-    public void handleRouteUniqueness(
-            Transaction transaction,
-            Firestore db
-    ) {
-        var handler = new TransactionRouteUniquenessHandler(
-                transaction,
-                db,
-                groupName,
-                DbPathConstants.ROUTE_GROUP_NAME,
-                routeName,
-                points
+    @Override
+    public void handleRouteUniqueness(RouteUniquenessHandler.Builder<?> builder) {
+        super.handleRouteUniqueness(
+                builder.setOwnerName(groupName)
+                        .setOwnerPath(DbPathConstants.ROUTE_GROUP_NAME)
         );
-        handler.handleRouteUniqueness();
     }
 
-    public void handleRouteNameUniqueness(
-            Transaction transaction,
-            Firestore db
-    ) {
-        var handler = new TransactionRouteUniquenessHandler(
-                transaction,
-                db,
-                groupName,
-                DbPathConstants.ROUTE_GROUP_NAME,
-                routeName,
-                points
+    @Override
+    public void handleRoutePointsUniqueness(RouteUniquenessHandler.Builder<?> builder) {
+        super.handleRoutePointsUniqueness(
+                builder.setOwnerName(groupName)
+                        .setOwnerPath(DbPathConstants.ROUTE_GROUP_NAME)
         );
-        handler.handleRouteNameUniqueness();
     }
 
-    public void handlePointsUniqueness(
-            Transaction transaction,
-            Firestore db
-    ) {
-        var handler = new TransactionRouteUniquenessHandler(
-                transaction,
-                db,
-                groupName,
-                DbPathConstants.ROUTE_GROUP_NAME,
-                routeName,
-                points
+    @Override
+    public void handleRouteNameUniqueness(RouteUniquenessHandler.Builder<?> builder) {
+        super.handleRouteNameUniqueness(
+                builder.setOwnerName(groupName)
+                        .setOwnerPath(DbPathConstants.ROUTE_GROUP_NAME)
         );
-        handler.handlePointsUniqueness();
     }
 
     public String getGroupName() {

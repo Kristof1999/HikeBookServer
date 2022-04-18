@@ -76,7 +76,9 @@ public class UserRouteEditService implements RouteEdit {
             String oldRouteName,
             UserRoute newRoute
     ) {
-        newRoute.handleRouteUniqueness(db);
+        newRoute.handleRouteUniqueness(new SimpleRouteUniquenessHandler
+                .Builder(db)
+        );
 
         saveChanges(ownerName, oldRouteName, newRoute);
         return true;
@@ -87,7 +89,9 @@ public class UserRouteEditService implements RouteEdit {
             String oldRouteName,
             UserRoute newRoute
     ) {
-        newRoute.handleRouteNameUniqueness(db);
+        newRoute.handleRouteNameUniqueness(new SimpleRouteUniquenessHandler
+                .Builder(db)
+        );
 
         saveChanges(ownerName, oldRouteName, newRoute);
         return true;
@@ -97,7 +101,9 @@ public class UserRouteEditService implements RouteEdit {
             String ownerName,
             UserRoute newRoute
     ) {
-        newRoute.handlePointsUniqueness(db);
+        newRoute.handleRoutePointsUniqueness(new SimpleRouteUniquenessHandler
+                .Builder(db)
+        );
 
         saveChanges(ownerName, newRoute.getRouteName(), newRoute);
         return true;

@@ -86,7 +86,9 @@ public class GroupRouteEditService implements RouteEdit {
             String oldRouteName,
             GroupRoute newRoute
     ) {
-        newRoute.handleRouteUniqueness(transaction, db);
+        newRoute.handleRouteUniqueness(new TransactionRouteUniquenessHandler
+                .Builder(db, transaction)
+        );
 
         saveChanges(transaction, oldRouteName, newRoute);
         return true;
@@ -97,7 +99,9 @@ public class GroupRouteEditService implements RouteEdit {
             String oldRouteName,
             GroupRoute newRoute
     ) {
-        newRoute.handleRouteNameUniqueness(transaction, db);
+        newRoute.handleRouteNameUniqueness(new TransactionRouteUniquenessHandler
+                .Builder(db, transaction)
+        );
 
         saveChanges(transaction, oldRouteName, newRoute);
         return true;
@@ -107,7 +111,9 @@ public class GroupRouteEditService implements RouteEdit {
             Transaction transaction,
             GroupRoute newRoute
     ) {
-        newRoute.handlePointsUniqueness(transaction, db);
+        newRoute.handleRoutePointsUniqueness(new TransactionRouteUniquenessHandler
+                .Builder(db, transaction)
+        );
 
         saveChanges(transaction, newRoute.getRouteName(), newRoute);
         return true;

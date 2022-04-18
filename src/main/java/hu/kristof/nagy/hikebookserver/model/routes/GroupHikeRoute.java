@@ -4,6 +4,7 @@ import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.Transaction;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.Point;
+import hu.kristof.nagy.hikebookserver.service.route.routeuniqueness.RouteUniquenessHandler;
 import hu.kristof.nagy.hikebookserver.service.route.routeuniqueness.TransactionRouteUniquenessHandler;
 
 import java.util.List;
@@ -31,49 +32,12 @@ public class GroupHikeRoute extends Route {
         return data;
     }
 
-    public void handleRouteUniqueness(
-            Transaction transaction,
-            Firestore db
-    ) {
-        var handler = new TransactionRouteUniquenessHandler(
-                transaction,
-                db,
-                groupHikeName,
-                DbPathConstants.ROUTE_GROUP_HIKE_NAME,
-                routeName,
-                points
+    @Override
+    public void handleRouteUniqueness(RouteUniquenessHandler.Builder<?> builder) {
+        super.handleRouteUniqueness(
+                builder.setOwnerName(groupHikeName)
+                        .setOwnerPath(DbPathConstants.ROUTE_GROUP_HIKE_NAME)
         );
-        handler.handleRouteUniqueness();
-    }
-
-    public void handleRouteNameUniqueness(
-            Transaction transaction,
-            Firestore db
-    ) {
-        var handler = new TransactionRouteUniquenessHandler(
-                transaction,
-                db,
-                groupHikeName,
-                DbPathConstants.ROUTE_GROUP_HIKE_NAME,
-                routeName,
-                points
-        );
-        handler.handleRouteNameUniqueness();
-    }
-
-    public void handlePointsUniqueness(
-            Transaction transaction,
-            Firestore db
-    ) {
-        var handler = new TransactionRouteUniquenessHandler(
-                transaction,
-                db,
-                groupHikeName,
-                DbPathConstants.ROUTE_GROUP_HIKE_NAME,
-                routeName,
-                points
-        );
-        handler.handlePointsUniqueness();
     }
 
     public String getGroupHikeName() {
