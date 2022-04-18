@@ -4,6 +4,7 @@ import com.google.cloud.firestore.DocumentSnapshot;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.Point;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -34,6 +35,15 @@ public final class GroupRoute extends Route {
         return Objects.requireNonNull(
                 documentSnapshot.toObject(GroupRoute.class)
         );
+    }
+
+    public static String[] getSelectPaths() {
+        String[] routeSelectPaths = Route.getSelectPaths();
+        String[] groupRouteSelectPaths = Arrays.copyOf(
+                routeSelectPaths, routeSelectPaths.length + 1
+        );
+        groupRouteSelectPaths[groupRouteSelectPaths.length - 1] = DbPathConstants.ROUTE_GROUP_NAME;
+        return groupRouteSelectPaths;
     }
 
     public String getGroupName() {

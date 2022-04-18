@@ -70,8 +70,10 @@ public class UserRouteController {
         return routeEdit.editRoute(editedUserRoute, userName, DbPathConstants.ROUTE_USER_NAME);
     }
 
-    @GetMapping("")
-    public List<BrowseListItem> listUserRoutes() {
-        return userRouteLoadService.listUserRoutes();
+    @GetMapping("browse/{userName}")
+    public List<BrowseListItem> listUserRoutes(
+            @PathVariable String userName
+    ) {
+        return userRouteLoadService.listUserRoutes(userName);
     }
 }

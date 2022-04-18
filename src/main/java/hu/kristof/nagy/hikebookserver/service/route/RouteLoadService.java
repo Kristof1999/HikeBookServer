@@ -23,9 +23,7 @@ public class RouteLoadService {
     public List<Route> loadRoutes(String ownerName, String ownerPath) {
         var queryFuture =  db
                 .collection(DbPathConstants.COLLECTION_ROUTE)
-                .select(DbPathConstants.ROUTE_NAME,
-                        DbPathConstants.ROUTE_POINTS,
-                        DbPathConstants.ROUTE_DESCRIPTION)
+                .select(Route.getSelectPaths())
                 .whereEqualTo(ownerPath, ownerName)
                 .get();
         return FutureUtil.handleFutureGet(() ->

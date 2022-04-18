@@ -1,6 +1,7 @@
 package hu.kristof.nagy.hikebookserver.service.groups;
 
 import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.Transaction;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.Group;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
@@ -16,29 +17,29 @@ public class GroupCreateService {
     private Firestore db;
 
     public boolean createGroup(String groupName, String userName) {
-        // TODO: run as transaction
-        if (isNameUnique(groupName)) {
-            save(new Group(groupName, userName));
-            return true;
-        } else {
-            throw new IllegalArgumentException("A " + groupName + " már létezik! Kérem, hogy válasszon másikat.");
-        }
+        var transactionFuture = db.runTransaction(transaction -> {
+            if (isNameUnique(transaction, groupName)) {
+                save(transaction, new Group(groupName, userName));
+                return true;
+            } else {
+                throw new IllegalArgumentException("A " + groupName + " már létezik! Kérem, hogy válasszon másikat.");
+            }
+        });
+        return FutureUtil.handleFutureGet(transactionFuture::get);
     }
 
-    private void save(Group group) {
+    private void save(Transaction transaction, Group group) {
         Map<String, Object> data = group.toMap();
-        FutureUtil.handleFutureGet(() ->
-                db.collection(DbPathConstants.COLLECTION_GROUP)
-                        .add(data)
-                        .get()
-        );
+        var docRef = db.collection(DbPathConstants.COLLECTION_GROUP)
+                .document();
+        transaction.create(docRef, data);
     }
 
-    private boolean isNameUnique(String name) {
-        var queryFuture = db
+    private boolean isNameUnique(Transaction transaction, String name) {
+        var query = db
                 .collection(DbPathConstants.COLLECTION_GROUP)
-                .whereEqualTo(DbPathConstants.GROUP_NAME, name)
-                .get();
+                .whereEqualTo(DbPathConstants.GROUP_NAME, name);
+        var queryFuture = transaction.get(query);
         return FutureUtil.handleFutureGet(() ->
                 queryFuture.get().isEmpty()
         );

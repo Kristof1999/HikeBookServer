@@ -38,10 +38,7 @@ public class UserRouteLoadService {
     public UserRoute loadUserRoute(String userName, String routeName) {
         var queryFuture = db
                 .collection(DbPathConstants.COLLECTION_ROUTE)
-                .select(DbPathConstants.ROUTE_POINTS,
-                        DbPathConstants.ROUTE_NAME,
-                        DbPathConstants.ROUTE_USER_NAME,
-                        DbPathConstants.ROUTE_DESCRIPTION)
+                .select(UserRoute.getSelectPaths())
                 .whereEqualTo(DbPathConstants.ROUTE_USER_NAME, userName)
                 .whereEqualTo(DbPathConstants.ROUTE_NAME, routeName)
                 .get();
@@ -58,14 +55,16 @@ public class UserRouteLoadService {
     /**
      * Lists all the routes' name and associated user name.
      */
-    public List<BrowseListItem> listUserRoutes() {
+    public List<BrowseListItem> listUserRoutes(String requesterName) {
         var routes = new ArrayList<BrowseListItem>();
-        // TODO: select routes which do not belong to the user who requested the listing
-        // use whereNotEqualTo(...)
-        for(var docRef : db.collection(DbPathConstants.COLLECTION_ROUTE).listDocuments()) {
-            DocumentSnapshot documentSnapshot = FutureUtil.handleFutureGet(() ->
-                    docRef.get().get()
-            );
+        var queryFuture = db.collection(DbPathConstants.COLLECTION_ROUTE)
+                .select(BrowseListItem.getSelectPaths())
+                .whereNotEqualTo(DbPathConstants.ROUTE_USER_NAME, requesterName)
+                .get();
+        var queryDocs = FutureUtil.handleFutureGet(() ->
+                queryFuture.get().getDocuments()
+        );
+        for(var documentSnapshot : queryDocs) {
             var userName = Objects.requireNonNull(
                     documentSnapshot.getString(DbPathConstants.ROUTE_USER_NAME)
             );

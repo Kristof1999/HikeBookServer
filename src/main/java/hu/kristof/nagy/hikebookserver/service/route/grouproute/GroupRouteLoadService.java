@@ -32,10 +32,7 @@ public class GroupRouteLoadService {
     public GroupRoute loadGroupRoute(String groupName, String routeName) {
         var queryFuture = db
                 .collection(DbPathConstants.COLLECTION_ROUTE)
-                .select(DbPathConstants.ROUTE_POINTS,
-                        DbPathConstants.ROUTE_NAME,
-                        DbPathConstants.ROUTE_GROUP_NAME,
-                        DbPathConstants.ROUTE_DESCRIPTION)
+                .select(GroupRoute.getSelectPaths())
                 .whereEqualTo(DbPathConstants.ROUTE_GROUP_NAME, groupName)
                 .whereEqualTo(DbPathConstants.ROUTE_NAME, routeName)
                 .get();

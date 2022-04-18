@@ -1,5 +1,7 @@
 package hu.kristof.nagy.hikebookserver.model;
 
+import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
+
 import java.util.Objects;
 
 public final class BrowseListItem {
@@ -23,6 +25,13 @@ public final class BrowseListItem {
 
     public void setRouteName(String routeName) {
         this.routeName = routeName;
+    }
+
+    public static String[] getSelectPaths() {
+        return new String[] {
+                DbPathConstants.ROUTE_USER_NAME,
+                DbPathConstants.ROUTE_NAME
+        };
     }
 
     @Override

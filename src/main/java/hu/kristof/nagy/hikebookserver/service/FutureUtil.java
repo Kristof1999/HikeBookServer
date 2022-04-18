@@ -7,7 +7,6 @@ public class FutureUtil {
         try {
             return f.getFuture();
         } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
             throw new IllegalArgumentException(Util.GENERIC_ERROR_MSG);
         }
     }

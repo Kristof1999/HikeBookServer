@@ -42,6 +42,14 @@ public class Route {
         );
     }
 
+    public static String[] getSelectPaths() {
+        return new String[] {
+                DbPathConstants.ROUTE_NAME,
+                DbPathConstants.ROUTE_POINTS,
+                DbPathConstants.ROUTE_DESCRIPTION
+        };
+    }
+
     public String getRouteName() {
         return routeName;
     }
