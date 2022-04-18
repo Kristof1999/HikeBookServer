@@ -23,10 +23,8 @@ public class UserRouteEditService {
     @Autowired
     private Firestore db;
 
-    // TODO: update javadoc
     /**
-     * Edits the route.
-     * @param route the edited route
+     * Edits the route. If something changes, then it must be unique for the user.
      * @return true if the edited route is unique for the given user
      */
     public boolean editRoute(

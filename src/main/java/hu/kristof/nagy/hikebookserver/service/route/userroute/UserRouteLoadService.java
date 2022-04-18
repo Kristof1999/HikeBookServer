@@ -1,6 +1,5 @@
 package hu.kristof.nagy.hikebookserver.service.route.userroute;
 
-import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
@@ -8,10 +7,7 @@ import hu.kristof.nagy.hikebookserver.model.BrowseListItem;
 import hu.kristof.nagy.hikebookserver.model.routes.UserRoute;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import hu.kristof.nagy.hikebookserver.service.Util;
-import hu.kristof.nagy.hikebookserver.service.route.QueryException;
 import hu.kristof.nagy.hikebookserver.service.route.RouteLoadService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +24,9 @@ public class UserRouteLoadService {
     @Autowired
     private RouteLoadService routeLoadService;
 
+    /**
+     * Loads all the routes associated with the given user.
+     */
     public List<UserRoute> loadUserRoutes(String userName) {
         return routeLoadService.loadRoutes(userName, DbPathConstants.ROUTE_USER_NAME)
                 .stream()
@@ -35,6 +34,9 @@ public class UserRouteLoadService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Loads the given route associated with the given user.
+     */
     public UserRoute loadUserRoute(String userName, String routeName) {
         var queryFuture = db
                 .collection(DbPathConstants.COLLECTION_ROUTE)

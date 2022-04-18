@@ -1,9 +1,12 @@
 package hu.kristof.nagy.hikebookserver.model.routes;
 
 import com.google.cloud.firestore.DocumentSnapshot;
+import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.Query;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.Point;
-import hu.kristof.nagy.hikebookserver.model.RouteType;
+import hu.kristof.nagy.hikebookserver.service.route.RouteServiceUtils;
+import hu.kristof.nagy.hikebookserver.service.route.RouteUniquenessHandler;
 
 import java.util.HashMap;
 import java.util.List;
@@ -48,6 +51,12 @@ public class Route {
                 DbPathConstants.ROUTE_POINTS,
                 DbPathConstants.ROUTE_DESCRIPTION
         };
+    }
+
+    public void handleRouteUniqueness(
+            RouteUniquenessHandler handler
+    ) {
+        handler.handleRouteUniqueness();
     }
 
     public String getRouteName() {

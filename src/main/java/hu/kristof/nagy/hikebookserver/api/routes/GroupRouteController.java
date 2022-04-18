@@ -35,7 +35,7 @@ public class GroupRouteController {
             @PathVariable String routeName,
             @RequestBody GroupRoute groupRoute
     ) {
-        return groupRouteCreateService.createGroupRoute(groupRoute);
+        return groupRouteCreateService.createRoute(groupRoute);
     }
 
     @GetMapping("{groupName}")

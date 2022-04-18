@@ -35,7 +35,7 @@ public class UserRouteController {
             @PathVariable String routeName,
             @RequestBody UserRoute userRoute
     ) {
-        return userRouteCreateService.createUserRoute(userRoute);
+        return userRouteCreateService.createRoute(userRoute);
     }
 
     @GetMapping("{userName}")
