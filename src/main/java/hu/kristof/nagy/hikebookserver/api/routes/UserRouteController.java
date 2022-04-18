@@ -67,7 +67,7 @@ public class UserRouteController {
         @PathVariable String oldRouteName,
         @RequestBody EditedUserRoute editedUserRoute
     ) {
-        return routeEdit.editRoute(editedUserRoute, userName, DbPathConstants.ROUTE_USER_NAME);
+        return routeEdit.editRoute(editedUserRoute);
     }
 
     @GetMapping("browse/{userName}")

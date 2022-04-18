@@ -3,11 +3,13 @@ package hu.kristof.nagy.hikebookserver.service.route.grouproute;
 import com.google.cloud.firestore.*;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.Point;
-import hu.kristof.nagy.hikebookserver.model.routes.*;
+import hu.kristof.nagy.hikebookserver.model.routes.EditedGroupRoute;
+import hu.kristof.nagy.hikebookserver.model.routes.EditedRoute;
+import hu.kristof.nagy.hikebookserver.model.routes.GroupRoute;
+import hu.kristof.nagy.hikebookserver.model.routes.Route;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import hu.kristof.nagy.hikebookserver.service.Util;
-import hu.kristof.nagy.hikebookserver.service.route.QueryException;
-import hu.kristof.nagy.hikebookserver.service.route.RouteServiceUtils;
+import hu.kristof.nagy.hikebookserver.service.route.RouteEdit;
 import hu.kristof.nagy.hikebookserver.service.route.routeuniqueness.GroupRouteUniquenessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,19 +18,19 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class GroupRouteEditService {
+public class GroupRouteEditService implements RouteEdit {
     @Autowired
     private Firestore db;
 
-    public boolean editRoute(
-            EditedGroupRoute route
-    ) {
+    @Override
+    public boolean editRoute(EditedRoute route) {
         String oldRouteName = route.getOldRoute().getRouteName();
         String newRouteName = route.getNewRoute().getRouteName();
         String oldDescription = route.getOldRoute().getDescription();
         String newDescription = route.getNewRoute().getDescription();
         List<Point> oldPoints = route.getOldRoute().getPoints();
         List<Point> newPoints = route.getNewRoute().getPoints();
+        String ownerName = ((GroupRoute) route.getNewRoute()).getGroupName();
 
         var transactionFuture = db.runTransaction(transaction -> {
             if (oldRouteName.equals(newRouteName)) {
@@ -37,18 +39,18 @@ public class GroupRouteEditService {
                         // nothing changed, no need to save
                         return true;
                     } else {
-                        return updateRouteWithPointsChange(transaction, route.getNewGroupRoute());
+                        return updateRouteWithPointsChange(transaction, ownerName, route.getNewRoute());
                     }
                 } else {
                     if (oldPoints.equals(newPoints)) {
                         // only the description changed
                         saveChanges(
-                                transaction, newRouteName, route.getNewGroupRoute()
+                                transaction, newRouteName, route.getNewRoute()
                         );
                         return true;
                     } else {
                         return updateRouteWithPointsChange(
-                                transaction, route.getNewGroupRoute()
+                                transaction, ownerName, route.getNewRoute()
                         );
                     }
                 }
@@ -56,21 +58,21 @@ public class GroupRouteEditService {
                 if (oldDescription.equals(newDescription)) {
                     if (oldPoints.equals(newPoints)) {
                         return updateRouteWithNameChange(
-                                transaction, oldRouteName, route.getNewGroupRoute()
+                                transaction, ownerName, oldRouteName, route.getNewRoute()
                         );
                     } else {
                         return updateRouteWithNameAndPointsChange(
-                                transaction, oldRouteName, route.getNewGroupRoute()
+                                transaction, ownerName, oldRouteName, route.getNewRoute()
                         );
                     }
                 } else {
                     if (oldPoints.equals(newPoints)) {
                         return updateRouteWithNameChange(
-                                transaction, oldRouteName, route.getNewGroupRoute()
+                                transaction, ownerName, oldRouteName, route.getNewRoute()
                         );
                     } else {
                         return updateRouteWithNameAndPointsChange(
-                                transaction, oldRouteName, route.getNewGroupRoute()
+                                transaction, ownerName, oldRouteName, route.getNewRoute()
                         );
                     }
                 }
@@ -81,64 +83,68 @@ public class GroupRouteEditService {
 
     private boolean updateRouteWithNameAndPointsChange(
             Transaction transaction,
+            String ownerName,
             String oldRouteName,
-            GroupRoute newGroupRoute
+            Route newRoute
     ) {
         var handler = new GroupRouteUniquenessHandler(
                 transaction,
                 db,
-                newGroupRoute.getGroupName(),
-                newGroupRoute.getRouteName(),
-                newGroupRoute.getPoints()
+                ownerName,
+                newRoute.getRouteName(),
+                newRoute.getPoints()
         );
-        newGroupRoute.handleRouteUniqueness(handler);
+        newRoute.handleRouteUniqueness(handler);
 
-        saveChanges(transaction, oldRouteName, newGroupRoute);
+        saveChanges(transaction, oldRouteName, newRoute);
         return true;
     }
 
     private boolean updateRouteWithNameChange(
             Transaction transaction,
+            String ownerName,
             String oldRouteName,
-            GroupRoute newGroupRoute
+            Route newRoute
     ) {
         var handler = new GroupRouteUniquenessHandler(
                 transaction,
                 db,
-                newGroupRoute.getGroupName(),
-                newGroupRoute.getRouteName(),
-                newGroupRoute.getPoints()
+                ownerName,
+                newRoute.getRouteName(),
+                newRoute.getPoints()
         );
-        newGroupRoute.handleRouteNameUniqueness(handler);
+        newRoute.handleRouteNameUniqueness(handler);
 
-        saveChanges(transaction, oldRouteName, newGroupRoute);
+        saveChanges(transaction, oldRouteName, newRoute);
         return true;
     }
 
     private boolean updateRouteWithPointsChange(
             Transaction transaction,
-            GroupRoute newGroupRoute
+            String ownerName,
+            Route newRoute
     ) {
         var handler = new GroupRouteUniquenessHandler(
                 transaction,
                 db,
-                newGroupRoute.getGroupName(),
-                newGroupRoute.getRouteName(),
-                newGroupRoute.getPoints()
+                ownerName,
+                newRoute.getRouteName(),
+                newRoute.getPoints()
         );
-        newGroupRoute.handlePointUniqueness(handler);
+        newRoute.handlePointUniqueness(handler);
 
-        saveChanges(transaction, newGroupRoute.getRouteName(), newGroupRoute);
+        saveChanges(transaction, newRoute.getRouteName(), newRoute);
         return true;
     }
 
     private void saveChanges(
             Transaction transaction,
             String oldRouteName,
-            GroupRoute groupRoute
+            Route newRoute
     ) {
         var query = getRouteQuery(
-                groupRoute.getGroupName(), DbPathConstants.ROUTE_GROUP_NAME, oldRouteName
+                ((GroupRoute) newRoute).getGroupName(),
+                oldRouteName
         );
         var queryFuture = transaction.get(query);
 
@@ -147,7 +153,7 @@ public class GroupRouteEditService {
         );
         Util.handleListSize(queryDocs, documentSnapshots -> {
             var docRef = getDocToUpdate(queryDocs);
-            Map<String, Object> data = groupRoute.toMap();
+            Map<String, Object> data = newRoute.toMap();
             return transaction.set(docRef, data);
         });
     }
@@ -160,11 +166,10 @@ public class GroupRouteEditService {
 
     private Query getRouteQuery(
             String ownerName,
-            String ownerPath,
             String oldRouteName
     ) {
         return db.collection(DbPathConstants.COLLECTION_ROUTE)
-                .whereEqualTo(ownerPath, ownerName)
+                .whereEqualTo(DbPathConstants.ROUTE_GROUP_NAME, ownerName)
                 .whereEqualTo(DbPathConstants.ROUTE_NAME, oldRouteName);
     }
 }
