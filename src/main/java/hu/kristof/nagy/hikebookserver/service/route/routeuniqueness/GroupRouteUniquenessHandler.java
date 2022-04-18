@@ -37,14 +37,14 @@ public class GroupRouteUniquenessHandler extends RouteUniquenessHandler {
     }
 
     @Override
-    public boolean arePointsUnique() {
+    protected boolean arePointsUnique() {
         var query = arePointsUniqueQuery();
         var queryFuture = transaction.get(query);
         return FutureUtil.handleFutureGet(() -> queryFuture.get().isEmpty());
     }
 
     @Override
-    public boolean isRouteNameUnique() {
+    protected boolean isRouteNameUnique() {
         var query = isRouteNameUniqueQuery();
         var queryFuture = transaction.get(query);
         var queryRes = FutureUtil.handleFutureGet(queryFuture::get);

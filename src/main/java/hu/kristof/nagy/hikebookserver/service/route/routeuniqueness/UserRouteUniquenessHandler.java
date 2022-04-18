@@ -33,13 +33,13 @@ public class UserRouteUniquenessHandler extends RouteUniquenessHandler {
     }
 
     @Override
-    public boolean arePointsUnique() {
+    protected boolean arePointsUnique() {
         var queryFuture = arePointsUniqueQuery().get();
         return FutureUtil.handleFutureGet(() -> queryFuture.get().isEmpty());
     }
 
     @Override
-    public boolean isRouteNameUnique() {
+    protected boolean isRouteNameUnique() {
         var queryFuture = isRouteNameUniqueQuery().get();
         return FutureUtil.handleFutureGet(() -> queryFuture.get().isEmpty());
     }

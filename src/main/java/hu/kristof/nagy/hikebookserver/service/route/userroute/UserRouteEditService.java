@@ -11,6 +11,7 @@ import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import hu.kristof.nagy.hikebookserver.service.Util;
 import hu.kristof.nagy.hikebookserver.service.route.QueryException;
 import hu.kristof.nagy.hikebookserver.service.route.RouteServiceUtils;
+import hu.kristof.nagy.hikebookserver.service.route.routeuniqueness.UserRouteUniquenessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -93,18 +94,16 @@ public class UserRouteEditService {
             String oldRouteName,
             Route route
     ) {
-        if (RouteServiceUtils.routeNameExistsForOwner(db, ownerName, route.getRouteName(), ownerPath)) {
-            throw new IllegalArgumentException(
-                    RouteServiceUtils.getRouteNameNotUniqueString(route.getRouteName())
-            );
-        } else {
-            if (RouteServiceUtils.arePointsUniqueForOwner(db, ownerName, route.getPoints(), ownerPath)) {
-                saveChanges(ownerName, ownerPath, oldRouteName, route);
-                return true;
-            } else {
-                throw new IllegalArgumentException(RouteServiceUtils.POINTS_NOT_UNIQE);
-            }
-        }
+        var handler = new UserRouteUniquenessHandler(
+                db,
+                ownerName,
+                route.getRouteName(),
+                route.getPoints()
+        );
+        route.handleRouteUniqueness(handler);
+
+        saveChanges(ownerName, ownerPath, oldRouteName, route);
+        return true;
     }
 
     private boolean updateRouteWithNameChange(
@@ -113,14 +112,16 @@ public class UserRouteEditService {
             String oldRouteName,
             Route route
     ) {
-        if (RouteServiceUtils.routeNameExistsForOwner(db, ownerName, route.getRouteName(), ownerPath)) {
-            throw new IllegalArgumentException(
-                    RouteServiceUtils.getRouteNameNotUniqueString(route.getRouteName())
-            );
-        } else {
-            saveChanges(ownerName, ownerPath, oldRouteName, route);
-            return true;
-        }
+        var handler = new UserRouteUniquenessHandler(
+                db,
+                ownerName,
+                route.getRouteName(),
+                route.getPoints()
+        );
+        route.handleRouteNameUniqueness(handler);
+
+        saveChanges(ownerName, ownerPath, oldRouteName, route);
+        return true;
     }
 
     private boolean updateRouteWithPointsChange(
@@ -128,12 +129,16 @@ public class UserRouteEditService {
             String ownerPath,
             Route route
     ) {
-        if (RouteServiceUtils.arePointsUniqueForOwner(db, ownerName, route.getPoints(), ownerPath)) {
-            saveChanges(ownerName, ownerPath, route.getRouteName(), route);
-            return true;
-        } else {
-            throw new IllegalArgumentException(RouteServiceUtils.POINTS_NOT_UNIQE);
-        }
+        var handler = new UserRouteUniquenessHandler(
+                db,
+                ownerName,
+                route.getRouteName(),
+                route.getPoints()
+        );
+        route.handlePointUniqueness(handler);
+
+        saveChanges(ownerName, ownerPath, route.getRouteName(), route);
+        return true;
     }
 
     private void saveChanges(
@@ -142,34 +147,18 @@ public class UserRouteEditService {
             String oldRouteName,
             Route route
     ) {
-        if (route instanceof UserRoute) {
-            var queryFuture = getRouteQuery(ownerName, ownerPath, oldRouteName).get();
-            var querySnapshot = FutureUtil.handleFutureGet(queryFuture::get);
+        var queryFuture = getRouteQuery(ownerName, ownerPath, oldRouteName).get();
+        var querySnapshot = FutureUtil.handleFutureGet(queryFuture::get);
 
-            var queryDocs = querySnapshot.getDocuments();
-            Util.handleListSize(queryDocs, documentSnapshots -> {
-                var docRef = getDocToUpdate(documentSnapshots);
-                Map<String, Object> data = route.toMap();
-                return FutureUtil.handleFutureGet(() ->
-                        docRef.set(data)
-                                .get() // wait for write result
-                );
-            });
-        } else {
-            var transactionFuture = db.runTransaction(transaction -> {
-                var query = getRouteQuery(ownerName, ownerPath, oldRouteName);
-                var queryFuture = transaction.get(query);
-
-                var queryDocs = queryFuture.get().getDocuments();
-                return Util.handleListSize(queryDocs, documentSnapshots -> {
-                    var docRef = getDocToUpdate(documentSnapshots);
-                    Map<String, Object> data = route.toMap();
-                    return transaction.set(docRef, data);
-                });
-            });
-            // wait for write to finish
-            FutureUtil.handleFutureGet(transactionFuture::get);
-        }
+        var queryDocs = querySnapshot.getDocuments();
+        Util.handleListSize(queryDocs, documentSnapshots -> {
+            var docRef = getDocToUpdate(documentSnapshots);
+            Map<String, Object> data = route.toMap();
+            return FutureUtil.handleFutureGet(() ->
+                    docRef.set(data)
+                            .get() // wait for write result
+            );
+        });
     }
 
     private DocumentReference getDocToUpdate(List<? extends DocumentSnapshot> queryDocs) {

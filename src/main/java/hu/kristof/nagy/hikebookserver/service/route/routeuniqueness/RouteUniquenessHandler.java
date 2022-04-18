@@ -17,20 +17,25 @@ public abstract class RouteUniquenessHandler {
     public abstract String getOwnerPath();
 
     public void handleRouteUniqueness() {
-        if (isRouteNameUnique()) {
-            if (!arePointsUnique()) {
-                throw new IllegalArgumentException(RouteServiceUtils.POINTS_NOT_UNIQE);
-            }
-        } else {
+        handlePointUniqueness();
+        handleRouteNameUniqueness();
+    }
+
+    public void handlePointUniqueness() {
+        if (!arePointsUnique())
+            throw new IllegalArgumentException(RouteServiceUtils.POINTS_NOT_UNIQE);
+    }
+
+    public void handleRouteNameUniqueness() {
+        if (!isRouteNameUnique())
             throw new IllegalArgumentException(
                     RouteServiceUtils.getRouteNameNotUniqueString(routeName)
             );
-        }
     }
 
     protected abstract boolean arePointsUnique();
 
-    public Query arePointsUniqueQuery() {
+    protected Query arePointsUniqueQuery() {
         return  db.collection(DbPathConstants.COLLECTION_ROUTE)
                 .whereEqualTo(getOwnerPath(), getOwnerName())
                 .whereEqualTo(DbPathConstants.ROUTE_POINTS, points);
@@ -38,7 +43,7 @@ public abstract class RouteUniquenessHandler {
 
     protected abstract boolean isRouteNameUnique();
 
-    public Query isRouteNameUniqueQuery() {
+    protected Query isRouteNameUniqueQuery() {
         return db.collection(DbPathConstants.COLLECTION_ROUTE)
                 .whereEqualTo(getOwnerPath(), getOwnerName())
                 .whereEqualTo(DbPathConstants.ROUTE_NAME, routeName);

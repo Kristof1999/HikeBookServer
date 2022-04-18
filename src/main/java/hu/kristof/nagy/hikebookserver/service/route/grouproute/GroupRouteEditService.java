@@ -109,32 +109,27 @@ public class GroupRouteEditService {
                 newGroupRoute.getRouteName(),
                 newGroupRoute.getPoints()
         );
+        newGroupRoute.handleRouteNameUniqueness(handler);
 
-
-        if (RouteServiceUtils.routeNameExistsForOwner(
-                transaction, db, newGroupRoute.getGroupName(), newGroupRoute.getRouteName(), DbPathConstants.ROUTE_GROUP_NAME)
-        ) {
-            throw new IllegalArgumentException(
-                    RouteServiceUtils.getRouteNameNotUniqueString(newGroupRoute.getRouteName())
-            );
-        } else {
-            saveChanges(transaction, oldRouteName, newGroupRoute);
-            return true;
-        }
+        saveChanges(transaction, oldRouteName, newGroupRoute);
+        return true;
     }
 
     private boolean updateRouteWithPointsChange(
             Transaction transaction,
-            GroupRoute groupRoute
+            GroupRoute newGroupRoute
     ) {
-        if (RouteServiceUtils.arePointsUniqueForOwner(
-                transaction, db, groupRoute.getGroupName(), groupRoute.getPoints(), DbPathConstants.ROUTE_GROUP_NAME)
-        ) {
-            saveChanges(transaction, groupRoute.getRouteName(), groupRoute);
-            return true;
-        } else {
-            throw new IllegalArgumentException(RouteServiceUtils.POINTS_NOT_UNIQE);
-        }
+        var handler = new GroupRouteUniquenessHandler(
+                transaction,
+                db,
+                newGroupRoute.getGroupName(),
+                newGroupRoute.getRouteName(),
+                newGroupRoute.getPoints()
+        );
+        newGroupRoute.handlePointUniqueness(handler);
+
+        saveChanges(transaction, newGroupRoute.getRouteName(), newGroupRoute);
+        return true;
     }
 
     private void saveChanges(

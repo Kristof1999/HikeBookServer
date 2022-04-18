@@ -50,10 +50,16 @@ public class Route {
         };
     }
 
-    public void handleRouteUniqueness(
-            RouteUniquenessHandler handler
-    ) {
+    public void handleRouteUniqueness(RouteUniquenessHandler handler) {
         handler.handleRouteUniqueness();
+    }
+
+    public void handlePointUniqueness(RouteUniquenessHandler handler) {
+        handler.handlePointUniqueness();
+    }
+
+    public void handleRouteNameUniqueness(RouteUniquenessHandler handler) {
+        handler.handleRouteNameUniqueness();
     }
 
     public String getRouteName() {
