@@ -26,7 +26,7 @@ public class GroupHikeCreateService {
         var transactionFuture = db.runTransaction(transaction -> {
             if (isGroupHikeNameUnique(transaction, groupHikeName)) {
                 var groupHikeRoute = new GroupHikeRoute(helper.getRoute(), groupHikeName);
-                createGroupHikeRoute(transaction, groupHikeName, groupHikeRoute, helper.getDateTime());
+                createGroupHikeRoute(transaction, groupHikeRoute, helper.getDateTime());
                 createGroupHike(transaction, userName, groupHikeName, helper.getDateTime());
             } else {
                 throw new IllegalArgumentException("A csoport túra neve nem egyedi! Kérem, hogy válasszon másik nevet.");
@@ -63,19 +63,10 @@ public class GroupHikeCreateService {
 
     private void createGroupHikeRoute(
             Transaction transaction,
-            String groupHikeName,
             GroupHikeRoute groupHikeRoute,
             DateTime dateTime
     ) {
-        var handler = new TransactionRouteUniquenessHandler(
-                transaction,
-                db,
-                groupHikeName,
-                DbPathConstants.ROUTE_GROUP_HIKE_NAME,
-                groupHikeRoute.getRouteName(),
-                groupHikeRoute.getPoints()
-        );
-        groupHikeRoute.handleRouteUniqueness(handler);
+        groupHikeRoute.handleRouteUniqueness(transaction, db);
 
         Map<String, Object> data = groupHikeRoute.toMap();
         var description = (String) data.get(DbPathConstants.ROUTE_DESCRIPTION);

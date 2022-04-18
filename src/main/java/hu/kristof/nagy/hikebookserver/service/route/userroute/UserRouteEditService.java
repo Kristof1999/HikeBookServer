@@ -9,6 +9,7 @@ import hu.kristof.nagy.hikebookserver.model.Point;
 import hu.kristof.nagy.hikebookserver.model.routes.EditedRoute;
 import hu.kristof.nagy.hikebookserver.model.routes.EditedUserRoute;
 import hu.kristof.nagy.hikebookserver.model.routes.Route;
+import hu.kristof.nagy.hikebookserver.model.routes.UserRoute;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import hu.kristof.nagy.hikebookserver.service.Util;
 import hu.kristof.nagy.hikebookserver.service.route.RouteEdit;
@@ -34,6 +35,7 @@ public class UserRouteEditService implements RouteEdit {
         List<Point> oldPoints = route.getOldRoute().getPoints();
         List<Point> newPoints = route.getNewRoute().getPoints();
         String ownerName = ((EditedUserRoute) route).getNewUserRoute().getUserName();
+        UserRoute userRoute = ((EditedUserRoute) route).getNewUserRoute();
 
         if (oldRouteName.equals(newRouteName)) {
             if (oldDescription.equals(newDescription)) {
@@ -41,43 +43,29 @@ public class UserRouteEditService implements RouteEdit {
                     // nothing changed, no need to save
                     return true;
                 } else {
-                    return updateRouteWithPointsChange(
-                            ownerName, route.getNewRoute()
-                    );
+                    return updateRouteWithPointsChange(ownerName, userRoute);
                 }
             } else {
                 if (oldPoints.equals(newPoints)) {
                     // only the description changed
-                    saveChanges(
-                            ownerName, newRouteName, route.getNewRoute()
-                    );
+                    saveChanges(ownerName, newRouteName, userRoute);
                     return true;
                 } else {
-                    return updateRouteWithPointsChange(
-                            ownerName, route.getNewRoute()
-                    );
+                    return updateRouteWithPointsChange(ownerName, userRoute);
                 }
             }
         } else {
             if (oldDescription.equals(newDescription)) {
                 if (oldPoints.equals(newPoints)) {
-                    return updateRouteWithNameChange(
-                            ownerName, oldRouteName, route.getNewRoute()
-                    );
+                    return updateRouteWithNameChange(ownerName, oldRouteName, userRoute);
                 } else {
-                    return updateRouteWithNameAndPointsChange(
-                            ownerName, oldRouteName, route.getNewRoute()
-                    );
+                    return updateRouteWithNameAndPointsChange(ownerName, oldRouteName, userRoute);
                 }
             } else {
                 if (oldPoints.equals(newPoints)) {
-                    return updateRouteWithNameChange(
-                            ownerName, oldRouteName, route.getNewRoute()
-                    );
+                    return updateRouteWithNameChange(ownerName, oldRouteName, userRoute);
                 } else {
-                    return updateRouteWithNameAndPointsChange(
-                            ownerName, oldRouteName, route.getNewRoute()
-                    );
+                    return updateRouteWithNameAndPointsChange(ownerName, oldRouteName, userRoute);
                 }
             }
         }
@@ -86,15 +74,9 @@ public class UserRouteEditService implements RouteEdit {
     private boolean updateRouteWithNameAndPointsChange(
             String ownerName,
             String oldRouteName,
-            Route newRoute
+            UserRoute newRoute
     ) {
-        var handler = new SimpleRouteUniquenessHandler(
-                db,
-                ownerName,
-                newRoute.getRouteName(),
-                newRoute.getPoints()
-        );
-        newRoute.handleRouteUniqueness(handler);
+        newRoute.handleRouteUniqueness(db);
 
         saveChanges(ownerName, oldRouteName, newRoute);
         return true;
@@ -103,15 +85,9 @@ public class UserRouteEditService implements RouteEdit {
     private boolean updateRouteWithNameChange(
             String ownerName,
             String oldRouteName,
-            Route newRoute
+            UserRoute newRoute
     ) {
-        var handler = new SimpleRouteUniquenessHandler(
-                db,
-                ownerName,
-                newRoute.getRouteName(),
-                newRoute.getPoints()
-        );
-        newRoute.handleRouteNameUniqueness(handler);
+        newRoute.handleRouteNameUniqueness(db);
 
         saveChanges(ownerName, oldRouteName, newRoute);
         return true;
@@ -119,15 +95,9 @@ public class UserRouteEditService implements RouteEdit {
 
     private boolean updateRouteWithPointsChange(
             String ownerName,
-            Route newRoute
+            UserRoute newRoute
     ) {
-        var handler = new SimpleRouteUniquenessHandler(
-                db,
-                ownerName,
-                newRoute.getRouteName(),
-                newRoute.getPoints()
-        );
-        newRoute.handlePointUniqueness(handler);
+        newRoute.handlePointsUniqueness(db);
 
         saveChanges(ownerName, newRoute.getRouteName(), newRoute);
         return true;
@@ -136,7 +106,7 @@ public class UserRouteEditService implements RouteEdit {
     private void saveChanges(
             String ownerName,
             String oldRouteName,
-            Route newRoute
+            UserRoute newRoute
     ) {
         var queryFuture = getRouteQuery(ownerName, oldRouteName).get();
         var querySnapshot = FutureUtil.handleFutureGet(queryFuture::get);
