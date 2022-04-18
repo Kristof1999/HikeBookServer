@@ -1,4 +1,4 @@
-package hu.kristof.nagy.hikebookserver.service.route;
+package hu.kristof.nagy.hikebookserver.service.route.routeuniqueness;
 
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.Transaction;
@@ -8,32 +8,32 @@ import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 
 import java.util.List;
 
-public class GroupRouteUniquenessHandler extends RouteUniquenessHandler {
-    private String groupName;
-    private Transaction transaction;
+public class GroupHikeRouteUniquenessHandler extends RouteUniquenessHandler {
+    private final String groupHikeName;
+    private final Transaction transaction;
 
-    public GroupRouteUniquenessHandler(
+    public GroupHikeRouteUniquenessHandler(
             Transaction transaction,
             Firestore db,
-            String groupName,
+            String groupHikeName,
             String routeName,
             List<Point> points
     ) {
         this.transaction = transaction;
         this.db = db;
-        this.groupName = groupName;
+        this.groupHikeName = groupHikeName;
         this.routeName = routeName;
         this.points = points;
     }
 
     @Override
     public String getOwnerName() {
-        return groupName;
+        return groupHikeName;
     }
 
     @Override
     public String getOwnerPath() {
-        return DbPathConstants.ROUTE_GROUP_NAME;
+        return DbPathConstants.ROUTE_GROUP_HIKE_NAME;
     }
 
     @Override

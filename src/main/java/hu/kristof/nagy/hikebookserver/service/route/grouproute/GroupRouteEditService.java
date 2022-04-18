@@ -8,6 +8,7 @@ import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import hu.kristof.nagy.hikebookserver.service.Util;
 import hu.kristof.nagy.hikebookserver.service.route.QueryException;
 import hu.kristof.nagy.hikebookserver.service.route.RouteServiceUtils;
+import hu.kristof.nagy.hikebookserver.service.route.routeuniqueness.GroupRouteUniquenessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -81,39 +82,43 @@ public class GroupRouteEditService {
     private boolean updateRouteWithNameAndPointsChange(
             Transaction transaction,
             String oldRouteName,
-            GroupRoute groupRoute
+            GroupRoute newGroupRoute
     ) {
-        if (RouteServiceUtils.routeNameExistsForOwner(
-                transaction, db, groupRoute.getGroupName(), groupRoute.getGroupName(), DbPathConstants.ROUTE_GROUP_NAME
-        )) {
-            throw new IllegalArgumentException(
-                    RouteServiceUtils.getRouteNameNotUniqueString(groupRoute.getRouteName())
-            );
-        } else {
-            if (RouteServiceUtils.arePointsUniqueForOwner(
-                    transaction, db, groupRoute.getGroupName(), groupRoute.getPoints(), DbPathConstants.ROUTE_GROUP_NAME)
-            ) {
-                saveChanges(transaction, oldRouteName, groupRoute);
-                return true;
-            } else {
-                throw new IllegalArgumentException(RouteServiceUtils.POINTS_NOT_UNIQE);
-            }
-        }
+        var handler = new GroupRouteUniquenessHandler(
+                transaction,
+                db,
+                newGroupRoute.getGroupName(),
+                newGroupRoute.getRouteName(),
+                newGroupRoute.getPoints()
+        );
+        newGroupRoute.handleRouteUniqueness(handler);
+
+        saveChanges(transaction, oldRouteName, newGroupRoute);
+        return true;
     }
 
     private boolean updateRouteWithNameChange(
             Transaction transaction,
             String oldRouteName,
-            GroupRoute groupRoute
+            GroupRoute newGroupRoute
     ) {
+        var handler = new GroupRouteUniquenessHandler(
+                transaction,
+                db,
+                newGroupRoute.getGroupName(),
+                newGroupRoute.getRouteName(),
+                newGroupRoute.getPoints()
+        );
+
+
         if (RouteServiceUtils.routeNameExistsForOwner(
-                transaction, db, groupRoute.getGroupName(), groupRoute.getRouteName(), DbPathConstants.ROUTE_GROUP_NAME)
+                transaction, db, newGroupRoute.getGroupName(), newGroupRoute.getRouteName(), DbPathConstants.ROUTE_GROUP_NAME)
         ) {
             throw new IllegalArgumentException(
-                    RouteServiceUtils.getRouteNameNotUniqueString(groupRoute.getRouteName())
+                    RouteServiceUtils.getRouteNameNotUniqueString(newGroupRoute.getRouteName())
             );
         } else {
-            saveChanges(transaction, oldRouteName, groupRoute);
+            saveChanges(transaction, oldRouteName, newGroupRoute);
             return true;
         }
     }

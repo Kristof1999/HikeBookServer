@@ -4,12 +4,9 @@ import com.google.cloud.firestore.Firestore;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.routes.GroupRoute;
 import hu.kristof.nagy.hikebookserver.model.routes.Route;
-import hu.kristof.nagy.hikebookserver.model.routes.UserRoute;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
-import hu.kristof.nagy.hikebookserver.service.route.GroupRouteUniquenessHandler;
+import hu.kristof.nagy.hikebookserver.service.route.routeuniqueness.GroupRouteUniquenessHandler;
 import hu.kristof.nagy.hikebookserver.service.route.RouteCreate;
-import hu.kristof.nagy.hikebookserver.service.route.RouteServiceUtils;
-import hu.kristof.nagy.hikebookserver.service.route.UserRouteUniquenessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -8,6 +8,7 @@ import hu.kristof.nagy.hikebookserver.model.GroupHikeCreateHelper;
 import hu.kristof.nagy.hikebookserver.model.routes.GroupHikeRoute;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import hu.kristof.nagy.hikebookserver.service.route.RouteServiceUtils;
+import hu.kristof.nagy.hikebookserver.service.route.routeuniqueness.GroupHikeRouteUniquenessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -67,28 +68,23 @@ public class GroupHikeCreateService {
             GroupHikeRoute groupHikeRoute,
             DateTime dateTime
     ) {
-        if (RouteServiceUtils.routeNameExistsForOwner(
-                transaction, db, groupHikeName, groupHikeRoute.getRouteName(), DbPathConstants.ROUTE_GROUP_HIKE_NAME
-        )) {
-            throw new IllegalArgumentException(
-                    RouteServiceUtils.getRouteNameNotUniqueString(groupHikeRoute.getRouteName())
-            );
-        } else {
-            if (RouteServiceUtils.arePointsUniqueForOwner(
-                    transaction, db, groupHikeName, groupHikeRoute.getPoints(), DbPathConstants.ROUTE_GROUP_HIKE_NAME
-            )) {
-                Map<String, Object> data = groupHikeRoute.toMap();
-                var description = (String) data.get(DbPathConstants.ROUTE_DESCRIPTION);
-                description = dateTime.toString() + "\n" + description;
-                data.put(DbPathConstants.ROUTE_DESCRIPTION, description);
-                var docRef = db
-                        .collection(DbPathConstants.COLLECTION_ROUTE)
-                        .document();
-                // wait for write to finish
-                transaction.create(docRef, data);
-            } else {
-                throw new IllegalArgumentException(RouteServiceUtils.POINTS_NOT_UNIQE);
-            }
-        }
+        var handler = new GroupHikeRouteUniquenessHandler(
+                transaction,
+                db,
+                groupHikeName,
+                groupHikeRoute.getRouteName(),
+                groupHikeRoute.getPoints()
+        );
+        groupHikeRoute.handleRouteUniqueness(handler);
+
+        Map<String, Object> data = groupHikeRoute.toMap();
+        var description = (String) data.get(DbPathConstants.ROUTE_DESCRIPTION);
+        description = dateTime.toString() + "\n" + description;
+        data.put(DbPathConstants.ROUTE_DESCRIPTION, description);
+        var docRef = db
+                .collection(DbPathConstants.COLLECTION_ROUTE)
+                .document();
+        // wait for write to finish
+        transaction.create(docRef, data);
     }
 }

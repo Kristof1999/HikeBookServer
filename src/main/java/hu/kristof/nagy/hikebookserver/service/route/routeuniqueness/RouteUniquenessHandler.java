@@ -1,9 +1,10 @@
-package hu.kristof.nagy.hikebookserver.service.route;
+package hu.kristof.nagy.hikebookserver.service.route.routeuniqueness;
 
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.Query;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.Point;
+import hu.kristof.nagy.hikebookserver.service.route.RouteServiceUtils;
 
 import java.util.List;
 
@@ -29,7 +30,7 @@ public abstract class RouteUniquenessHandler {
 
     protected abstract boolean arePointsUnique();
 
-    protected Query arePointsUniqueQuery() {
+    public Query arePointsUniqueQuery() {
         return  db.collection(DbPathConstants.COLLECTION_ROUTE)
                 .whereEqualTo(getOwnerPath(), getOwnerName())
                 .whereEqualTo(DbPathConstants.ROUTE_POINTS, points);
@@ -37,7 +38,7 @@ public abstract class RouteUniquenessHandler {
 
     protected abstract boolean isRouteNameUnique();
 
-    protected Query isRouteNameUniqueQuery() {
+    public Query isRouteNameUniqueQuery() {
         return db.collection(DbPathConstants.COLLECTION_ROUTE)
                 .whereEqualTo(getOwnerPath(), getOwnerName())
                 .whereEqualTo(DbPathConstants.ROUTE_NAME, routeName);

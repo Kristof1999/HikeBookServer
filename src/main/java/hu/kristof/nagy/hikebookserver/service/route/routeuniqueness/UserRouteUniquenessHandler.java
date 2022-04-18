@@ -1,4 +1,4 @@
-package hu.kristof.nagy.hikebookserver.service.route;
+package hu.kristof.nagy.hikebookserver.service.route.routeuniqueness;
 
 import com.google.cloud.firestore.Firestore;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
@@ -33,13 +33,13 @@ public class UserRouteUniquenessHandler extends RouteUniquenessHandler {
     }
 
     @Override
-    protected boolean arePointsUnique() {
+    public boolean arePointsUnique() {
         var queryFuture = arePointsUniqueQuery().get();
         return FutureUtil.handleFutureGet(() -> queryFuture.get().isEmpty());
     }
 
     @Override
-    protected boolean isRouteNameUnique() {
+    public boolean isRouteNameUnique() {
         var queryFuture = isRouteNameUniqueQuery().get();
         return FutureUtil.handleFutureGet(() -> queryFuture.get().isEmpty());
     }
