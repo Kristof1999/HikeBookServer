@@ -45,12 +45,6 @@ public class GroupRouteLoadService {
 
         QueryDocumentSnapshot queryDocumentSnapshot = FutureUtil.handleFutureGet(() -> {
             var queryDocs = queryFuture.get().getDocuments();
-            // the route might have been deleted when the user wants to load it
-            if (queryDocs.isEmpty()) {
-                throw new IllegalArgumentException("A(z) " + routeName + " nevű" +
-                        "útvonal nem elérhető. Kérem, frissítse a csoport oldalt."
-                );
-            }
             return Util.handleListSize(queryDocs, documentSnapshots ->
                     (QueryDocumentSnapshot) documentSnapshots.get(0)
             );

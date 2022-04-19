@@ -6,7 +6,6 @@ import hu.kristof.nagy.hikebookserver.model.Point;
 import hu.kristof.nagy.hikebookserver.model.routes.EditedGroupRoute;
 import hu.kristof.nagy.hikebookserver.model.routes.EditedRoute;
 import hu.kristof.nagy.hikebookserver.model.routes.GroupRoute;
-import hu.kristof.nagy.hikebookserver.model.routes.Route;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import hu.kristof.nagy.hikebookserver.service.Util;
 import hu.kristof.nagy.hikebookserver.service.route.RouteEdit;
@@ -22,6 +21,15 @@ public class GroupRouteEditService implements RouteEdit {
     @Autowired
     private Firestore db;
 
+    @Autowired
+    private GroupRouteLoadService groupRouteLoadService;
+
+    /**
+     * Edits the route. If something changes, then it must be unique for the user.
+     * If the route got deleted while editing, then an
+     * error message will inform the user.
+     * @return true if the edited route is unique for the given user
+     */
     @Override
     public boolean editRoute(EditedRoute route) {
         String oldRouteName = route.getOldRoute().getRouteName();
@@ -33,6 +41,13 @@ public class GroupRouteEditService implements RouteEdit {
         GroupRoute newGroupRoute = ((EditedGroupRoute) route).getNewGroupRoute();
 
         var transactionFuture = db.runTransaction(transaction -> {
+            // check if old route didn't get deleted
+            if (!doesGroupRouteExist(transaction, newGroupRoute.getGroupName(), oldRouteName)) {
+                throw new IllegalArgumentException("A(z) " + oldRouteName + " nevű" +
+                        "útvonal nem elérhető. Kérem, frissítse a csoport oldalt."
+                );
+            }
+
             if (oldRouteName.equals(newRouteName)) {
                 if (oldDescription.equals(newDescription)) {
                     if (oldPoints.equals(newPoints)) {
@@ -79,6 +94,24 @@ public class GroupRouteEditService implements RouteEdit {
             }
         });
         return FutureUtil.handleFutureGet(transactionFuture::get);
+    }
+
+    private boolean doesGroupRouteExist(
+            Transaction transaction,
+            String groupName,
+            String routeName
+    ) {
+        var query = db
+                .collection(DbPathConstants.COLLECTION_ROUTE)
+                .whereEqualTo(DbPathConstants.ROUTE_GROUP_NAME, groupName)
+                .whereEqualTo(DbPathConstants.ROUTE_NAME, routeName);
+        var queryFuture = transaction.get(query);
+
+        return FutureUtil.handleFutureGet(() -> {
+            var queryDocs = queryFuture.get().getDocuments();
+            // the route might have been deleted when the user wants to load it
+            return !queryDocs.isEmpty();
+        });
     }
 
     private boolean updateRouteWithNameAndPointsChange(

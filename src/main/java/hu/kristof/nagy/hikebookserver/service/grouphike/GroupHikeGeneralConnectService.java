@@ -6,6 +6,7 @@ import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.DateTime;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import hu.kristof.nagy.hikebookserver.service.Util;
+import hu.kristof.nagy.hikebookserver.service.route.grouphikeroute.GroupHikeRouteLoadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,11 +17,16 @@ public class GroupHikeGeneralConnectService {
     @Autowired
     private Firestore db;
 
+    @Autowired
+    private GroupHikeRouteLoadService groupHikeRouteLoadService;
+
     /**
      * Connects or disconnects the given user to the given group hike
      * based on whether the user is at the connected page or not.
      * If everyone left the given group hike, then the
      * associated route will be deleted.
+     * If someone tries to connect to a deleted group hike, he/she
+     * will receive a message that the group hike does no longer exist.
      * @param groupHikeName name of group hike to join/leave
      * @param userName name of user who wants to join/leave the given group hike
      * @param isConnectedPage boolean that tells whether the user is at the connected page or not
@@ -41,16 +47,23 @@ public class GroupHikeGeneralConnectService {
     }
 
     private boolean connect(String groupHikeName, String userName, DateTime dateTime) {
-        Map<String, Object> data = dateTime.toMap();
-        data.put(DbPathConstants.GROUP_HIKE_DATE_TIME, dateTime.toString());
-        data.put(DbPathConstants.GROUP_HIKE_NAME, groupHikeName);
-        data.put(DbPathConstants.GROUP_HIKE_PARTICIPANT_NAME, userName);
-        return FutureUtil.handleFutureGet(() -> {
-            db.collection(DbPathConstants.COLLECTION_GROUP_HIKE)
-                    .add(data)
-                    .get();
-            return true;
+        var transactionFuture = db.runTransaction(transaction -> {
+            if (participantNumber(transaction, groupHikeName) == 0)
+                throw new IllegalArgumentException("A csoportos túra véget ért/megszűnt.");
+
+            Map<String, Object> data = dateTime.toMap();
+            data.put(DbPathConstants.GROUP_HIKE_DATE_TIME, dateTime.toString());
+            data.put(DbPathConstants.GROUP_HIKE_NAME, groupHikeName);
+            data.put(DbPathConstants.GROUP_HIKE_PARTICIPANT_NAME, userName);
+            return FutureUtil.handleFutureGet(() -> {
+                var docRef = db.collection(DbPathConstants.COLLECTION_GROUP_HIKE)
+                        .document();
+                transaction.create(docRef, data);
+                return true;
+            });
         });
+
+        return FutureUtil.handleFutureGet(transactionFuture::get);
     }
 
     private boolean disconnect(String groupHikeName, String userName) {

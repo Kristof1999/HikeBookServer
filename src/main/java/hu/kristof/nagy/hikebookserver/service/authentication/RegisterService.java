@@ -26,24 +26,28 @@ public class RegisterService {
      * @return true if registration was successful
      */
     public boolean registerUser(User user) {
-        var users = db.collection(DbPathConstants.COLLECTION_USER);
-        var queryFuture = users
-                .select(DbPathConstants.USER_NAME)
-                .whereEqualTo(DbPathConstants.USER_NAME, user.getName())
-                .get();
+        var transactionFuture = db.runTransaction(transaction -> {
+            var users = db.collection(DbPathConstants.COLLECTION_USER);
+            var query = users
+                    .select(DbPathConstants.USER_NAME)
+                    .whereEqualTo(DbPathConstants.USER_NAME, user.getName());
+            var queryFuture = transaction.get(query);
 
-        return FutureUtil.handleFutureGet(() -> {
-            if (queryFuture.get().isEmpty()) {
-                // userName is unique
-                Map<String, Object> data = user.toMap();
+            return FutureUtil.handleFutureGet(() -> {
+                if (queryFuture.get().isEmpty()) {
+                    // userName is unique
+                    Map<String, Object> data = user.toMap();
 
-                users.document(user.getName())
-                        .set(data)
-                        .get();// wait for write result
-                return true;
-            } else {
-                return false;
-            }
+                    var docRef = users.document(user.getName());
+                    transaction.set(docRef, data);
+                    return true;
+                } else {
+                    return false;
+                }
+            });
         });
+
+        // wait for write result
+        return FutureUtil.handleFutureGet(transactionFuture::get);
     }
 }
