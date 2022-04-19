@@ -1,7 +1,6 @@
 package hu.kristof.nagy.hikebookserver.model;
 
 import com.google.cloud.firestore.DocumentSnapshot;
-import com.google.cloud.firestore.QueryDocumentSnapshot;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 
 public class GroupHikeListHelper {

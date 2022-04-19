@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("groups/")
 public class GroupsController {
 
     @Autowired
@@ -24,7 +25,7 @@ public class GroupsController {
     @Autowired
     private GroupsMembersListService groupsMembersListService;
 
-    @GetMapping("groups/{userName}/{isConnectedPage}")
+    @GetMapping("{userName}/{isConnectedPage}")
     public List<String> listGroups(
             @PathVariable String userName,
             @PathVariable boolean isConnectedPage
@@ -32,7 +33,7 @@ public class GroupsController {
         return groupsListService.listGroups(userName, isConnectedPage);
     }
 
-    @PutMapping("groups/{groupName}/{userName}")
+    @PutMapping("{groupName}/{userName}")
     public boolean createGroup(
             @PathVariable String groupName,
             @PathVariable String userName
@@ -40,7 +41,7 @@ public class GroupsController {
         return groupCreateService.createGroup(groupName, userName);
     }
 
-    @PutMapping("groups/{groupName}/{userName}/{isConnectedPage}")
+    @PutMapping("{groupName}/{userName}/{isConnectedPage}")
     public boolean generalConnect(
             @PathVariable String groupName,
             @PathVariable String userName,
@@ -49,7 +50,7 @@ public class GroupsController {
         return groupsGeneralConnectService.generalConnect(groupName, userName, isConnectedPage);
     }
 
-    @GetMapping("groups/{groupName}")
+    @GetMapping("{groupName}")
     public List<String> listMembers(
             @PathVariable String groupName
     ) {
