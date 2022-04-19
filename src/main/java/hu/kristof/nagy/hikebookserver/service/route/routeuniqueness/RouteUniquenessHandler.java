@@ -8,6 +8,9 @@ import hu.kristof.nagy.hikebookserver.service.route.RouteServiceUtils;
 
 import java.util.List;
 
+/**
+ * A Class the checks and handles a route's uniqueness.
+ */
 public abstract class RouteUniquenessHandler {
     protected String ownerName;
     protected String ownerPath;

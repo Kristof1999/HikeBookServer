@@ -16,6 +16,17 @@ public class GroupHikeGeneralConnectService {
     @Autowired
     private Firestore db;
 
+    /**
+     * Connects or disconnects the given user to the given group hike
+     * based on whether the user is at the connected page or not.
+     * If everyone left the given group hike, then the
+     * associated route will be deleted.
+     * @param groupHikeName name of group hike to join/leave
+     * @param userName name of user who wants to join/leave the given group hike
+     * @param isConnectedPage boolean that tells whether the user is at the connected page or not
+     * @param dateTime date and time of the group hike
+     * @return true if joining/leaving was successful
+     */
     public boolean generalConnect(
             String groupHikeName,
             String userName,

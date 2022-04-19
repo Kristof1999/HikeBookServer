@@ -7,6 +7,9 @@ import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 
 import java.util.List;
 
+/**
+ * A RouteUniquenessHandler that checks the uniqueness with a transaction.
+ */
 public class TransactionRouteUniquenessHandler extends RouteUniquenessHandler {
     private final Transaction transaction;
 

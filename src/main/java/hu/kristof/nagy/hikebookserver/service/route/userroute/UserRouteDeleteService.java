@@ -28,7 +28,7 @@ public class UserRouteDeleteService {
 
         QuerySnapshot querySnapshot = FutureUtil.handleFutureGet(queryFuture::get);
         if (querySnapshot.isEmpty()) {
-            // route with given name and userName didn't
+            // route with given name and userName didn't exist
             return false;
         } else {
             var queryDocs = querySnapshot.getDocuments();

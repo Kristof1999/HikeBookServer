@@ -22,6 +22,9 @@ public class GroupRouteLoadService {
     @Autowired
     private RouteLoadService routeLoadService;
 
+    /**
+     * Loads group routes associated with the given group's name.
+     */
     public List<GroupRoute> loadGroupRoutes(String groupName) {
         return routeLoadService.loadRoutes(groupName, DbPathConstants.ROUTE_GROUP_NAME)
                 .stream()
@@ -29,6 +32,9 @@ public class GroupRouteLoadService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Loads the given route with the specified route name and group name.
+     */
     public GroupRoute loadGroupRoute(String groupName, String routeName) {
         var queryFuture = db
                 .collection(DbPathConstants.COLLECTION_ROUTE)

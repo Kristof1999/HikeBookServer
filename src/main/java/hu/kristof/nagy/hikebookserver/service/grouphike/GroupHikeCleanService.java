@@ -20,6 +20,9 @@ public class GroupHikeCleanService {
     @Autowired
     private Firestore db;
 
+    /**
+     * Deletes group hikes which date is lower than or equal to today's date.
+     */
     // Run once a day at 23:45:00
     @Scheduled(cron = "0 45 23 * * *")
     public void cleanGroupHikes() {
@@ -71,7 +74,7 @@ public class GroupHikeCleanService {
                 .collection(DbPathConstants.COLLECTION_GROUP_HIKE);
         var select = groupHikes.select(DbPathConstants.GROUP_HIKE_NAME);
         var yearQuery = select
-                .whereLessThan(DbPathConstants.GROUP_HIKE_YEAR, currentTime.get(Calendar.YEAR));
+                .whereLessThanOrEqualTo(DbPathConstants.GROUP_HIKE_YEAR, currentTime.get(Calendar.YEAR));
         var yearQueryFuture = transaction.get(yearQuery);
         var years = FutureUtil.handleFutureGet(() -> yearQueryFuture.get().getDocuments());
         // if there are no group hikes which happened in the past year,
@@ -79,12 +82,12 @@ public class GroupHikeCleanService {
         // which dates are in the last month
         if (years.isEmpty()) {
             var monthQuery = select
-                    .whereLessThan(DbPathConstants.GROUP_HIKE_MONTH, currentTime.get(Calendar.MONTH));
+                    .whereLessThanOrEqualTo(DbPathConstants.GROUP_HIKE_MONTH, currentTime.get(Calendar.MONTH));
             var monthQueryFuture = transaction.get(monthQuery);
             var months = FutureUtil.handleFutureGet(() -> monthQueryFuture.get().getDocuments());
             if (months.isEmpty()) {
                 var dayOfMonthQuery = select
-                        .whereLessThan(DbPathConstants.GROUP_HIKE_DAY_OF_MONTH, currentTime.get(Calendar.DAY_OF_MONTH));
+                        .whereLessThanOrEqualTo(DbPathConstants.GROUP_HIKE_DAY_OF_MONTH, currentTime.get(Calendar.DAY_OF_MONTH));
                 var dayOfMonthQueryFuture = transaction.get(dayOfMonthQuery);
                 return FutureUtil.handleFutureGet(() -> dayOfMonthQueryFuture.get().getDocuments());
             } else {

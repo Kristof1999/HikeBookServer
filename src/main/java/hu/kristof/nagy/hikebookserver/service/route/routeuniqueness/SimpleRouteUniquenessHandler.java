@@ -7,6 +7,9 @@ import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 
 import java.util.List;
 
+/**
+ * A RouteUniquenessHandler which simply checks the uniqueness.
+ */
 public class SimpleRouteUniquenessHandler extends RouteUniquenessHandler {
     public SimpleRouteUniquenessHandler(Builder builder) {
         this(

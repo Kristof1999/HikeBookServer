@@ -23,10 +23,10 @@ public class GroupsMembersListService {
                 .get();
         return FutureUtil.handleFutureGet(() ->
                 queryFuture.get().getDocuments().stream()
-                .map(queryDocumentSnapshot ->
-                        queryDocumentSnapshot.getString(DbPathConstants.GROUP_MEMBER_NAME)
-                )
-                .collect(Collectors.toList())
+                        .map(queryDocumentSnapshot ->
+                                queryDocumentSnapshot.getString(DbPathConstants.GROUP_MEMBER_NAME)
+                        )
+                        .collect(Collectors.toList())
         );
     }
 }

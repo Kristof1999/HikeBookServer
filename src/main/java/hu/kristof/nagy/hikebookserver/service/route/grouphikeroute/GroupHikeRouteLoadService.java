@@ -16,9 +16,7 @@ public class GroupHikeRouteLoadService {
 
     public Route loadGroupHikeRoute(String groupHikeName) {
         var queryFuture = db.collection(DbPathConstants.COLLECTION_ROUTE)
-                .select(DbPathConstants.ROUTE_NAME,
-                        DbPathConstants.ROUTE_DESCRIPTION,
-                        DbPathConstants.ROUTE_POINTS)
+                .select(Route.getSelectPaths())
                 .whereEqualTo(DbPathConstants.ROUTE_GROUP_HIKE_NAME, groupHikeName)
                 .get();
         var queryDocs = FutureUtil.handleFutureGet(() ->

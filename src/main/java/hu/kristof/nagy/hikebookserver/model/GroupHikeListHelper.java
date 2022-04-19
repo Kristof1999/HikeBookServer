@@ -22,6 +22,17 @@ public class GroupHikeListHelper {
         return new GroupHikeListHelper(groupHikeName, dateTime);
     }
 
+    public static String[] getSelectPaths() {
+        return new String[] {
+                DbPathConstants.GROUP_HIKE_NAME,
+                DbPathConstants.GROUP_HIKE_YEAR,
+                DbPathConstants.GROUP_HIKE_MONTH,
+                DbPathConstants.GROUP_HIKE_DAY_OF_MONTH,
+                DbPathConstants.GROUP_HIKE_HOUR_OF_DAY,
+                DbPathConstants.GROUP_HIKE_MINUTE
+        };
+    }
+
     public String getGroupHikeName() {
         return groupHikeName;
     }

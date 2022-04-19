@@ -15,6 +15,9 @@ public class GroupRouteDeleteService {
     @Autowired
     private Firestore db;
 
+    /**
+     * Deletes the group route with the given group name and route name.
+     */
     public boolean deleteGroupRoute(String groupName, String routeName) {
         var transactionFuture = db.runTransaction(transaction -> {
             var routes = db.collection(DbPathConstants.COLLECTION_ROUTE);

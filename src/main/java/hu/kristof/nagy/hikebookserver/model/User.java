@@ -1,6 +1,7 @@
 package hu.kristof.nagy.hikebookserver.model;
 
 import com.google.common.primitives.Bytes;
+import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 
 import java.util.*;
 
@@ -19,6 +20,14 @@ public final class User {
         this.name = name;
         this.password = password;
         this.avgSpeed = avgSpeed;
+    }
+
+    public Map<String, Object> toMap() {
+        var data = new HashMap<String, Object>();
+        data.put(DbPathConstants.USER_NAME, getName());
+        data.put(DbPathConstants.USER_PASSWORD, getPassword());
+        data.put(DbPathConstants.USER_AVG_SPEED, getAvgSpeed());
+        return data;
     }
 
     public String getName() {

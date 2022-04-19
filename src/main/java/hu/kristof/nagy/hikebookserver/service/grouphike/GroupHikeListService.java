@@ -3,6 +3,7 @@ package hu.kristof.nagy.hikebookserver.service.grouphike;
 import com.google.cloud.firestore.Firestore;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.GroupHikeListHelper;
+import hu.kristof.nagy.hikebookserver.model.routes.GroupHikeRoute;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,12 +30,7 @@ public class GroupHikeListService {
     private List<GroupHikeListHelper> listConnectedGroupHikes(String userName) {
         var queryFuture = db
                 .collection(DbPathConstants.COLLECTION_GROUP_HIKE)
-                .select(DbPathConstants.GROUP_HIKE_NAME,
-                        DbPathConstants.GROUP_HIKE_YEAR,
-                        DbPathConstants.GROUP_HIKE_MONTH,
-                        DbPathConstants.GROUP_HIKE_DAY_OF_MONTH,
-                        DbPathConstants.GROUP_HIKE_HOUR_OF_DAY,
-                        DbPathConstants.GROUP_HIKE_MINUTE)
+                .select(GroupHikeListHelper.getSelectPaths())
                 .whereEqualTo(DbPathConstants.GROUP_HIKE_PARTICIPANT_NAME, userName)
                 .get();
         return FutureUtil.handleFutureGet(() -> new ArrayList<>(
@@ -54,12 +50,7 @@ public class GroupHikeListService {
         } else {
             var queryFuture = db
                     .collection(DbPathConstants.COLLECTION_GROUP_HIKE)
-                    .select(DbPathConstants.GROUP_HIKE_NAME,
-                            DbPathConstants.GROUP_HIKE_YEAR,
-                            DbPathConstants.GROUP_HIKE_MONTH,
-                            DbPathConstants.GROUP_HIKE_DAY_OF_MONTH,
-                            DbPathConstants.GROUP_HIKE_HOUR_OF_DAY,
-                            DbPathConstants.GROUP_HIKE_MINUTE)
+                    .select(GroupHikeListHelper.getSelectPaths())
                     .whereNotIn(DbPathConstants.GROUP_HIKE_NAME, connectedGroupHikeNames)
                     .get();
             return FutureUtil.handleFutureGet(() -> new ArrayList<>(

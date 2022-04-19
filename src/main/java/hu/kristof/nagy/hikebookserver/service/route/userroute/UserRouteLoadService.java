@@ -55,7 +55,7 @@ public class UserRouteLoadService {
     }
 
     /**
-     * Lists all the routes' name and associated user name.
+     * Lists all the user routes' name and associated user name.
      */
     public List<BrowseListItem> listUserRoutes(String requesterName) {
         var routes = new ArrayList<BrowseListItem>();

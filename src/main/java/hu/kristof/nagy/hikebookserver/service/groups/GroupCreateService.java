@@ -16,6 +16,12 @@ public class GroupCreateService {
     @Autowired
     private Firestore db;
 
+    /**
+     * Creates a group with the given group name, and
+     * user name as the first member,
+     * if the group name is unique.
+     * @return true if creation was successful
+     */
     public boolean createGroup(String groupName, String userName) {
         var transactionFuture = db.runTransaction(transaction -> {
             if (isNameUnique(transaction, groupName)) {

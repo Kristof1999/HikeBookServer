@@ -14,7 +14,6 @@ public class GroupHikeParticipantsListService {
     @Autowired
     private Firestore db;
 
-    // TODO: derive common parts with groups members list to a common method
     public List<String> listParticipants(String groupHikeName) {
         var queryFuture = db
                 .collection(DbPathConstants.COLLECTION_GROUP_HIKE)

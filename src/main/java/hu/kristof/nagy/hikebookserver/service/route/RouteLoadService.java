@@ -22,6 +22,8 @@ public class RouteLoadService {
 
     /**
      * Loads routes associated with the given owner.
+     * @param ownerName the owner to load routes for
+     * @param ownerPath the path of the owner to use for querying
      */
     public List<Route> loadRoutes(String ownerName, String ownerPath) {
         var queryFuture =  db

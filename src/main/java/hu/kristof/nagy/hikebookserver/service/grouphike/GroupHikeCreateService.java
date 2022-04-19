@@ -18,6 +18,11 @@ public class GroupHikeCreateService {
     @Autowired
     private Firestore db;
 
+    /**
+     * Creates the group hike with the given name, route,
+     * and user name as the first participant,
+     * if the group hike name and the route are unique.
+     */
     public boolean createGroupHike(
             String userName,
             String groupHikeName,

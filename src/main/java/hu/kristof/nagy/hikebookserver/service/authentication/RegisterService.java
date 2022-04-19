@@ -35,10 +35,7 @@ public class RegisterService {
         return FutureUtil.handleFutureGet(() -> {
             if (queryFuture.get().isEmpty()) {
                 // userName is unique
-                var data = new HashMap<String, Object>();
-                data.put(DbPathConstants.USER_NAME, user.getName());
-                data.put(DbPathConstants.USER_PASSWORD, user.getPassword());
-                data.put(DbPathConstants.USER_AVG_SPEED, user.getAvgSpeed());
+                Map<String, Object> data = user.toMap();
 
                 users.document(user.getName())
                         .set(data)
