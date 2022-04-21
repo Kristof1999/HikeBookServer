@@ -2,6 +2,7 @@ package hu.kristof.nagy.hikebookserver.service.route.grouproute;
 
 import com.google.cloud.firestore.Firestore;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
+import hu.kristof.nagy.hikebookserver.model.ResponseResult;
 import hu.kristof.nagy.hikebookserver.model.routes.Route;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import hu.kristof.nagy.hikebookserver.service.route.RouteCreate;
@@ -18,7 +19,7 @@ public class GroupRouteCreateService implements RouteCreate {
     private Firestore db;
 
     @Override
-    public boolean createRoute(Route route) {
+    public ResponseResult<Boolean> createRoute(Route route) {
         var transactionFuture = db.runTransaction(transaction -> {
             route.handleRouteUniqueness(new TransactionRouteUniquenessHandler
                     .Builder(db, transaction)
@@ -32,6 +33,6 @@ public class GroupRouteCreateService implements RouteCreate {
             transaction.create(docRef, data);
             return true;
         });
-        return FutureUtil.handleFutureGet(transactionFuture::get);
+        return ResponseResult.success(FutureUtil.handleFutureGet(transactionFuture::get));
     }
 }

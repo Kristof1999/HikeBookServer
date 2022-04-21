@@ -1,5 +1,6 @@
 package hu.kristof.nagy.hikebookserver.service.route;
 
+import hu.kristof.nagy.hikebookserver.model.ResponseResult;
 import hu.kristof.nagy.hikebookserver.model.routes.Route;
 
 public interface RouteCreate {
@@ -9,5 +10,5 @@ public interface RouteCreate {
      * @param route the created route
      * @return true if route is unique
      */
-    boolean createRoute(Route route);
+    ResponseResult<Boolean> createRoute(Route route);
 }

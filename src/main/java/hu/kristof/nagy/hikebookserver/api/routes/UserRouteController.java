@@ -2,6 +2,7 @@ package hu.kristof.nagy.hikebookserver.api.routes;
 
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.BrowseListItem;
+import hu.kristof.nagy.hikebookserver.model.ResponseResult;
 import hu.kristof.nagy.hikebookserver.model.routes.EditedUserRoute;
 import hu.kristof.nagy.hikebookserver.model.routes.UserRoute;
 import hu.kristof.nagy.hikebookserver.service.route.userroute.UserRouteCreateService;
@@ -30,7 +31,7 @@ public class UserRouteController {
     private UserRouteEditService routeEdit;
 
     @PutMapping("{userName}/{routeName}")
-    public boolean createUserRoute(
+    public ResponseResult<Boolean> createUserRoute(
             @PathVariable String userName,
             @PathVariable String routeName,
             @RequestBody UserRoute userRoute

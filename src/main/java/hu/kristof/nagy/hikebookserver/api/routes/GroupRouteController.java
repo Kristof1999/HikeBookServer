@@ -1,6 +1,7 @@
 package hu.kristof.nagy.hikebookserver.api.routes;
 
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
+import hu.kristof.nagy.hikebookserver.model.ResponseResult;
 import hu.kristof.nagy.hikebookserver.model.routes.EditedGroupRoute;
 import hu.kristof.nagy.hikebookserver.model.routes.GroupRoute;
 import hu.kristof.nagy.hikebookserver.model.routes.UserRoute;
@@ -30,7 +31,7 @@ public class GroupRouteController {
     private GroupRouteEditService groupRouteEditService;
 
     @PutMapping("{groupName}/{routeName}")
-    public boolean createGroupRoute(
+    public ResponseResult<Boolean> createGroupRoute(
             @PathVariable String groupName,
             @PathVariable String routeName,
             @RequestBody GroupRoute groupRoute

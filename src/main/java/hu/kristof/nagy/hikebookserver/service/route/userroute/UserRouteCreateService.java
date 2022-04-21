@@ -2,6 +2,7 @@ package hu.kristof.nagy.hikebookserver.service.route.userroute;
 
 import com.google.cloud.firestore.Firestore;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
+import hu.kristof.nagy.hikebookserver.model.ResponseResult;
 import hu.kristof.nagy.hikebookserver.model.routes.Route;
 import hu.kristof.nagy.hikebookserver.model.routes.UserRoute;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
@@ -19,10 +20,14 @@ public class UserRouteCreateService implements RouteCreate {
     private Firestore db;
 
     @Override
-    public boolean createRoute(Route route) {
-        route.handleRouteUniqueness(new SimpleRouteUniquenessHandler
-                .Builder(db)
-        );
+    public ResponseResult<Boolean> createRoute(Route route) {
+        try {
+            route.handleRouteUniqueness(new SimpleRouteUniquenessHandler
+                    .Builder(db)
+            );
+        } catch (IllegalArgumentException e) {
+            return ResponseResult.fail(e.getMessage());
+        }
 
         Map<String, Object> data = route.toMap();
         FutureUtil.handleFutureGet(() ->
@@ -30,7 +35,7 @@ public class UserRouteCreateService implements RouteCreate {
                         .add(data)
                         .get() // wait for write result
         );
-        return true;
+        return ResponseResult.success(true);
     }
 
 }
