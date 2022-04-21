@@ -4,6 +4,7 @@ import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.Transaction;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.DateTime;
+import hu.kristof.nagy.hikebookserver.model.ResponseResult;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import hu.kristof.nagy.hikebookserver.service.Util;
 import hu.kristof.nagy.hikebookserver.service.route.grouphikeroute.GroupHikeRouteLoadService;
@@ -33,16 +34,16 @@ public class GroupHikeGeneralConnectService {
      * @param dateTime date and time of the group hike
      * @return true if joining/leaving was successful
      */
-    public boolean generalConnect(
+    public ResponseResult<Boolean> generalConnect(
             String groupHikeName,
             String userName,
             boolean isConnectedPage,
             DateTime dateTime
     ) {
         if (isConnectedPage) {
-            return disconnect(groupHikeName, userName);
+            return ResponseResult.success(disconnect(groupHikeName, userName));
         } else {
-            return connect(groupHikeName, userName, dateTime);
+            return ResponseResult.success(connect(groupHikeName, userName, dateTime));
         }
     }
 

@@ -3,6 +3,7 @@ package hu.kristof.nagy.hikebookserver.service.route.userroute;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QuerySnapshot;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
+import hu.kristof.nagy.hikebookserver.model.ResponseResult;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import hu.kristof.nagy.hikebookserver.service.Util;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ public class UserRouteDeleteService {
      * @param routeName name of route which to delete for the given user
      * @return true if deletion was successful
      */
-    public boolean deleteUserRoute(String userName, String routeName) {
+    public ResponseResult<Boolean> deleteUserRoute(String userName, String routeName) {
         var routes = db.collection(DbPathConstants.COLLECTION_ROUTE);
         var queryFuture = routes
                 .whereEqualTo(DbPathConstants.ROUTE_USER_NAME, userName)
@@ -29,7 +30,8 @@ public class UserRouteDeleteService {
         QuerySnapshot querySnapshot = FutureUtil.handleFutureGet(queryFuture::get);
         if (querySnapshot.isEmpty()) {
             // route with given name and userName didn't exist
-            return false;
+            // maybe throw exception
+            return ResponseResult.success(false);
         } else {
             var queryDocs = querySnapshot.getDocuments();
             return Util.handleListSize(queryDocs, documentSnapshots -> {
@@ -39,7 +41,7 @@ public class UserRouteDeleteService {
                                 .delete()
                                 .get() // wait for write result
                 );
-                return true;
+                return ResponseResult.success(true);
             });
         }
     }

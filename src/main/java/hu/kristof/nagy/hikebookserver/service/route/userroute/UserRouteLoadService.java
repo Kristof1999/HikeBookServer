@@ -4,6 +4,7 @@ import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.BrowseListItem;
+import hu.kristof.nagy.hikebookserver.model.ResponseResult;
 import hu.kristof.nagy.hikebookserver.model.routes.UserRoute;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import hu.kristof.nagy.hikebookserver.service.Util;
@@ -27,17 +28,19 @@ public class UserRouteLoadService {
     /**
      * Loads all the routes associated with the given user.
      */
-    public List<UserRoute> loadUserRoutes(String userName) {
-        return routeLoadService.loadRoutes(userName, DbPathConstants.ROUTE_USER_NAME)
+    public ResponseResult<List<UserRoute>> loadUserRoutes(String userName) {
+        return ResponseResult.success(
+                routeLoadService.loadRoutes(userName, DbPathConstants.ROUTE_USER_NAME)
                 .stream()
                 .map(route -> new UserRoute(route, userName))
-                .collect(Collectors.toList());
+                .collect(Collectors.toList())
+        );
     }
 
     /**
      * Loads the given route associated with the given user.
      */
-    public UserRoute loadUserRoute(String userName, String routeName) {
+    public ResponseResult<UserRoute> loadUserRoute(String userName, String routeName) {
         var queryFuture = db
                 .collection(DbPathConstants.COLLECTION_ROUTE)
                 .select(UserRoute.getSelectPaths())
@@ -51,13 +54,13 @@ public class UserRouteLoadService {
                     (QueryDocumentSnapshot) documentSnapshots.get(0)
             );
         });
-        return UserRoute.from(queryDocumentSnapshot);
+        return ResponseResult.success(UserRoute.from(queryDocumentSnapshot));
     }
 
     /**
      * Lists all the user routes' name and associated user name.
      */
-    public List<BrowseListItem> listUserRoutes(String requesterName) {
+    public ResponseResult<List<BrowseListItem>> listUserRoutes(String requesterName) {
         var routes = new ArrayList<BrowseListItem>();
         var queryFuture = db.collection(DbPathConstants.COLLECTION_ROUTE)
                 .select(BrowseListItem.getSelectPaths())
@@ -75,6 +78,6 @@ public class UserRouteLoadService {
             );
             routes.add(new BrowseListItem(userName, routeName));
         }
-        return routes;
+        return ResponseResult.success(routes);
     }
 }

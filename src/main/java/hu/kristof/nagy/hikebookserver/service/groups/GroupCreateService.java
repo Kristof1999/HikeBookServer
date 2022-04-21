@@ -4,6 +4,7 @@ import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.Transaction;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.Group;
+import hu.kristof.nagy.hikebookserver.model.ResponseResult;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,7 +23,7 @@ public class GroupCreateService {
      * if the group name is unique.
      * @return true if creation was successful
      */
-    public boolean createGroup(String groupName, String userName) {
+    public ResponseResult<Boolean> createGroup(String groupName, String userName) {
         var transactionFuture = db.runTransaction(transaction -> {
             if (isNameUnique(transaction, groupName)) {
                 save(transaction, new Group(groupName, userName));
@@ -31,7 +32,7 @@ public class GroupCreateService {
                 throw new IllegalArgumentException("A " + groupName + " már létezik! Kérem, hogy válasszon másikat.");
             }
         });
-        return FutureUtil.handleFutureGet(transactionFuture::get);
+        return ResponseResult.success(FutureUtil.handleFutureGet(transactionFuture::get));
     }
 
     private void save(Transaction transaction, Group group) {

@@ -3,6 +3,7 @@ package hu.kristof.nagy.hikebookserver.service.route.grouproute;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QuerySnapshot;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
+import hu.kristof.nagy.hikebookserver.model.ResponseResult;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import hu.kristof.nagy.hikebookserver.service.Util;
 import hu.kristof.nagy.hikebookserver.service.route.QueryException;
@@ -18,7 +19,7 @@ public class GroupRouteDeleteService {
     /**
      * Deletes the group route with the given group name and route name.
      */
-    public boolean deleteGroupRoute(String groupName, String routeName) {
+    public ResponseResult<Boolean> deleteGroupRoute(String groupName, String routeName) {
         var transactionFuture = db.runTransaction(transaction -> {
             var routes = db.collection(DbPathConstants.COLLECTION_ROUTE);
             var query = routes
@@ -41,6 +42,6 @@ public class GroupRouteDeleteService {
                 });
             }
         });
-        return FutureUtil.handleFutureGet(transactionFuture::get);
+        return ResponseResult.success(FutureUtil.handleFutureGet(transactionFuture::get));
     }
 }

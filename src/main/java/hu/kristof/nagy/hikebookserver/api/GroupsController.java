@@ -1,5 +1,6 @@
 package hu.kristof.nagy.hikebookserver.api;
 
+import hu.kristof.nagy.hikebookserver.model.ResponseResult;
 import hu.kristof.nagy.hikebookserver.service.groups.GroupCreateService;
 import hu.kristof.nagy.hikebookserver.service.groups.GroupsGeneralConnectService;
 import hu.kristof.nagy.hikebookserver.service.groups.GroupsListService;
@@ -26,7 +27,7 @@ public class GroupsController {
     private GroupsMembersListService groupsMembersListService;
 
     @GetMapping("{userName}/{isConnectedPage}")
-    public List<String> listGroups(
+    public ResponseResult<List<String>> listGroups(
             @PathVariable String userName,
             @PathVariable boolean isConnectedPage
     ) {
@@ -34,7 +35,7 @@ public class GroupsController {
     }
 
     @PutMapping("{groupName}/{userName}")
-    public boolean createGroup(
+    public ResponseResult<Boolean> createGroup(
             @PathVariable String groupName,
             @PathVariable String userName
     ) {
@@ -42,7 +43,7 @@ public class GroupsController {
     }
 
     @PutMapping("{groupName}/{userName}/{isConnectedPage}")
-    public boolean generalConnect(
+    public ResponseResult<Boolean> generalConnect(
             @PathVariable String groupName,
             @PathVariable String userName,
             @PathVariable boolean isConnectedPage
@@ -51,7 +52,7 @@ public class GroupsController {
     }
 
     @GetMapping("{groupName}")
-    public List<String> listMembers(
+    public ResponseResult<List<String>> listMembers(
             @PathVariable String groupName
     ) {
         return groupsMembersListService.listMembers(groupName);

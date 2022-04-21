@@ -40,14 +40,14 @@ public class GroupRouteController {
     }
 
     @GetMapping("{groupName}")
-    public List<GroupRoute> loadGroupRoutes(
+    public ResponseResult<List<GroupRoute>> loadGroupRoutes(
             @PathVariable String groupName
     ) {
         return groupRouteLoadService.loadGroupRoutes(groupName);
     }
 
     @GetMapping("{groupName}/{routeName}")
-    public GroupRoute loadUserRoute(
+    public ResponseResult<GroupRoute> loadUserRoute(
             @PathVariable String groupName,
             @PathVariable String routeName
     ) {
@@ -55,7 +55,7 @@ public class GroupRouteController {
     }
 
     @DeleteMapping("{groupName}/{routeName}")
-    public boolean deleteGroupRoute(
+    public ResponseResult<Boolean> deleteGroupRoute(
             @PathVariable String groupName,
             @PathVariable String routeName
     ) {
@@ -63,7 +63,7 @@ public class GroupRouteController {
     }
 
     @PutMapping("edit/{groupName}/{oldRouteName}")
-    public boolean editGroupRoute(
+    public ResponseResult<Boolean> editGroupRoute(
             @PathVariable String groupName,
             @PathVariable String oldRouteName,
             @RequestBody EditedGroupRoute editedGroupRoute

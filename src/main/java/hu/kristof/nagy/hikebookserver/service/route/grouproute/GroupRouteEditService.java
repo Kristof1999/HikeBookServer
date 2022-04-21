@@ -3,6 +3,7 @@ package hu.kristof.nagy.hikebookserver.service.route.grouproute;
 import com.google.cloud.firestore.*;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.Point;
+import hu.kristof.nagy.hikebookserver.model.ResponseResult;
 import hu.kristof.nagy.hikebookserver.model.routes.EditedGroupRoute;
 import hu.kristof.nagy.hikebookserver.model.routes.EditedRoute;
 import hu.kristof.nagy.hikebookserver.model.routes.GroupRoute;
@@ -31,7 +32,7 @@ public class GroupRouteEditService implements RouteEdit {
      * @return true if the edited route is unique for the given user
      */
     @Override
-    public boolean editRoute(EditedRoute route) {
+    public ResponseResult<Boolean> editRoute(EditedRoute route) {
         String oldRouteName = route.getOldRoute().getRouteName();
         String newRouteName = route.getNewRoute().getRouteName();
         String oldDescription = route.getOldRoute().getDescription();
@@ -93,7 +94,7 @@ public class GroupRouteEditService implements RouteEdit {
                 }
             }
         });
-        return FutureUtil.handleFutureGet(transactionFuture::get);
+        return ResponseResult.success(FutureUtil.handleFutureGet(transactionFuture::get));
     }
 
     private boolean doesGroupRouteExist(

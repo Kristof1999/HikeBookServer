@@ -6,6 +6,7 @@ import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.Query;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.Point;
+import hu.kristof.nagy.hikebookserver.model.ResponseResult;
 import hu.kristof.nagy.hikebookserver.model.routes.EditedRoute;
 import hu.kristof.nagy.hikebookserver.model.routes.EditedUserRoute;
 import hu.kristof.nagy.hikebookserver.model.routes.Route;
@@ -27,7 +28,7 @@ public class UserRouteEditService implements RouteEdit {
     private Firestore db;
 
     @Override
-    public boolean editRoute(EditedRoute route) {
+    public ResponseResult<Boolean> editRoute(EditedRoute route) {
         String oldRouteName = route.getOldRoute().getRouteName();
         String newRouteName = route.getNewRoute().getRouteName();
         String oldDescription = route.getOldRoute().getDescription();
@@ -41,31 +42,35 @@ public class UserRouteEditService implements RouteEdit {
             if (oldDescription.equals(newDescription)) {
                 if (oldPoints.equals(newPoints)) {
                     // nothing changed, no need to save
-                    return true;
+                    return ResponseResult.success(true);
                 } else {
-                    return updateRouteWithPointsChange(ownerName, userRoute);
+                    return ResponseResult.success(updateRouteWithPointsChange(ownerName, userRoute));
                 }
             } else {
                 if (oldPoints.equals(newPoints)) {
                     // only the description changed
                     saveChanges(ownerName, newRouteName, userRoute);
-                    return true;
+                    return ResponseResult.success(true);
                 } else {
-                    return updateRouteWithPointsChange(ownerName, userRoute);
+                    return ResponseResult.success(updateRouteWithPointsChange(ownerName, userRoute));
                 }
             }
         } else {
             if (oldDescription.equals(newDescription)) {
                 if (oldPoints.equals(newPoints)) {
-                    return updateRouteWithNameChange(ownerName, oldRouteName, userRoute);
+                    return ResponseResult.success(updateRouteWithNameChange(ownerName, oldRouteName, userRoute));
                 } else {
-                    return updateRouteWithNameAndPointsChange(ownerName, oldRouteName, userRoute);
+                    return ResponseResult.success(
+                            updateRouteWithNameAndPointsChange(ownerName, oldRouteName, userRoute)
+                    );
                 }
             } else {
                 if (oldPoints.equals(newPoints)) {
-                    return updateRouteWithNameChange(ownerName, oldRouteName, userRoute);
+                    return ResponseResult.success(updateRouteWithNameChange(ownerName, oldRouteName, userRoute));
                 } else {
-                    return updateRouteWithNameAndPointsChange(ownerName, oldRouteName, userRoute);
+                    return ResponseResult.success(
+                            updateRouteWithNameAndPointsChange(ownerName, oldRouteName, userRoute)
+                    );
                 }
             }
         }

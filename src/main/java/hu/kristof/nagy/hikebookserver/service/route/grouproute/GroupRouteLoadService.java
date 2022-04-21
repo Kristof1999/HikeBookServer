@@ -3,6 +3,7 @@ package hu.kristof.nagy.hikebookserver.service.route.grouproute;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
+import hu.kristof.nagy.hikebookserver.model.ResponseResult;
 import hu.kristof.nagy.hikebookserver.model.routes.GroupRoute;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import hu.kristof.nagy.hikebookserver.service.Util;
@@ -25,17 +26,19 @@ public class GroupRouteLoadService {
     /**
      * Loads group routes associated with the given group's name.
      */
-    public List<GroupRoute> loadGroupRoutes(String groupName) {
-        return routeLoadService.loadRoutes(groupName, DbPathConstants.ROUTE_GROUP_NAME)
+    public ResponseResult<List<GroupRoute>> loadGroupRoutes(String groupName) {
+        return ResponseResult.success(
+                routeLoadService.loadRoutes(groupName, DbPathConstants.ROUTE_GROUP_NAME)
                 .stream()
                 .map(route -> new GroupRoute(route, groupName))
-                .collect(Collectors.toList());
+                .collect(Collectors.toList())
+        );
     }
 
     /**
      * Loads the given route with the specified route name and group name.
      */
-    public GroupRoute loadGroupRoute(String groupName, String routeName) {
+    public ResponseResult<GroupRoute> loadGroupRoute(String groupName, String routeName) {
         var queryFuture = db
                 .collection(DbPathConstants.COLLECTION_ROUTE)
                 .select(GroupRoute.getSelectPaths())
@@ -49,6 +52,6 @@ public class GroupRouteLoadService {
                     (QueryDocumentSnapshot) documentSnapshots.get(0)
             );
         });
-        return GroupRoute.from(queryDocumentSnapshot);
+        return ResponseResult.success(GroupRoute.from(queryDocumentSnapshot));
     }
 }

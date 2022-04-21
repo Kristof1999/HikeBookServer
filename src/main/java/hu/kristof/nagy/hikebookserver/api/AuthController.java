@@ -11,6 +11,7 @@ whether distributed in print or electronically.
 
 package hu.kristof.nagy.hikebookserver.api;
 
+import hu.kristof.nagy.hikebookserver.model.ResponseResult;
 import hu.kristof.nagy.hikebookserver.model.User;
 import hu.kristof.nagy.hikebookserver.service.authentication.LoginService;
 import hu.kristof.nagy.hikebookserver.service.authentication.RegisterService;
@@ -29,12 +30,12 @@ public class AuthController {
     private RegisterService register;
 
     @PostMapping("/login")
-    public boolean loginUser(@RequestBody User user) {
+    public ResponseResult<Boolean> loginUser(@RequestBody User user) {
         return login.loginUser(user);
     }
 
     @PostMapping("/register")
-    public boolean registerUser(@RequestBody User user) {
+    public ResponseResult<Boolean> registerUser(@RequestBody User user) {
         return register.registerUser(user);
     }
 }

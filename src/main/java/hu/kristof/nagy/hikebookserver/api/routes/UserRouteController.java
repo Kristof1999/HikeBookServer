@@ -39,14 +39,14 @@ public class UserRouteController {
     }
 
     @GetMapping("{userName}")
-    public List<UserRoute> loadUserRoutes(
+    public ResponseResult<List<UserRoute>> loadUserRoutes(
             @PathVariable String userName
     ) {
         return userRouteLoadService.loadUserRoutes(userName);
     }
 
     @GetMapping("{userName}/{routeName}")
-    public UserRoute loadUserRoute(
+    public ResponseResult<UserRoute> loadUserRoute(
             @PathVariable String userName,
             @PathVariable String routeName
     ) {
@@ -54,7 +54,7 @@ public class UserRouteController {
     }
 
     @DeleteMapping("{userName}/{routeName}")
-    public boolean deleteUserRoute(
+    public ResponseResult<Boolean> deleteUserRoute(
             @PathVariable String userName,
             @PathVariable String routeName
     ) {
@@ -62,7 +62,7 @@ public class UserRouteController {
     }
 
     @PutMapping("edit/{userName}/{oldRouteName}")
-    public boolean editUserRoute(
+    public ResponseResult<Boolean> editUserRoute(
         @PathVariable String userName,
         @PathVariable String oldRouteName,
         @RequestBody EditedUserRoute editedUserRoute
@@ -71,7 +71,7 @@ public class UserRouteController {
     }
 
     @GetMapping("browse/{userName}")
-    public List<BrowseListItem> listUserRoutes(
+    public ResponseResult<List<BrowseListItem>> listUserRoutes(
             @PathVariable String userName
     ) {
         return userRouteLoadService.listUserRoutes(userName);

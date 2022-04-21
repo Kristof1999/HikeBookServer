@@ -3,6 +3,7 @@ package hu.kristof.nagy.hikebookserver.service.grouphike;
 import com.google.cloud.firestore.Firestore;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.GroupHikeListHelper;
+import hu.kristof.nagy.hikebookserver.model.ResponseResult;
 import hu.kristof.nagy.hikebookserver.model.routes.GroupHikeRoute;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +20,11 @@ public class GroupHikeListService {
     @Autowired
     private Firestore db;
 
-    public List<GroupHikeListHelper> listGroupHikes(String userName, boolean isConnectedPage) {
+    public ResponseResult<List<GroupHikeListHelper>> listGroupHikes(String userName, boolean isConnectedPage) {
         if (isConnectedPage) {
-            return listConnectedGroupHikes(userName);
+            return ResponseResult.success(listConnectedGroupHikes(userName));
         } else {
-            return listNotConnectedGroupHikes(userName);
+            return ResponseResult.success(listNotConnectedGroupHikes(userName));
         }
     }
 

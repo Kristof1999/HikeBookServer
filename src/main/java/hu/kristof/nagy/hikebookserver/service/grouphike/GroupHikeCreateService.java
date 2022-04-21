@@ -5,6 +5,7 @@ import com.google.cloud.firestore.Transaction;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.DateTime;
 import hu.kristof.nagy.hikebookserver.model.GroupHikeCreateHelper;
+import hu.kristof.nagy.hikebookserver.model.ResponseResult;
 import hu.kristof.nagy.hikebookserver.model.routes.GroupHikeRoute;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import hu.kristof.nagy.hikebookserver.service.route.routeuniqueness.TransactionRouteUniquenessHandler;
@@ -23,7 +24,7 @@ public class GroupHikeCreateService {
      * and user name as the first participant,
      * if the group hike name and the route are unique.
      */
-    public boolean createGroupHike(
+    public ResponseResult<Boolean> createGroupHike(
             String userName,
             String groupHikeName,
             GroupHikeCreateHelper helper
@@ -38,7 +39,7 @@ public class GroupHikeCreateService {
             }
             return true;
         });
-        return FutureUtil.handleFutureGet(transactionFuture::get);
+        return ResponseResult.success(FutureUtil.handleFutureGet(transactionFuture::get));
     }
 
     private boolean isGroupHikeNameUnique(

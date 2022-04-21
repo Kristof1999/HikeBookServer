@@ -3,6 +3,7 @@ package hu.kristof.nagy.hikebookserver.service.groups;
 import com.google.cloud.firestore.Firestore;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.Group;
+import hu.kristof.nagy.hikebookserver.model.ResponseResult;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import hu.kristof.nagy.hikebookserver.service.Util;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,15 +17,15 @@ public class GroupsGeneralConnectService {
     @Autowired
     private Firestore db;
 
-    public boolean generalConnect(
+    public ResponseResult<Boolean> generalConnect(
             String groupName,
             String userName,
             boolean isConnectedPage
     ) {
         if (isConnectedPage) {
-            return disconnect(groupName, userName);
+            return ResponseResult.success(disconnect(groupName, userName));
         } else {
-            return connect(new Group(groupName, userName));
+            return ResponseResult.success(connect(new Group(groupName, userName)));
         }
     }
 

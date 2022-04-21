@@ -2,6 +2,7 @@ package hu.kristof.nagy.hikebookserver.service.route.grouphikeroute;
 
 import com.google.cloud.firestore.Firestore;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
+import hu.kristof.nagy.hikebookserver.model.ResponseResult;
 import hu.kristof.nagy.hikebookserver.model.routes.Route;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import hu.kristof.nagy.hikebookserver.service.Util;
@@ -14,7 +15,7 @@ public class GroupHikeRouteLoadService {
     @Autowired
     private Firestore db;
 
-    public Route loadGroupHikeRoute(String groupHikeName) {
+    public ResponseResult<Route> loadGroupHikeRoute(String groupHikeName) {
         var queryFuture = db.collection(DbPathConstants.COLLECTION_ROUTE)
                 .select(Route.getSelectPaths())
                 .whereEqualTo(DbPathConstants.ROUTE_GROUP_HIKE_NAME, groupHikeName)
@@ -23,7 +24,7 @@ public class GroupHikeRouteLoadService {
                 queryFuture.get().getDocuments()
         );
         return Util.handleListSize(queryDocs, documentSnapshots ->
-                Route.from(documentSnapshots.get(0))
+                ResponseResult.success(Route.from(documentSnapshots.get(0)))
         );
     }
 }

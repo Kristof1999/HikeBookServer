@@ -21,13 +21,9 @@ public class UserRouteCreateService implements RouteCreate {
 
     @Override
     public ResponseResult<Boolean> createRoute(Route route) {
-        try {
-            route.handleRouteUniqueness(new SimpleRouteUniquenessHandler
-                    .Builder(db)
-            );
-        } catch (IllegalArgumentException e) {
-            return ResponseResult.fail(e.getMessage());
-        }
+        route.handleRouteUniqueness(new SimpleRouteUniquenessHandler
+                .Builder(db)
+        );
 
         Map<String, Object> data = route.toMap();
         FutureUtil.handleFutureGet(() ->

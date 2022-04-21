@@ -5,6 +5,7 @@ import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QuerySnapshot;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
+import hu.kristof.nagy.hikebookserver.model.ResponseResult;
 import hu.kristof.nagy.hikebookserver.model.User;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ public class RegisterService {
      * in the database with the same name.
      * @return true if registration was successful
      */
-    public boolean registerUser(User user) {
+    public ResponseResult<Boolean> registerUser(User user) {
         var transactionFuture = db.runTransaction(transaction -> {
             var users = db.collection(DbPathConstants.COLLECTION_USER);
             var query = users
@@ -48,6 +49,6 @@ public class RegisterService {
         });
 
         // wait for write result
-        return FutureUtil.handleFutureGet(transactionFuture::get);
+        return ResponseResult.success(FutureUtil.handleFutureGet(transactionFuture::get));
     }
 }

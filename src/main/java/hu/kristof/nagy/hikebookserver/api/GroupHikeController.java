@@ -3,6 +3,7 @@ package hu.kristof.nagy.hikebookserver.api;
 import hu.kristof.nagy.hikebookserver.model.DateTime;
 import hu.kristof.nagy.hikebookserver.model.GroupHikeCreateHelper;
 import hu.kristof.nagy.hikebookserver.model.GroupHikeListHelper;
+import hu.kristof.nagy.hikebookserver.model.ResponseResult;
 import hu.kristof.nagy.hikebookserver.model.routes.Route;
 import hu.kristof.nagy.hikebookserver.service.grouphike.GroupHikeCreateService;
 import hu.kristof.nagy.hikebookserver.service.grouphike.GroupHikeGeneralConnectService;
@@ -31,7 +32,7 @@ public class GroupHikeController {
     private GroupHikeGeneralConnectService groupHikeGeneralConnectService;
 
     @GetMapping("{userName}/{isConnectedPage}")
-    public List<GroupHikeListHelper> listGroupHikes(
+    public ResponseResult<List<GroupHikeListHelper>> listGroupHikes(
             @PathVariable String userName,
             @PathVariable boolean isConnectedPage
     ) {
@@ -39,7 +40,7 @@ public class GroupHikeController {
     }
 
     @PutMapping("{userName}/{groupHikeName}")
-    public boolean createGroupHike(
+    public ResponseResult<Boolean> createGroupHike(
             @PathVariable String userName,
             @PathVariable String groupHikeName,
             @RequestBody GroupHikeCreateHelper helper
@@ -48,14 +49,14 @@ public class GroupHikeController {
     }
 
     @GetMapping("{groupHikeName}")
-    public List<String> listParticipants(
+    public ResponseResult<List<String>> listParticipants(
             @PathVariable String groupHikeName
     ) {
         return groupHikeParticipantsListService.listParticipants(groupHikeName);
     }
 
     @PutMapping("{groupHikeName}/{userName}/{isConnectedPage}")
-    public boolean generalGroupHikeConnect(
+    public ResponseResult<Boolean> generalGroupHikeConnect(
             @PathVariable String groupHikeName,
             @PathVariable String userName,
             @PathVariable boolean isConnectedPage,

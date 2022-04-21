@@ -2,6 +2,7 @@ package hu.kristof.nagy.hikebookserver.service.groups;
 
 import com.google.cloud.firestore.Firestore;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
+import hu.kristof.nagy.hikebookserver.model.ResponseResult;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,11 +18,11 @@ public class GroupsListService {
     @Autowired
     private Firestore db;
 
-    public List<String> listGroups(String userName, boolean isConnectedPage) {
+    public ResponseResult<List<String>> listGroups(String userName, boolean isConnectedPage) {
         if (isConnectedPage) {
-            return listConnectedGroupNames(userName);
+            return ResponseResult.success(listConnectedGroupNames(userName));
         } else {
-            return listNotConnectedGroupNames(userName);
+            return ResponseResult.success(listNotConnectedGroupNames(userName));
         }
     }
 
