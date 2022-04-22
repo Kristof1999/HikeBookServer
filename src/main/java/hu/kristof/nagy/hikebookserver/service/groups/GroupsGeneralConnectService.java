@@ -33,14 +33,18 @@ public class GroupsGeneralConnectService {
     private boolean connect(Group group) {
         Map<String, Object> data = group.toMap();
         if (groupExists(group.getGroupName())) {
-            return FutureUtil.handleFutureGet(() -> {
-                db.collection(DbPathConstants.COLLECTION_GROUP)
-                        .add(data)
-                        .get();
-                return true;
-            });
+            if (hasNotConnected(group.getGroupName(), group.getMemberName())) {
+                return FutureUtil.handleFutureGet(() -> {
+                    db.collection(DbPathConstants.COLLECTION_GROUP)
+                            .add(data)
+                            .get();
+                    return true;
+                });
+            } else {
+                throw new IllegalStateException("Cannot connect to the same group twice.");
+            }
         } else {
-            throw new QueryException("Group with name: " + group.getGroupName() + " does not exists.");
+            throw new IllegalStateException("Group with name: " + group.getGroupName() + " does not exists.");
         }
     }
 
@@ -49,6 +53,14 @@ public class GroupsGeneralConnectService {
                 .whereEqualTo(DbPathConstants.GROUP_NAME, groupName)
                 .get();
         return FutureUtil.handleFutureGet(() -> !queryFuture.get().isEmpty());
+    }
+
+    private boolean hasNotConnected(String groupName, String userName) {
+        var queryFuture = db.collection(DbPathConstants.COLLECTION_GROUP)
+                .whereEqualTo(DbPathConstants.GROUP_NAME, groupName)
+                .whereEqualTo(DbPathConstants.GROUP_MEMBER_NAME, userName)
+                .get();
+        return FutureUtil.handleFutureGet(() -> queryFuture.get().isEmpty());
     }
 
     private boolean disconnect(String groupName, String userName) {
