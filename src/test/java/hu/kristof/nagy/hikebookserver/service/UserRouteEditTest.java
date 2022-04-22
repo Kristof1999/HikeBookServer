@@ -159,13 +159,38 @@ public class UserRouteEditTest {
         );
     }
 
+    @Test
     void testPointTypeChange() {
-        //TODO
-        //test if we only change the type of one of the points,
-        //it returns true
+        List<Point> points = new ArrayList<>();
+        points.add(new Point(0.0, 0.0, PointType.SET, ""));
+        points.add(new Point(1.0, 1.0, PointType.NEW, ""));
+        String userName = "asd";
+        String routeName = "route";
+        UserRoute oldRoute = new UserRoute(routeName, points, "", userName);
+        routeCreateService.createRoute(oldRoute);
+
+        List<Point> newPoints = new ArrayList<>();
+        points.add(new Point(0.0, 0.0, PointType.SET, ""));
+        points.add(new Point(1.0, 1.0, PointType.CASTLE, ""));
+        UserRoute newRoute = new UserRoute(routeName, newPoints, "", userName);
+        boolean res = routeEditService.editRoute(new EditedUserRoute(newRoute, oldRoute)).getSuccessResult();
+
+        assertTrue(res);
     }
 
+    @Test
     void testDescriptionChange() {
-        // TODO
+        List<Point> points = new ArrayList<>();
+        points.add(new Point(0.0, 0.0, PointType.SET, ""));
+        points.add(new Point(1.0, 1.0, PointType.NEW, ""));
+        String userName = "asd";
+        String routeName = "route";
+        UserRoute oldRoute = new UserRoute(routeName, points, "", userName);
+        routeCreateService.createRoute(oldRoute);
+
+        UserRoute newRoute = new UserRoute(routeName, points, "description", userName);
+        boolean res = routeEditService.editRoute(new EditedUserRoute(newRoute, oldRoute)).getSuccessResult();
+
+        assertTrue(res);
     }
 }
