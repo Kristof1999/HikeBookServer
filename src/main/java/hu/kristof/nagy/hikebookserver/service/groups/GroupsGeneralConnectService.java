@@ -6,6 +6,7 @@ import hu.kristof.nagy.hikebookserver.model.Group;
 import hu.kristof.nagy.hikebookserver.model.ResponseResult;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import hu.kristof.nagy.hikebookserver.service.Util;
+import hu.kristof.nagy.hikebookserver.service.route.QueryException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,12 +32,23 @@ public class GroupsGeneralConnectService {
 
     private boolean connect(Group group) {
         Map<String, Object> data = group.toMap();
-        return FutureUtil.handleFutureGet(() -> {
-            db.collection(DbPathConstants.COLLECTION_GROUP)
-                    .add(data)
-                    .get();
-            return true;
-        });
+        if (groupExists(group.getGroupName())) {
+            return FutureUtil.handleFutureGet(() -> {
+                db.collection(DbPathConstants.COLLECTION_GROUP)
+                        .add(data)
+                        .get();
+                return true;
+            });
+        } else {
+            throw new QueryException("Group with name: " + group.getGroupName() + " does not exists.");
+        }
+    }
+
+    private boolean groupExists(String groupName) {
+        var queryFuture = db.collection(DbPathConstants.COLLECTION_GROUP)
+                .whereEqualTo(DbPathConstants.GROUP_NAME, groupName)
+                .get();
+        return FutureUtil.handleFutureGet(() -> !queryFuture.get().isEmpty());
     }
 
     private boolean disconnect(String groupName, String userName) {
