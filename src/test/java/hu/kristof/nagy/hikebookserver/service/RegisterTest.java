@@ -27,7 +27,7 @@ class RegisterTest {
 
     @Test
     void testCorrectRegistration() {
-        boolean res = register.registerUser(new User("asd", "asd"));
+        boolean res = register.registerUser(new User("asd", "asd")).getSuccessResult();
 
         assertTrue(res);
     }
@@ -37,7 +37,7 @@ class RegisterTest {
         User user = new User("asd", "asd");
         register.registerUser(user);
 
-        boolean res = register.registerUser(user);
+        boolean res = register.registerUser(user).getSuccessResult();
 
         assertFalse(res);
     }

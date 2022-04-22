@@ -36,22 +36,22 @@ class LoginTest {
     void testCorrectLogin() {
         register.registerUser(new User("asd", "asd"));
 
-        boolean res = login.loginUser(new User("asd","asd"));
+        boolean res = login.loginUser(new User("asd","asd")).getSuccessResult();
 
         assertTrue(res);
     }
 
     @Test
     void testIncorrectLogin() {
-        boolean res = login.loginUser(new User("a", "asd"));
+        boolean res = login.loginUser(new User("a", "asd")).getSuccessResult();
 
         assertFalse(res);
 
-        res = login.loginUser(new User("a", "a"));
+        res = login.loginUser(new User("a", "a")).getSuccessResult();
 
         assertFalse(res);
 
-        res = login.loginUser(new User("asd", "a"));
+        res = login.loginUser(new User("asd", "a")).getSuccessResult();
 
         assertFalse(res);
     }

@@ -50,7 +50,7 @@ public class UserRouteLoadTest {
         points.add(p2);
         String userName = "asd";
         String routeName = "route";
-        userRouteCreateService.createUserRoute(
+        userRouteCreateService.createRoute(
                 new UserRoute(routeName, points, "", userName)
         );
 
