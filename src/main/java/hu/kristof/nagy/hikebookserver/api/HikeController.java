@@ -16,7 +16,7 @@ public class HikeController {
     public void updateAvgSpeed(
             @PathVariable String userName,
             @RequestBody Double avgSpeed
-    )  {
+    ) {
         updateAvgSpeedService.updateAvgSpeed(userName, avgSpeed);
     }
 }
