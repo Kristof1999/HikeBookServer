@@ -44,7 +44,6 @@ public class UserRouteCreateTest {
         ).getSuccessResult();
 
         assertTrue(res);
-        // TODO: check the fields of the route after loading it
     }
 
     @Test

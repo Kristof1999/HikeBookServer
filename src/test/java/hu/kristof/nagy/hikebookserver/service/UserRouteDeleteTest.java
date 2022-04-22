@@ -48,7 +48,6 @@ public class UserRouteDeleteTest {
         boolean res = routeDeleteService.deleteUserRoute(userName, routeName).getSuccessResult();
 
         assertTrue(res);
-        // TODO: assert with route loading
     }
 
     @Test
