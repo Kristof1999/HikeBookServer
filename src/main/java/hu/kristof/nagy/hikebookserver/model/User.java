@@ -13,7 +13,7 @@ public final class User {
     public User() {}
 
     public User(String name, String password) {
-        this(name, password, 0.0);
+        this(name, password, 3.0);
     }
 
     public User(String name, String password, double avgSpeed) {
