@@ -1,4 +1,4 @@
-package hu.kristof.nagy.hikebookserver.service;
+package hu.kristof.nagy.hikebookserver.service.route;
 
 // For local emulator suite: set environment variables:
 // FIRESTORE_EMULATOR_HOST=localhost:8000
@@ -8,6 +8,7 @@ import com.google.cloud.firestore.Firestore;
 import hu.kristof.nagy.hikebookserver.model.Point;
 import hu.kristof.nagy.hikebookserver.model.PointType;
 import hu.kristof.nagy.hikebookserver.model.routes.UserRoute;
+import hu.kristof.nagy.hikebookserver.service.TestUtils;
 import hu.kristof.nagy.hikebookserver.service.route.userroute.UserRouteCreateService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

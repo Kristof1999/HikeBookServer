@@ -1,7 +1,8 @@
-package hu.kristof.nagy.hikebookserver.service;
+package hu.kristof.nagy.hikebookserver.service.authenthication;
 
 import com.google.cloud.firestore.Firestore;
 import hu.kristof.nagy.hikebookserver.model.User;
+import hu.kristof.nagy.hikebookserver.service.TestUtils;
 import hu.kristof.nagy.hikebookserver.service.authentication.LoginService;
 import hu.kristof.nagy.hikebookserver.service.authentication.RegisterService;
 import org.junit.jupiter.api.BeforeEach;
