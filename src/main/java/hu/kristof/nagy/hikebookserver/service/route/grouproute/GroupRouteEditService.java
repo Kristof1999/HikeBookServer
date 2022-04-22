@@ -9,7 +9,6 @@ import hu.kristof.nagy.hikebookserver.model.routes.EditedRoute;
 import hu.kristof.nagy.hikebookserver.model.routes.GroupRoute;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import hu.kristof.nagy.hikebookserver.service.Util;
-import hu.kristof.nagy.hikebookserver.service.route.RouteEdit;
 import hu.kristof.nagy.hikebookserver.service.route.routeuniqueness.TransactionRouteUniquenessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class GroupRouteEditService implements RouteEdit {
+public class GroupRouteEditService {
     @Autowired
     private Firestore db;
 
@@ -31,15 +30,14 @@ public class GroupRouteEditService implements RouteEdit {
      * error message will inform the user.
      * @return true if the edited route is unique for the given user
      */
-    @Override
-    public ResponseResult<Boolean> editRoute(EditedRoute route) {
+    public ResponseResult<Boolean> editRoute(EditedGroupRoute route) {
         String oldRouteName = route.getOldRoute().getRouteName();
         String newRouteName = route.getNewRoute().getRouteName();
         String oldDescription = route.getOldRoute().getDescription();
         String newDescription = route.getNewRoute().getDescription();
         List<Point> oldPoints = route.getOldRoute().getPoints();
         List<Point> newPoints = route.getNewRoute().getPoints();
-        GroupRoute newGroupRoute = ((EditedGroupRoute) route).getNewGroupRoute();
+        GroupRoute newGroupRoute =  route.getNewGroupRoute();
 
         var transactionFuture = db.runTransaction(transaction -> {
             // check if old route didn't get deleted

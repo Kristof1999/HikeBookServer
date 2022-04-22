@@ -9,11 +9,9 @@ import hu.kristof.nagy.hikebookserver.model.Point;
 import hu.kristof.nagy.hikebookserver.model.ResponseResult;
 import hu.kristof.nagy.hikebookserver.model.routes.EditedRoute;
 import hu.kristof.nagy.hikebookserver.model.routes.EditedUserRoute;
-import hu.kristof.nagy.hikebookserver.model.routes.Route;
 import hu.kristof.nagy.hikebookserver.model.routes.UserRoute;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import hu.kristof.nagy.hikebookserver.service.Util;
-import hu.kristof.nagy.hikebookserver.service.route.RouteEdit;
 import hu.kristof.nagy.hikebookserver.service.route.routeuniqueness.SimpleRouteUniquenessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,21 +20,20 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class UserRouteEditService implements RouteEdit {
+public class UserRouteEditService {
 
     @Autowired
     private Firestore db;
 
-    @Override
-    public ResponseResult<Boolean> editRoute(EditedRoute route) {
+    public ResponseResult<Boolean> editRoute(EditedUserRoute route) {
         String oldRouteName = route.getOldRoute().getRouteName();
         String newRouteName = route.getNewRoute().getRouteName();
         String oldDescription = route.getOldRoute().getDescription();
         String newDescription = route.getNewRoute().getDescription();
         List<Point> oldPoints = route.getOldRoute().getPoints();
         List<Point> newPoints = route.getNewRoute().getPoints();
-        String ownerName = ((EditedUserRoute) route).getNewUserRoute().getUserName();
-        UserRoute userRoute = ((EditedUserRoute) route).getNewUserRoute();
+        String ownerName =route.getNewUserRoute().getUserName();
+        UserRoute userRoute = route.getNewUserRoute();
 
         if (oldRouteName.equals(newRouteName)) {
             if (oldDescription.equals(newDescription)) {
