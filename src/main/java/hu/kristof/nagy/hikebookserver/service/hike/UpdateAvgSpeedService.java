@@ -17,8 +17,6 @@ public class UpdateAvgSpeedService {
     private Firestore db;
 
     public void updateAvgSpeed(String userName, Double avgSpeed) {
-        // TODO: test
-        // TODO: we don't want/need to message the client back
         var users = db.collection(DbPathConstants.COLLECTION_USER);
         var queryFuture = users
                 .select(DbPathConstants.USER_AVG_SPEED)
