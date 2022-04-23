@@ -22,7 +22,7 @@ public class GroupHikeCreateService {
     /**
      * Creates the group hike with the given name, route,
      * and user name as the first participant,
-     * if the group hike name and the route are unique.
+     * if the group hike name is unique.
      */
     public ResponseResult<Boolean> createGroupHike(
             String userName,
@@ -72,10 +72,6 @@ public class GroupHikeCreateService {
             GroupHikeRoute groupHikeRoute,
             DateTime dateTime
     ) {
-        groupHikeRoute.handleRouteUniqueness(new TransactionRouteUniquenessHandler
-                .Builder(db, transaction)
-        );
-
         Map<String, Object> data = groupHikeRoute.toMap();
         var description = (String) data.get(DbPathConstants.ROUTE_DESCRIPTION);
         description = dateTime.toString() + "\n" + description;
