@@ -7,6 +7,10 @@ import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import java.util.concurrent.ExecutionException;
 
 public class TestUtils {
+    public static void cleanGroupHikes(Firestore db) {
+        cleanCollection(db, DbPathConstants.COLLECTION_GROUP_HIKE);
+    }
+
     public static void cleanGroups(Firestore db) {
         cleanCollection(db, DbPathConstants.COLLECTION_GROUP);
     }
