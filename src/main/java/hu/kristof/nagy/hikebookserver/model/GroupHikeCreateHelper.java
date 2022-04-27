@@ -1,15 +1,15 @@
 package hu.kristof.nagy.hikebookserver.model;
 
-import hu.kristof.nagy.hikebookserver.model.routes.Route;
+import hu.kristof.nagy.hikebookserver.model.routes.GroupHikeRoute;
 
 public class GroupHikeCreateHelper {
     private DateTime dateTime;
-    private Route route;
+    private GroupHikeRoute route;
 
     public GroupHikeCreateHelper() {
     }
 
-    public GroupHikeCreateHelper(DateTime dateTime, Route route) {
+    public GroupHikeCreateHelper(DateTime dateTime, GroupHikeRoute route) {
         this.dateTime = dateTime;
         this.route = route;
     }
@@ -22,11 +22,11 @@ public class GroupHikeCreateHelper {
         this.dateTime = dateTime;
     }
 
-    public Route getRoute() {
+    public GroupHikeRoute getRoute() {
         return route;
     }
 
-    public void setRoute(Route route) {
+    public void setRoute(GroupHikeRoute route) {
         this.route = route;
     }
 }

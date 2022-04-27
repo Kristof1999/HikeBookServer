@@ -1,11 +1,14 @@
 package hu.kristof.nagy.hikebookserver.model.routes;
 
+import com.google.cloud.firestore.DocumentSnapshot;
 import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.Point;
 import hu.kristof.nagy.hikebookserver.service.route.routeuniqueness.RouteUniquenessHandler;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class GroupHikeRoute extends Route {
     private String groupHikeName;
@@ -27,6 +30,21 @@ public class GroupHikeRoute extends Route {
         Map<String, Object> data = super.toMap();
         data.put(DbPathConstants.ROUTE_GROUP_HIKE_NAME, groupHikeName);
         return data;
+    }
+
+    public static GroupHikeRoute from(DocumentSnapshot documentSnapshot) {
+        return Objects.requireNonNull(
+                documentSnapshot.toObject(GroupHikeRoute.class)
+        );
+    }
+
+    public static String[] getSelectPaths() {
+        String[] routeSelectPaths = Route.getSelectPaths();
+        String[] userRouteSelectPaths = Arrays.copyOf(
+                routeSelectPaths, routeSelectPaths.length + 1
+        );
+        userRouteSelectPaths[userRouteSelectPaths.length - 1] = DbPathConstants.ROUTE_GROUP_HIKE_NAME;
+        return userRouteSelectPaths;
     }
 
     @Override

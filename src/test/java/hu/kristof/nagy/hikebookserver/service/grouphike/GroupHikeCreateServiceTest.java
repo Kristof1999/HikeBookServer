@@ -5,6 +5,7 @@ import hu.kristof.nagy.hikebookserver.model.DateTime;
 import hu.kristof.nagy.hikebookserver.model.GroupHikeCreateHelper;
 import hu.kristof.nagy.hikebookserver.model.Point;
 import hu.kristof.nagy.hikebookserver.model.PointType;
+import hu.kristof.nagy.hikebookserver.model.routes.GroupHikeRoute;
 import hu.kristof.nagy.hikebookserver.model.routes.Route;
 import hu.kristof.nagy.hikebookserver.service.TestUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,7 +40,7 @@ public class GroupHikeCreateServiceTest {
         var dateTime = new DateTime(2022, 4, 23, 9, 10);
         var points = new ArrayList<Point>();
         points.add(new Point(0.0, 0.0, PointType.NEW, ""));
-        var route = new Route("route", points, "");
+        var route = new GroupHikeRoute("route", points, "", groupHikeName);
         var helper = new GroupHikeCreateHelper(dateTime, route);
 
         boolean res = groupHikeCreateService
@@ -56,7 +57,7 @@ public class GroupHikeCreateServiceTest {
         var dateTime = new DateTime(2022, 4, 23, 9, 10);
         var points = new ArrayList<Point>();
         points.add(new Point(0.0, 0.0, PointType.NEW, ""));
-        var route = new Route("route", points, "");
+        var route = new GroupHikeRoute("route", points, "", groupHikeName);
         var helper = new GroupHikeCreateHelper(dateTime, route);
         groupHikeCreateService.createGroupHike(userName, groupHikeName, helper);
 
