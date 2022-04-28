@@ -28,87 +28,20 @@ public class UserRouteEditService {
     public ResponseResult<Boolean> editRoute(EditedUserRoute route) {
         String oldRouteName = route.getOldRoute().getRouteName();
         String newRouteName = route.getNewRoute().getRouteName();
-        String oldDescription = route.getOldRoute().getDescription();
-        String newDescription = route.getNewRoute().getDescription();
         List<Point> oldPoints = route.getOldRoute().getPoints();
         List<Point> newPoints = route.getNewRoute().getPoints();
-        String ownerName =route.getNewUserRoute().getUserName();
+        String ownerName = route.getNewUserRoute().getUserName();
         UserRoute userRoute = route.getNewUserRoute();
 
-        if (oldRouteName.equals(newRouteName)) {
-            if (oldDescription.equals(newDescription)) {
-                if (oldPoints.equals(newPoints)) {
-                    // nothing changed, no need to save
-                    return ResponseResult.success(true);
-                } else {
-                    return ResponseResult.success(updateRouteWithPointsChange(ownerName, userRoute));
-                }
-            } else {
-                if (oldPoints.equals(newPoints)) {
-                    // only the description changed
-                    saveChanges(ownerName, newRouteName, userRoute);
-                    return ResponseResult.success(true);
-                } else {
-                    return ResponseResult.success(updateRouteWithPointsChange(ownerName, userRoute));
-                }
-            }
-        } else {
-            if (oldDescription.equals(newDescription)) {
-                if (oldPoints.equals(newPoints)) {
-                    return ResponseResult.success(updateRouteWithNameChange(ownerName, oldRouteName, userRoute));
-                } else {
-                    return ResponseResult.success(
-                            updateRouteWithNameAndPointsChange(ownerName, oldRouteName, userRoute)
-                    );
-                }
-            } else {
-                if (oldPoints.equals(newPoints)) {
-                    return ResponseResult.success(updateRouteWithNameChange(ownerName, oldRouteName, userRoute));
-                } else {
-                    return ResponseResult.success(
-                            updateRouteWithNameAndPointsChange(ownerName, oldRouteName, userRoute)
-                    );
-                }
-            }
+        var uniquenessHandlerBuilder = new SimpleRouteUniquenessHandler.Builder(db);
+        if (!oldRouteName.equals(newRouteName)) {
+            userRoute.handleRouteNameUniqueness(uniquenessHandlerBuilder);
         }
-    }
-
-    private boolean updateRouteWithNameAndPointsChange(
-            String ownerName,
-            String oldRouteName,
-            UserRoute newRoute
-    ) {
-        newRoute.handleRouteUniqueness(new SimpleRouteUniquenessHandler
-                .Builder(db)
-        );
-
-        saveChanges(ownerName, oldRouteName, newRoute);
-        return true;
-    }
-
-    private boolean updateRouteWithNameChange(
-            String ownerName,
-            String oldRouteName,
-            UserRoute newRoute
-    ) {
-        newRoute.handleRouteNameUniqueness(new SimpleRouteUniquenessHandler
-                .Builder(db)
-        );
-
-        saveChanges(ownerName, oldRouteName, newRoute);
-        return true;
-    }
-
-    private boolean updateRouteWithPointsChange(
-            String ownerName,
-            UserRoute newRoute
-    ) {
-        newRoute.handleRoutePointsUniqueness(new SimpleRouteUniquenessHandler
-                .Builder(db)
-        );
-
-        saveChanges(ownerName, newRoute.getRouteName(), newRoute);
-        return true;
+        if (!oldPoints.equals(newPoints)) {
+            userRoute.handleRoutePointsUniqueness(uniquenessHandlerBuilder);
+        }
+        saveChanges(ownerName, oldRouteName, userRoute);
+        return ResponseResult.success(true);
     }
 
     private void saveChanges(
