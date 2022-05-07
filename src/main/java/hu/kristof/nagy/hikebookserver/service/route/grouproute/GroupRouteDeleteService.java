@@ -33,6 +33,9 @@ public class GroupRouteDeleteService {
                 return false;
             } else {
                 var queryDocs = querySnapshot.getDocuments();
+                if (queryDocs.size() == 0) {
+                    throw new IllegalArgumentException("Az adott útvonal már törölve lett! Kérem, hogy frissítse az oldalt.");
+                }
                 return Util.handleListSize(queryDocs, documentSnapshots -> {
                     String id = documentSnapshots.get(0).getId();
                     var docRef = routes.document(id);
