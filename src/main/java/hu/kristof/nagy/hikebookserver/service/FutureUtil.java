@@ -15,7 +15,12 @@ public class FutureUtil {
         try {
             return f.getFuture();
         } catch (ExecutionException | InterruptedException e) {
-            throw new IllegalArgumentException(Util.GENERIC_ERROR_MSG);
+            if (e.getCause() instanceof IllegalArgumentException) {
+                // exception is thrown inside transaction
+                throw new IllegalArgumentException(e.getCause().getMessage());
+            } else {
+                throw new IllegalArgumentException(Util.GENERIC_ERROR_MSG);
+            }
         }
     }
 
