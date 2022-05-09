@@ -41,10 +41,10 @@ public class GroupsGeneralConnectService {
                     return true;
                 });
             } else {
-                throw new IllegalStateException("Cannot connect to the same group twice.");
+                throw new IllegalArgumentException("Ehhez a csoporthoz már csatlakoztál.");
             }
         } else {
-            throw new IllegalStateException("Group with name: " + group.getGroupName() + " does not exists.");
+            throw new IllegalArgumentException("Ez a csoport: " + group.getGroupName() + " nem létezik.");
         }
     }
 
