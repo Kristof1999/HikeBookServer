@@ -11,7 +11,6 @@ public class FutureUtil {
      * @return the result of the lambda
      */
     public static <P> P handleFutureGet(FutureGet<P> f) {
-        // TODO: refactor using Supplier
         try {
             return f.getFuture();
         } catch (ExecutionException | InterruptedException e) {
