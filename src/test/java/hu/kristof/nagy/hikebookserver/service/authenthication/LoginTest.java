@@ -18,13 +18,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class LoginTest {
-
-    @Autowired
-    private LoginService login;
-
-    @Autowired
-    private RegisterService register;
-
     @Autowired
     private Firestore db;
 
@@ -35,24 +28,24 @@ class LoginTest {
 
     @Test
     void testCorrectLogin() {
-        register.registerUser(new User("asd", "asd"));
+        RegisterService.registerUser(db, new User("asd", "asd"));
 
-        boolean res = login.loginUser(new User("asd","asd")).getSuccessResult();
+        boolean res = LoginService.loginUser(db, new User("asd","asd")).getSuccessResult();
 
         assertTrue(res);
     }
 
     @Test
     void testIncorrectLogin() {
-        boolean res = login.loginUser(new User("a", "asd")).getSuccessResult();
+        boolean res = LoginService.loginUser(db, new User("a", "asd")).getSuccessResult();
 
         assertFalse(res);
 
-        res = login.loginUser(new User("a", "a")).getSuccessResult();
+        res = LoginService.loginUser(db, new User("a", "a")).getSuccessResult();
 
         assertFalse(res);
 
-        res = login.loginUser(new User("asd", "a")).getSuccessResult();
+        res = LoginService.loginUser(db, new User("asd", "a")).getSuccessResult();
 
         assertFalse(res);
     }

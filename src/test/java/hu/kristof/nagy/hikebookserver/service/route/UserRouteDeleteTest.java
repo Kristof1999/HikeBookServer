@@ -3,8 +3,6 @@ package hu.kristof.nagy.hikebookserver.service.route;
 import com.google.cloud.firestore.Firestore;
 import hu.kristof.nagy.hikebookserver.model.Point;
 import hu.kristof.nagy.hikebookserver.model.PointType;
-import hu.kristof.nagy.hikebookserver.model.routes.Route;
-import hu.kristof.nagy.hikebookserver.model.RouteType;
 import hu.kristof.nagy.hikebookserver.model.routes.UserRoute;
 import hu.kristof.nagy.hikebookserver.service.TestUtils;
 import hu.kristof.nagy.hikebookserver.service.route.userroute.UserRouteCreateService;
@@ -22,13 +20,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 public class UserRouteDeleteTest {
-
-    @Autowired
-    private UserRouteDeleteService routeDeleteService;
-
-    @Autowired
-    private UserRouteCreateService routeCreateService;
-
     @Autowired
     private Firestore db;
 
@@ -44,16 +35,16 @@ public class UserRouteDeleteTest {
         points.add(new Point(1.0, 1.0, PointType.NEW, ""));
         String userName = "asd";
         String routeName = "route";
-        routeCreateService.createRoute(new UserRoute(routeName, points, "", userName));
+        UserRouteCreateService.createRoute(db, new UserRoute(routeName, points, "", userName));
 
-        boolean res = routeDeleteService.deleteUserRoute(userName, routeName).getSuccessResult();
+        boolean res = UserRouteDeleteService.deleteUserRoute(db, userName, routeName).getSuccessResult();
 
         assertTrue(res);
     }
 
     @Test
     void testNonExistent() {
-        boolean res = routeDeleteService.deleteUserRoute("","").getSuccessResult();
+        boolean res = UserRouteDeleteService.deleteUserRoute(db, "","").getSuccessResult();
 
         assertFalse(res);
     }

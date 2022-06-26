@@ -9,26 +9,17 @@ import hu.kristof.nagy.hikebookserver.model.routes.GroupRoute;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import hu.kristof.nagy.hikebookserver.service.Util;
 import hu.kristof.nagy.hikebookserver.service.route.RouteLoadService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Service
-public class GroupRouteLoadService {
-    @Autowired
-    private Firestore db;
-
-    @Autowired
-    private RouteLoadService routeLoadService;
-
+public final class GroupRouteLoadService {
     /**
      * Loads group routes associated with the given group's name.
      */
-    public ResponseResult<List<GroupRoute>> loadGroupRoutes(String groupName) {
+    public static ResponseResult<List<GroupRoute>> loadGroupRoutes(Firestore db, String groupName) {
         return ResponseResult.success(
-                routeLoadService.loadRoutes(groupName, DbFields.GroupRoute.NAME)
+                RouteLoadService.loadRoutes(db, groupName, DbFields.GroupRoute.NAME)
                 .stream()
                 .map(route -> new GroupRoute(route, groupName))
                 .collect(Collectors.toList())
@@ -38,7 +29,7 @@ public class GroupRouteLoadService {
     /**
      * Loads the given route with the specified route name and group name.
      */
-    public ResponseResult<GroupRoute> loadGroupRoute(String groupName, String routeName) {
+    public static ResponseResult<GroupRoute> loadGroupRoute(Firestore db, String groupName, String routeName) {
         var queryFuture = db
                 .collection(DbCollections.ROUTE)
                 .select(GroupRoute.getSelectPaths())

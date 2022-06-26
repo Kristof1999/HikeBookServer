@@ -7,19 +7,12 @@ import hu.kristof.nagy.hikebookserver.data.DbFields;
 import hu.kristof.nagy.hikebookserver.model.ResponseResult;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import hu.kristof.nagy.hikebookserver.service.Util;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-@Service
 public class GroupRouteDeleteService {
-
-    @Autowired
-    private Firestore db;
-
     /**
      * Deletes the group route with the given group name and route name.
      */
-    public ResponseResult<Boolean> deleteGroupRoute(String groupName, String routeName) {
+    public static ResponseResult<Boolean> deleteGroupRoute(Firestore db, String groupName, String routeName) {
         var transactionFuture = db.runTransaction(transaction -> {
             var routes = db.collection(DbCollections.ROUTE);
             var query = routes

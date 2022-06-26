@@ -5,18 +5,12 @@ import hu.kristof.nagy.hikebookserver.data.DbCollections;
 import hu.kristof.nagy.hikebookserver.data.DbFields;
 import hu.kristof.nagy.hikebookserver.model.ResponseResult;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Service
-public class GroupHikeParticipantsListService {
-    @Autowired
-    private Firestore db;
-
-    public ResponseResult<List<String>> listParticipants(String groupHikeName) {
+public final class GroupHikeParticipantsListService {
+    public static ResponseResult<List<String>> listParticipants(Firestore db, String groupHikeName) {
         var queryFuture = db
                 .collection(DbCollections.GROUP_HIKE)
                 .select(DbFields.GroupHike.PARTICIPANT_NAME)

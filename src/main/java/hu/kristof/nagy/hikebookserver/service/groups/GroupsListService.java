@@ -5,29 +5,22 @@ import hu.kristof.nagy.hikebookserver.data.DbCollections;
 import hu.kristof.nagy.hikebookserver.data.DbFields;
 import hu.kristof.nagy.hikebookserver.model.ResponseResult;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Service
-public class GroupsListService {
-
-    @Autowired
-    private Firestore db;
-
-    public ResponseResult<List<String>> listGroups(String userName, boolean isConnectedPage) {
+public final class GroupsListService {
+    public static ResponseResult<List<String>> listGroups(Firestore db, String userName, boolean isConnectedPage) {
         if (isConnectedPage) {
-            return ResponseResult.success(listConnectedGroupNames(userName));
+            return ResponseResult.success(listConnectedGroupNames(db, userName));
         } else {
-            return ResponseResult.success(listNotConnectedGroupNames(userName));
+            return ResponseResult.success(listNotConnectedGroupNames(db, userName));
         }
     }
 
-    private List<String> listConnectedGroupNames(String userName) {
+    private static List<String> listConnectedGroupNames(Firestore db, String userName) {
         var queryFuture = db
                 .collection(DbCollections.GROUP)
                 .select(DbFields.Group.NAME)
@@ -42,10 +35,10 @@ public class GroupsListService {
         ));
     }
 
-    private List<String> listNotConnectedGroupNames(String userName) {
-        var connectedGroupNames = listConnectedGroupNames(userName);
+    private static List<String> listNotConnectedGroupNames(Firestore db, String userName) {
+        var connectedGroupNames = listConnectedGroupNames(db, userName);
         if (connectedGroupNames.isEmpty()) {
-            return listAllGroups();
+            return listAllGroups(db);
         } else {
             var queryFuture = db
                     .collection(DbCollections.GROUP)
@@ -62,7 +55,7 @@ public class GroupsListService {
         }
     }
 
-    private List<String> listAllGroups() {
+    private static List<String> listAllGroups(Firestore db) {
         var groups = db.collection(DbCollections.GROUP);
         var res = new HashSet<String>(); // distinct substitute
         for (var doc: groups.listDocuments()) {

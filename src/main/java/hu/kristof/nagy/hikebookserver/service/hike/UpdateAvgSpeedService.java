@@ -6,18 +6,11 @@ import hu.kristof.nagy.hikebookserver.data.DbCollections;
 import hu.kristof.nagy.hikebookserver.data.DbFields;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import hu.kristof.nagy.hikebookserver.service.Util;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 
-@Service
-public class UpdateAvgSpeedService {
-
-    @Autowired
-    private Firestore db;
-
-    public void updateAvgSpeed(String userName, Double avgSpeed) {
+public final class UpdateAvgSpeedService {
+    public static void updateAvgSpeed(Firestore db, String userName, Double avgSpeed) {
         var users = db.collection(DbCollections.USER);
         var queryFuture = users
                 .select(DbFields.User.AVG_SPEED)

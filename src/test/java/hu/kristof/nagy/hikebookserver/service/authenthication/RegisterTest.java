@@ -14,10 +14,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 class RegisterTest {
-
-    @Autowired
-    private RegisterService register;
-
     @Autowired
     private Firestore db;
 
@@ -28,7 +24,7 @@ class RegisterTest {
 
     @Test
     void testCorrectRegistration() {
-        boolean res = register.registerUser(new User("asd", "asd")).getSuccessResult();
+        boolean res = RegisterService.registerUser(db, new User("asd", "asd")).getSuccessResult();
 
         assertTrue(res);
     }
@@ -36,9 +32,9 @@ class RegisterTest {
     @Test
     void testIncorrectRegistration() {
         User user = new User("asd", "asd");
-        register.registerUser(user);
+        RegisterService.registerUser(db, user);
 
-        boolean res = register.registerUser(user).getSuccessResult();
+        boolean res = RegisterService.registerUser(db, user).getSuccessResult();
 
         assertFalse(res);
     }

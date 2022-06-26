@@ -10,27 +10,18 @@ import hu.kristof.nagy.hikebookserver.model.routes.GroupRoute;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import hu.kristof.nagy.hikebookserver.service.Util;
 import hu.kristof.nagy.hikebookserver.service.route.routeuniqueness.TransactionRouteUniquenessHandler;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
 
-@Service
 public class GroupRouteEditService {
-    @Autowired
-    private Firestore db;
-
-    @Autowired
-    private GroupRouteLoadService groupRouteLoadService;
-
     /**
      * Edits the route. If something changes, then it must be unique for the user.
      * If the route got deleted while editing, then an
      * error message will inform the user.
      * @return true if the edited route is unique for the given user
      */
-    public ResponseResult<Boolean> editRoute(EditedGroupRoute route) {
+    public static ResponseResult<Boolean> editRoute(Firestore db, EditedGroupRoute route) {
         String oldRouteName = route.getOldRoute().getRouteName();
         String newRouteName = route.getNewRoute().getRouteName();
         List<Point> oldPoints = route.getOldRoute().getPoints();
@@ -39,7 +30,7 @@ public class GroupRouteEditService {
 
         var transactionFuture = db.runTransaction(transaction -> {
             // check if old route didn't get deleted
-            if (!doesGroupRouteExist(transaction, newGroupRoute.getGroupName(), oldRouteName)) {
+            if (!doesGroupRouteExist(db, transaction, newGroupRoute.getGroupName(), oldRouteName)) {
                 throw new IllegalArgumentException("A(z) " + oldRouteName + " nevű" +
                         "útvonal nem elérhető. Kérem, frissítse a csoport oldalt."
                 );
@@ -52,13 +43,14 @@ public class GroupRouteEditService {
             if (!oldPoints.equals(newPoints)) {
                 newGroupRoute.handleRoutePointsUniqueness(uniquenessHandlerBuilder);
             }
-            saveChanges(transaction, oldRouteName, newGroupRoute);
+            saveChanges(db, transaction, oldRouteName, newGroupRoute);
             return true;
         });
         return ResponseResult.success(FutureUtil.handleFutureGet(transactionFuture::get));
     }
 
-    private boolean doesGroupRouteExist(
+    private static boolean doesGroupRouteExist(
+            Firestore db,
             Transaction transaction,
             String groupName,
             String routeName
@@ -76,12 +68,14 @@ public class GroupRouteEditService {
         });
     }
 
-    private void saveChanges(
+    private static void saveChanges(
+            Firestore db,
             Transaction transaction,
             String oldRouteName,
             GroupRoute newRoute
     ) {
         var query = getRouteQuery(
+                db,
                 newRoute.getGroupName(),
                 oldRouteName
         );
@@ -91,19 +85,20 @@ public class GroupRouteEditService {
                 queryFuture.get().getDocuments()
         );
         Util.handleListSize(queryDocs, documentSnapshots -> {
-            var docRef = getDocToUpdate(queryDocs);
+            var docRef = getDocToUpdate(db, queryDocs);
             Map<String, Object> data = newRoute.toMap();
             return transaction.set(docRef, data);
         });
     }
 
-    private DocumentReference getDocToUpdate(List<QueryDocumentSnapshot> queryDocs) {
+    private static DocumentReference getDocToUpdate(Firestore db, List<QueryDocumentSnapshot> queryDocs) {
         String id = queryDocs.get(0).getId();
         return db.collection(DbCollections.ROUTE)
                 .document(id);
     }
 
-    private Query getRouteQuery(
+    private static Query getRouteQuery(
+            Firestore db,
             String ownerName,
             String oldRouteName
     ) {

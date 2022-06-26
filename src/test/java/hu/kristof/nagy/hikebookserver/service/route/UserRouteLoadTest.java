@@ -22,12 +22,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @SpringBootTest
 public class UserRouteLoadTest {
     @Autowired
-    private UserRouteLoadService routeLoadService;
-
-    @Autowired
-    private UserRouteCreateService userRouteCreateService;
-
-    @Autowired
     private Firestore db;
 
     @BeforeEach
@@ -37,7 +31,7 @@ public class UserRouteLoadTest {
 
     @Test
     void testLoadRoutesForUserEmpty() {
-        List<UserRoute> routes = routeLoadService.loadUserRoutes("asd").getSuccessResult();
+        List<UserRoute> routes = UserRouteLoadService.loadUserRoutes(db, "asd").getSuccessResult();
 
         assertEquals(0, routes.size());
     }
@@ -51,11 +45,11 @@ public class UserRouteLoadTest {
         points.add(p2);
         String userName = "asd";
         String routeName = "route";
-        userRouteCreateService.createRoute(
+        UserRouteCreateService.createRoute(db,
                 new UserRoute(routeName, points, "", userName)
         );
 
-        List<UserRoute> routes = routeLoadService.loadUserRoutes("asd").getSuccessResult();
+        List<UserRoute> routes = UserRouteLoadService.loadUserRoutes(db, "asd").getSuccessResult();
 
         assertEquals(routeName, routes.get(0).getRouteName());
         assertEquals("", routes.get(0).getDescription());
@@ -71,12 +65,12 @@ public class UserRouteLoadTest {
         points.add(p2);
         var userName = "asd";
         var routeName = "route";
-        userRouteCreateService.createRoute(
+        UserRouteCreateService.createRoute(db,
                 new UserRoute(routeName, points, "", userName)
         );
 
-        List<BrowseListItem> items = routeLoadService.listUserRoutes("asd").getSuccessResult();
-        List<BrowseListItem> items2 = routeLoadService.listUserRoutes("user").getSuccessResult();
+        List<BrowseListItem> items = UserRouteLoadService.listUserRoutes(db, "asd").getSuccessResult();
+        List<BrowseListItem> items2 = UserRouteLoadService.listUserRoutes(db, "user").getSuccessResult();
 
         assertEquals(0, items.size());
         assertEquals(1, items2.size());
@@ -91,21 +85,21 @@ public class UserRouteLoadTest {
         points.add(p2);
         var userName = "asd";
         var routeName = "route";
-        userRouteCreateService.createRoute(
+        UserRouteCreateService.createRoute(db,
                 new UserRoute(routeName, points, "", userName)
         );
 
-        UserRoute userRoute = routeLoadService.loadUserRoute("asd", "route").getSuccessResult();
+        UserRoute userRoute = UserRouteLoadService.loadUserRoute(db, "asd", "route").getSuccessResult();
 
         assertEquals(userName, userRoute.getUserName());
         assertEquals(routeName, userRoute.getRouteName());
         assertEquals(points, userRoute.getPoints());
         assertEquals("", userRoute.getDescription());
         assertThrows(QueryException.class, () ->
-                routeLoadService.loadUserRoute("user", "route")
+                UserRouteLoadService.loadUserRoute(db, "user", "route")
         );
         assertThrows(QueryException.class, () ->
-                routeLoadService.loadUserRoute("asd", "asd")
+                UserRouteLoadService.loadUserRoute(db, "asd", "asd")
         );
     }
 }

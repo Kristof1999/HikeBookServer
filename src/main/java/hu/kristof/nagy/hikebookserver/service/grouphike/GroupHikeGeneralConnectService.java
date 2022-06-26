@@ -8,20 +8,10 @@ import hu.kristof.nagy.hikebookserver.model.DateTime;
 import hu.kristof.nagy.hikebookserver.model.ResponseResult;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import hu.kristof.nagy.hikebookserver.service.Util;
-import hu.kristof.nagy.hikebookserver.service.route.grouphikeroute.GroupHikeRouteLoadService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
-@Service
-public class GroupHikeGeneralConnectService {
-    @Autowired
-    private Firestore db;
-
-    @Autowired
-    private GroupHikeRouteLoadService groupHikeRouteLoadService;
-
+public final class GroupHikeGeneralConnectService {
     /**
      * Connects or disconnects the given user to the given group hike
      * based on whether the user is at the connected page or not.
@@ -35,22 +25,23 @@ public class GroupHikeGeneralConnectService {
      * @param dateTime date and time of the group hike
      * @return true if joining/leaving was successful
      */
-    public ResponseResult<Boolean> generalConnect(
+    public static ResponseResult<Boolean> generalConnect(
+            Firestore db,
             String groupHikeName,
             String userName,
             boolean isConnectedPage,
             DateTime dateTime
     ) {
         if (isConnectedPage) {
-            return ResponseResult.success(disconnect(groupHikeName, userName));
+            return ResponseResult.success(disconnect(db, groupHikeName, userName));
         } else {
-            return ResponseResult.success(connect(groupHikeName, userName, dateTime));
+            return ResponseResult.success(connect(db, groupHikeName, userName, dateTime));
         }
     }
 
-    private boolean connect(String groupHikeName, String userName, DateTime dateTime) {
+    private static boolean connect(Firestore db, String groupHikeName, String userName, DateTime dateTime) {
         var transactionFuture = db.runTransaction(transaction -> {
-            if (participantNumber(transaction, groupHikeName) == 0)
+            if (participantNumber(db, transaction, groupHikeName) == 0)
                 throw new IllegalArgumentException("A csoportos túra véget ért/megszűnt.");
 
             Map<String, Object> data = dateTime.toMap();
@@ -68,7 +59,7 @@ public class GroupHikeGeneralConnectService {
         return FutureUtil.handleFutureGet(transactionFuture::get);
     }
 
-    private boolean disconnect(String groupHikeName, String userName) {
+    private static boolean disconnect(Firestore db, String groupHikeName, String userName) {
         var transactionFuture = db.runTransaction(transaction -> {
             var query = db
                     .collection(DbCollections.GROUP_HIKE)
@@ -79,8 +70,8 @@ public class GroupHikeGeneralConnectService {
                     queryFuture.get().getDocuments()
             );
             return Util.handleListSize(queryDocs, documentSnapshots -> {
-                if (participantNumber(transaction, groupHikeName) == 1) {
-                    deleteGroupHikeRoute(transaction, groupHikeName);
+                if (participantNumber(db, transaction, groupHikeName) == 1) {
+                    deleteGroupHikeRoute(db, transaction, groupHikeName);
                 }
 
                 String id = documentSnapshots.get(0).getId();
@@ -93,7 +84,7 @@ public class GroupHikeGeneralConnectService {
         return FutureUtil.handleFutureGet(transactionFuture::get);
     }
 
-    private void deleteGroupHikeRoute(Transaction transaction, String groupHikeName) {
+    private static void deleteGroupHikeRoute(Firestore db, Transaction transaction, String groupHikeName) {
         var query = db.collection(DbCollections.ROUTE)
                 .whereEqualTo(DbFields.GroupHikeRoute.NAME, groupHikeName);
         var queryFuture = transaction.get(query);
@@ -106,7 +97,7 @@ public class GroupHikeGeneralConnectService {
         });
     }
 
-    private int participantNumber(Transaction transaction, String groupHikeName) {
+    private static int participantNumber(Firestore db, Transaction transaction, String groupHikeName) {
         var query = db.collection(DbCollections.GROUP_HIKE)
                 .whereEqualTo(DbFields.GroupHike.NAME, groupHikeName);
         var queryFuture = transaction.get(query);

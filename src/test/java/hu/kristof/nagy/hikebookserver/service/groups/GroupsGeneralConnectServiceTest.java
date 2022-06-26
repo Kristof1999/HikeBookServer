@@ -13,13 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 public class GroupsGeneralConnectServiceTest {
-
-    @Autowired
-    private GroupsGeneralConnectService groupsGeneralConnectService;
-
-    @Autowired
-    private GroupCreateService groupCreateService;
-
     @Autowired
     private Firestore db;
 
@@ -33,10 +26,10 @@ public class GroupsGeneralConnectServiceTest {
         var groupName = "group";
         var userName = "user";
         var userName2 = userName + "2";
-        groupCreateService.createGroup(groupName, userName);
+        GroupCreateService.createGroup(db, groupName, userName);
 
-        boolean res = groupsGeneralConnectService
-                .generalConnect(groupName, userName2, false)
+        boolean res = GroupsGeneralConnectService
+                .generalConnect(db, groupName, userName2, false)
                 .getSuccessResult();
 
         assertTrue(res);
@@ -48,8 +41,8 @@ public class GroupsGeneralConnectServiceTest {
         var userName = "user";
 
         assertThrows(IllegalStateException.class, () ->
-                groupsGeneralConnectService
-                .generalConnect(groupName, userName, false)
+                GroupsGeneralConnectService
+                .generalConnect(db, groupName, userName, false)
         );
     }
 
@@ -57,11 +50,11 @@ public class GroupsGeneralConnectServiceTest {
     void testConnectToSameGroup() {
         var groupName = "group";
         var userName = "user";
-        groupCreateService.createGroup(groupName, userName);
+        GroupCreateService.createGroup(db, groupName, userName);
 
         assertThrows(IllegalStateException.class, () ->
-                groupsGeneralConnectService
-                .generalConnect(groupName, userName, false)
+                GroupsGeneralConnectService
+                .generalConnect(db, groupName, userName, false)
         );
     }
 
@@ -69,10 +62,10 @@ public class GroupsGeneralConnectServiceTest {
     void testDisconnect() {
         var groupName = "group";
         var userName = "user";
-        groupCreateService.createGroup(groupName, userName);
+        GroupCreateService.createGroup(db, groupName, userName);
 
-        boolean res = groupsGeneralConnectService
-                .generalConnect(groupName, userName, true)
+        boolean res = GroupsGeneralConnectService
+                .generalConnect(db, groupName, userName, true)
                 .getSuccessResult();
 
         assertTrue(res);
@@ -84,8 +77,8 @@ public class GroupsGeneralConnectServiceTest {
         var userName = "user";
 
         assertThrows(QueryException.class, () ->
-                groupsGeneralConnectService
-                .generalConnect(groupName, userName, true)
+                GroupsGeneralConnectService
+                .generalConnect(db, groupName, userName, true)
         );
     }
 }

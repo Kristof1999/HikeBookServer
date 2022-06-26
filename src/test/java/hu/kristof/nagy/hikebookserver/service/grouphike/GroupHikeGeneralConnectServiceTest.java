@@ -21,16 +21,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 public class GroupHikeGeneralConnectServiceTest {
-
-    @Autowired
-    private GroupHikeGeneralConnectService groupHikeGeneralConnectService;
-
-    @Autowired
-    private GroupHikeCreateService groupHikeCreateService;
-
-    @Autowired
-    private GroupHikeRouteLoadService groupHikeRouteLoadService;
-
     @Autowired
     private Firestore db;
 
@@ -50,10 +40,10 @@ public class GroupHikeGeneralConnectServiceTest {
         points.add(new Point(0.0, 0.0, PointType.NEW, ""));
         var route = new GroupHikeRoute("route", points, "", groupHikeName);
         var helper = new GroupHikeCreateHelper(dateTime, route);
-        groupHikeCreateService.createGroupHike(userName, groupHikeName, helper);
+        GroupHikeCreateService.createGroupHike(db, userName, groupHikeName, helper);
 
-        boolean res = groupHikeGeneralConnectService
-                .generalConnect(groupHikeName, userName2, false, dateTime)
+        boolean res = GroupHikeGeneralConnectService
+                .generalConnect(db, groupHikeName, userName2, false, dateTime)
                 .getSuccessResult();
 
         assertTrue(res);
@@ -67,8 +57,8 @@ public class GroupHikeGeneralConnectServiceTest {
         var dateTime = new DateTime(2022, 4, 23, 9, 10);
 
         assertThrows(IllegalArgumentException.class, () ->
-                groupHikeGeneralConnectService
-                .generalConnect(groupHikeName, userName2, false, dateTime)
+                GroupHikeGeneralConnectService
+                .generalConnect(db, groupHikeName, userName2, false, dateTime)
         );
     }
 
@@ -82,20 +72,20 @@ public class GroupHikeGeneralConnectServiceTest {
         points.add(new Point(0.0, 0.0, PointType.NEW, ""));
         var route = new GroupHikeRoute("route", points, "", groupHikeName);
         var helper = new GroupHikeCreateHelper(dateTime, route);
-        groupHikeCreateService.createGroupHike(userName, groupHikeName, helper);
-        groupHikeGeneralConnectService
-                .generalConnect(groupHikeName, userName2, false, dateTime);
+        GroupHikeCreateService.createGroupHike(db, userName, groupHikeName, helper);
+        GroupHikeGeneralConnectService
+                .generalConnect(db, groupHikeName, userName2, false, dateTime);
 
-        boolean res = groupHikeGeneralConnectService
-                .generalConnect(groupHikeName, userName, true, dateTime)
+        boolean res = GroupHikeGeneralConnectService
+                .generalConnect(db, groupHikeName, userName, true, dateTime)
                 .getSuccessResult();
-        Route routeRes = groupHikeRouteLoadService.loadGroupHikeRoute(groupHikeName).getSuccessResult();
-        boolean res2 = groupHikeGeneralConnectService
-                .generalConnect(groupHikeName, userName2, true, dateTime)
+        Route routeRes = GroupHikeRouteLoadService.loadGroupHikeRoute(db, groupHikeName).getSuccessResult();
+        boolean res2 = GroupHikeGeneralConnectService
+                .generalConnect(db, groupHikeName, userName2, true, dateTime)
                 .getSuccessResult();
 
         assertThrows(QueryException.class, () ->
-                groupHikeRouteLoadService.loadGroupHikeRoute(groupHikeName)
+                GroupHikeRouteLoadService.loadGroupHikeRoute(db, groupHikeName)
         );
         assertTrue(res);
         assertTrue(res2);

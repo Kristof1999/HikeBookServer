@@ -1,5 +1,6 @@
 package hu.kristof.nagy.hikebookserver.api.routes;
 
+import com.google.cloud.firestore.Firestore;
 import hu.kristof.nagy.hikebookserver.model.BrowseListItem;
 import hu.kristof.nagy.hikebookserver.model.ResponseResult;
 import hu.kristof.nagy.hikebookserver.model.routes.EditedUserRoute;
@@ -18,16 +19,7 @@ import java.util.List;
 public class UserRouteController {
 
     @Autowired
-    private UserRouteCreateService userRouteCreateService;
-
-    @Autowired
-    private UserRouteLoadService userRouteLoadService;
-
-    @Autowired
-    private UserRouteDeleteService routeDelete;
-
-    @Autowired
-    private UserRouteEditService routeEdit;
+    private Firestore db;
 
     @PutMapping("{userName}/{routeName}")
     public ResponseResult<Boolean> createUserRoute(
@@ -35,14 +27,14 @@ public class UserRouteController {
             @PathVariable String routeName,
             @RequestBody UserRoute userRoute
     ) {
-        return userRouteCreateService.createRoute(userRoute);
+        return UserRouteCreateService.createRoute(db, userRoute);
     }
 
     @GetMapping("{userName}")
     public ResponseResult<List<UserRoute>> loadUserRoutes(
             @PathVariable String userName
     ) {
-        return userRouteLoadService.loadUserRoutes(userName);
+        return UserRouteLoadService.loadUserRoutes(db, userName);
     }
 
     @GetMapping("{userName}/{routeName}")
@@ -50,7 +42,7 @@ public class UserRouteController {
             @PathVariable String userName,
             @PathVariable String routeName
     ) {
-        return userRouteLoadService.loadUserRoute(userName, routeName);
+        return UserRouteLoadService.loadUserRoute(db, userName, routeName);
     }
 
     @DeleteMapping("{userName}/{routeName}")
@@ -58,7 +50,7 @@ public class UserRouteController {
             @PathVariable String userName,
             @PathVariable String routeName
     ) {
-        return routeDelete.deleteUserRoute(userName, routeName);
+        return UserRouteDeleteService.deleteUserRoute(db, userName, routeName);
     }
 
     @PutMapping("edit/{userName}/{oldRouteName}")
@@ -67,13 +59,13 @@ public class UserRouteController {
         @PathVariable String oldRouteName,
         @RequestBody EditedUserRoute editedUserRoute
     ) {
-        return routeEdit.editRoute(editedUserRoute);
+        return UserRouteEditService.editRoute(db, editedUserRoute);
     }
 
     @GetMapping("browse/{userName}")
     public ResponseResult<List<BrowseListItem>> listUserRoutes(
             @PathVariable String userName
     ) {
-        return userRouteLoadService.listUserRoutes(userName);
+        return UserRouteLoadService.listUserRoutes(db, userName);
     }
 }

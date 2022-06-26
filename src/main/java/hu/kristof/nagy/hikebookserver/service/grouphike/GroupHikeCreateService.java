@@ -9,31 +9,26 @@ import hu.kristof.nagy.hikebookserver.model.GroupHikeCreateHelper;
 import hu.kristof.nagy.hikebookserver.model.ResponseResult;
 import hu.kristof.nagy.hikebookserver.model.routes.GroupHikeRoute;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
-@Service
-public class GroupHikeCreateService {
-    @Autowired
-    private Firestore db;
-
+public final class GroupHikeCreateService {
     /**
      * Creates the group hike with the given name, route,
      * and user name as the first participant,
      * if the group hike name is unique.
      */
-    public ResponseResult<Boolean> createGroupHike(
+    public static ResponseResult<Boolean> createGroupHike(
+            Firestore db,
             String userName,
             String groupHikeName,
             GroupHikeCreateHelper helper
     ) {
         var transactionFuture = db.runTransaction(transaction -> {
-            if (isGroupHikeNameUnique(transaction, groupHikeName)) {
+            if (isGroupHikeNameUnique(db, transaction, groupHikeName)) {
                 var groupHikeRoute = new GroupHikeRoute(helper.getRoute(), groupHikeName);
-                createGroupHikeRoute(transaction, groupHikeRoute, helper.getDateTime());
-                createGroupHike(transaction, userName, groupHikeName, helper.getDateTime());
+                createGroupHikeRoute(db, transaction, groupHikeRoute, helper.getDateTime());
+                createGroupHike(db, transaction, userName, groupHikeName, helper.getDateTime());
             } else {
                 throw new IllegalArgumentException("A csoport túra neve nem egyedi! Kérem, hogy válasszon másik nevet.");
             }
@@ -42,7 +37,8 @@ public class GroupHikeCreateService {
         return ResponseResult.success(FutureUtil.handleFutureGet(transactionFuture::get));
     }
 
-    private boolean isGroupHikeNameUnique(
+    private static boolean isGroupHikeNameUnique(
+            Firestore db,
             Transaction transaction,
             String groupHikeName
     ) {
@@ -52,7 +48,8 @@ public class GroupHikeCreateService {
         return FutureUtil.handleFutureGet(() -> queryFuture.get().isEmpty());
     }
 
-    private void createGroupHike(
+    private static void createGroupHike(
+            Firestore db,
             Transaction transaction,
             String participantName,
             String groupHikeName,
@@ -67,7 +64,8 @@ public class GroupHikeCreateService {
         transaction.create(docRef, data);
     }
 
-    private void createGroupHikeRoute(
+    private static void createGroupHikeRoute(
+            Firestore db,
             Transaction transaction,
             GroupHikeRoute groupHikeRoute,
             DateTime dateTime

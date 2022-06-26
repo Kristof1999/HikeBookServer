@@ -10,22 +10,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 public class GroupsListServiceTest {
-
-    @Autowired
-    private GroupsListService groupsListService;
-
-    @Autowired
-    private GroupCreateService groupCreateService;
-
-    @Autowired
-    private GroupsGeneralConnectService groupsGeneralConnectService;
-
     @Autowired
     private Firestore db;
 
@@ -38,9 +27,9 @@ public class GroupsListServiceTest {
     void testListConnectedOne() {
         var groupName = "group";
         var userName = "user";
-        groupCreateService.createGroup(groupName, userName);
+        GroupCreateService.createGroup(db, groupName, userName);
 
-        List<String> res = groupsListService.listGroups(userName, true).getSuccessResult();
+        List<String> res = GroupsListService.listGroups(db, userName, true).getSuccessResult();
 
         assertEquals(1, res.size());
         assertEquals(groupName, res.get(0));
@@ -51,10 +40,10 @@ public class GroupsListServiceTest {
         var groupName = "group";
         var groupName2 = groupName + "2";
         var userName = "user";
-        groupCreateService.createGroup(groupName, userName);
-        groupCreateService.createGroup(groupName2, userName);
+        GroupCreateService.createGroup(db, groupName, userName);
+        GroupCreateService.createGroup(db, groupName2, userName);
 
-        List<String> res = groupsListService.listGroups(userName, true).getSuccessResult();
+        List<String> res = GroupsListService.listGroups(db, userName, true).getSuccessResult();
 
         assertEquals(2, res.size());
         assertThat(res, containsInAnyOrder(groupName, groupName2));
@@ -65,10 +54,10 @@ public class GroupsListServiceTest {
         var groupName = "group";
         var userName = "user";
         var userName2 = userName + "2";
-        groupCreateService.createGroup(groupName, userName);
-        groupsGeneralConnectService.generalConnect(groupName, userName2, false);
+        GroupCreateService.createGroup(db, groupName, userName);
+        GroupsGeneralConnectService.generalConnect(db, groupName, userName2, false);
 
-        List<String> res = groupsListService.listGroups(userName, true).getSuccessResult();
+        List<String> res = GroupsListService.listGroups(db, userName, true).getSuccessResult();
 
         assertEquals(1, res.size());
         assertEquals(groupName, res.get(0));
@@ -79,9 +68,9 @@ public class GroupsListServiceTest {
         var groupName = "group";
         var userName = "user";
         var userName2 = userName + "2";
-        groupCreateService.createGroup(groupName, userName);
+        GroupCreateService.createGroup(db, groupName, userName);
 
-        List<String> res = groupsListService.listGroups(userName2, false).getSuccessResult();
+        List<String> res = GroupsListService.listGroups(db, userName2, false).getSuccessResult();
 
         assertEquals(1, res.size());
         assertEquals(groupName, res.get(0));
@@ -93,10 +82,10 @@ public class GroupsListServiceTest {
         var groupName2 = groupName + "2";
         var userName = "user";
         var userName2 = userName + "2";
-        groupCreateService.createGroup(groupName, userName);
-        groupCreateService.createGroup(groupName2, userName);
+        GroupCreateService.createGroup(db, groupName, userName);
+        GroupCreateService.createGroup(db, groupName2, userName);
 
-        List<String> res = groupsListService.listGroups(userName2, false).getSuccessResult();
+        List<String> res = GroupsListService.listGroups(db, userName2, false).getSuccessResult();
 
         assertEquals(2, res.size());
         assertThat(res, containsInAnyOrder(groupName, groupName2));
@@ -108,10 +97,10 @@ public class GroupsListServiceTest {
         var userName = "user";
         var userName2 = userName + "2";
         var userName3 = userName + "3";
-        groupCreateService.createGroup(groupName, userName);
-        groupsGeneralConnectService.generalConnect(groupName, userName2, false);
+        GroupCreateService.createGroup(db, groupName, userName);
+        GroupsGeneralConnectService.generalConnect(db, groupName, userName2, false);
 
-        List<String> res = groupsListService.listGroups(userName3, false).getSuccessResult();
+        List<String> res = GroupsListService.listGroups(db, userName3, false).getSuccessResult();
 
         assertEquals(1, res.size());
         assertEquals(groupName, res.get(0));
@@ -123,10 +112,10 @@ public class GroupsListServiceTest {
         var groupName2 = groupName + "2";
         var userName = "user";
         var userName2 = userName + "2";
-        groupCreateService.createGroup(groupName, userName);
-        groupCreateService.createGroup(groupName2, userName2);
+        GroupCreateService.createGroup(db, groupName, userName);
+        GroupCreateService.createGroup(db, groupName2, userName2);
 
-        List<String> res = groupsListService.listGroups(userName2, false).getSuccessResult();
+        List<String> res = GroupsListService.listGroups(db, userName2, false).getSuccessResult();
 
         assertEquals(1, res.size());
         assertEquals(groupName, res.get(0));
@@ -139,11 +128,11 @@ public class GroupsListServiceTest {
         var groupName3 = groupName + "3";
         var userName = "user";
         var userName2 = userName + "2";
-        groupCreateService.createGroup(groupName, userName);
-        groupCreateService.createGroup(groupName2, userName);
-        groupCreateService.createGroup(groupName3, userName2);
+        GroupCreateService.createGroup(db, groupName, userName);
+        GroupCreateService.createGroup(db, groupName2, userName);
+        GroupCreateService.createGroup(db, groupName3, userName2);
 
-        List<String> res = groupsListService.listGroups(userName2, false).getSuccessResult();
+        List<String> res = GroupsListService.listGroups(db, userName2, false).getSuccessResult();
 
         assertEquals(2, res.size());
         assertThat(res, containsInAnyOrder(groupName, groupName2));
@@ -156,11 +145,11 @@ public class GroupsListServiceTest {
         var userName = "user";
         var userName2 = userName + "2";
         var userName3 = userName + "3";
-        groupCreateService.createGroup(groupName, userName);
-        groupsGeneralConnectService.generalConnect(groupName, userName2, false);
-        groupCreateService.createGroup(groupName2, userName3);
+        GroupCreateService.createGroup(db, groupName, userName);
+        GroupsGeneralConnectService.generalConnect(db, groupName, userName2, false);
+        GroupCreateService.createGroup(db, groupName2, userName3);
 
-        List<String> res = groupsListService.listGroups(userName3, false).getSuccessResult();
+        List<String> res = GroupsListService.listGroups(db, userName3, false).getSuccessResult();
 
         assertEquals(1, res.size());
         assertEquals(groupName, res.get(0));

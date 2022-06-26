@@ -1,5 +1,6 @@
 package hu.kristof.nagy.hikebookserver.api;
 
+import com.google.cloud.firestore.Firestore;
 import hu.kristof.nagy.hikebookserver.model.ResponseResult;
 import hu.kristof.nagy.hikebookserver.service.groups.GroupCreateService;
 import hu.kristof.nagy.hikebookserver.service.groups.GroupsGeneralConnectService;
@@ -15,23 +16,14 @@ import java.util.List;
 public class GroupsController {
 
     @Autowired
-    private GroupsListService groupsListService;
-
-    @Autowired
-    private GroupCreateService groupCreateService;
-
-    @Autowired
-    private GroupsGeneralConnectService groupsGeneralConnectService;
-
-    @Autowired
-    private GroupsMembersListService groupsMembersListService;
+    private Firestore db;
 
     @GetMapping("{userName}/{isConnectedPage}")
     public ResponseResult<List<String>> listGroups(
             @PathVariable String userName,
             @PathVariable boolean isConnectedPage
     ) {
-        return groupsListService.listGroups(userName, isConnectedPage);
+        return GroupsListService.listGroups(db, userName, isConnectedPage);
     }
 
     @PutMapping("{groupName}/{userName}")
@@ -39,7 +31,7 @@ public class GroupsController {
             @PathVariable String groupName,
             @PathVariable String userName
     ) {
-        return groupCreateService.createGroup(groupName, userName);
+        return GroupCreateService.createGroup(db, groupName, userName);
     }
 
     @PutMapping("{groupName}/{userName}/{isConnectedPage}")
@@ -48,13 +40,13 @@ public class GroupsController {
             @PathVariable String userName,
             @PathVariable boolean isConnectedPage
     ) {
-        return groupsGeneralConnectService.generalConnect(groupName, userName, isConnectedPage);
+        return GroupsGeneralConnectService.generalConnect(db, groupName, userName, isConnectedPage);
     }
 
     @GetMapping("{groupName}")
     public ResponseResult<List<String>> listMembers(
             @PathVariable String groupName
     ) {
-        return groupsMembersListService.listMembers(groupName);
+        return GroupsMembersListService.listMembers(db, groupName);
     }
 }

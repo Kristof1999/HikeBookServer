@@ -20,13 +20,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 public class UpdateAvgSpeedServiceTest {
-
-    @Autowired
-    private UpdateAvgSpeedService updateAvgSpeedService;
-
-    @Autowired
-    private RegisterService registerService;
-
     @Autowired
     private Firestore db;
 
@@ -37,19 +30,19 @@ public class UpdateAvgSpeedServiceTest {
 
     @Test
     void testFirstUpdate() {
-        registerService.registerUser(new User("user", "password", 3.0));
+        RegisterService.registerUser(db, new User("user", "password", 3.0));
 
-        updateAvgSpeedService.updateAvgSpeed("user", 3.5);
+        UpdateAvgSpeedService.updateAvgSpeed(db, "user", 3.5);
 
         assertEquals(3.25, getSpeed("user"), 0.05);
     }
 
     @Test
     void testMultipleUpdates() {
-        registerService.registerUser(new User("user", "password", 3.0));
+        RegisterService.registerUser(db, new User("user", "password", 3.0));
 
-        updateAvgSpeedService.updateAvgSpeed("user", 3.5);
-        updateAvgSpeedService.updateAvgSpeed("user", 3.75);
+        UpdateAvgSpeedService.updateAvgSpeed(db, "user", 3.5);
+        UpdateAvgSpeedService.updateAvgSpeed(db, "user", 3.75);
 
         assertEquals(3.5, getSpeed("user"), 0.05);
     }

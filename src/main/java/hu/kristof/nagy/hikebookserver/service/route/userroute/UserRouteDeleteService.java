@@ -7,21 +7,14 @@ import hu.kristof.nagy.hikebookserver.data.DbFields;
 import hu.kristof.nagy.hikebookserver.model.ResponseResult;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import hu.kristof.nagy.hikebookserver.service.Util;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-@Service
-public class UserRouteDeleteService {
-
-    @Autowired
-    private Firestore db;
-
+public final class UserRouteDeleteService {
     /**
      * @param userName name of user who requested deletion
      * @param routeName name of route which to delete for the given user
      * @return true if deletion was successful
      */
-    public ResponseResult<Boolean> deleteUserRoute(String userName, String routeName) {
+    public static ResponseResult<Boolean> deleteUserRoute(Firestore db, String userName, String routeName) {
         var routes = db.collection(DbCollections.ROUTE);
         var queryFuture = routes
                 .whereEqualTo(DbFields.UserRoute.NAME, userName)

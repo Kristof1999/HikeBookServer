@@ -15,16 +15,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 public class GroupsMembersListServiceTest {
-
-    @Autowired
-    private GroupsMembersListService groupsMembersListService;
-
-    @Autowired
-    private GroupCreateService groupCreateService;
-
-    @Autowired
-    private GroupsGeneralConnectService groupsGeneralConnectService;
-
     @Autowired
     private Firestore db;
 
@@ -37,9 +27,9 @@ public class GroupsMembersListServiceTest {
     void testOneMember() {
         var groupName = "group";
         var userName = "user";
-        groupCreateService.createGroup(groupName, userName);
+        GroupCreateService.createGroup(db, groupName, userName);
 
-        List<String> res = groupsMembersListService.listMembers(groupName).getSuccessResult();
+        List<String> res = GroupsMembersListService.listMembers(db, groupName).getSuccessResult();
 
         assertEquals(1, res.size());
         assertEquals(userName, res.get(0));
@@ -50,10 +40,10 @@ public class GroupsMembersListServiceTest {
         var groupName = "group";
         var userName = "user";
         var userName2 = userName + "2";
-        groupCreateService.createGroup(groupName, userName);
-        groupsGeneralConnectService.generalConnect(groupName, userName2, false);
+        GroupCreateService.createGroup(db, groupName, userName);
+        GroupsGeneralConnectService.generalConnect(db, groupName, userName2, false);
 
-        List<String> res = groupsMembersListService.listMembers(groupName).getSuccessResult();
+        List<String> res = GroupsMembersListService.listMembers(db, groupName).getSuccessResult();
 
         assertEquals(2, res.size());
         assertThat(res, containsInAnyOrder(userName, userName2));
@@ -63,7 +53,7 @@ public class GroupsMembersListServiceTest {
     void testEmpty() {
         var groupName = "group";
 
-        List<String> res = groupsMembersListService.listMembers(groupName).getSuccessResult();
+        List<String> res = GroupsMembersListService.listMembers(db, groupName).getSuccessResult();
 
         assertEquals(0, res.size());
     }

@@ -22,12 +22,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest
 public class UserRouteEditTest {
     @Autowired
-    private UserRouteEditService routeEditService;
-
-    @Autowired
-    private UserRouteCreateService routeCreateService;
-
-    @Autowired
     private Firestore db;
 
     @BeforeEach
@@ -43,11 +37,11 @@ public class UserRouteEditTest {
         String userName = "asd";
         String routeName = "route";
         UserRoute oldRoute = new UserRoute(routeName, points, "", userName);
-        routeCreateService.createRoute(oldRoute);
+        UserRouteCreateService.createRoute(db, oldRoute);
 
         UserRoute newRoute = new UserRoute(routeName, points, "", userName);
         EditedUserRoute editedRoute = new EditedUserRoute(newRoute, oldRoute);
-        boolean res = routeEditService.editRoute(editedRoute).getSuccessResult();
+        boolean res = UserRouteEditService.editRoute(db, editedRoute).getSuccessResult();
 
         assertTrue(res);
     }
@@ -60,12 +54,12 @@ public class UserRouteEditTest {
         String userName = "asd";
         String routeName = "route";
         UserRoute oldRoute = new UserRoute(routeName, points, "", userName);
-        routeCreateService.createRoute(oldRoute);
+        UserRouteCreateService.createRoute(db, oldRoute);
 
         points.add(new Point(2.0, 2.0, PointType.NEW, ""));
         UserRoute newRoute = new UserRoute(routeName, points, "", userName);
         EditedUserRoute editedRoute = new EditedUserRoute(newRoute, oldRoute);
-        boolean res = routeEditService.editRoute(editedRoute).getSuccessResult();
+        boolean res = UserRouteEditService.editRoute(db, editedRoute).getSuccessResult();
 
         assertTrue(res);
     }
@@ -78,11 +72,11 @@ public class UserRouteEditTest {
         String userName = "asd";
         String routeName = "route";
         UserRoute oldRoute = new UserRoute(routeName, points, "", userName);
-        routeCreateService.createRoute(oldRoute);
+        UserRouteCreateService.createRoute(db, oldRoute);
 
         UserRoute newRoute = new UserRoute(routeName + "2", points, "", userName);
         EditedUserRoute editedRoute = new EditedUserRoute(newRoute, oldRoute);
-        boolean res = routeEditService.editRoute(editedRoute).getSuccessResult();
+        boolean res = UserRouteEditService.editRoute(db, editedRoute).getSuccessResult();
 
         assertTrue(res);
     }
@@ -95,12 +89,12 @@ public class UserRouteEditTest {
         String userName = "asd";
         String routeName = "route";
         UserRoute oldRoute = new UserRoute(routeName, points, "", userName);
-        routeCreateService.createRoute(oldRoute);
+        UserRouteCreateService.createRoute(db, oldRoute);
 
         points.add(new Point(2.0, 2.0, PointType.NEW, ""));
         UserRoute newRoute = new UserRoute(routeName + "2", points, "", userName);
         EditedUserRoute editedRoute = new EditedUserRoute(newRoute, oldRoute);
-        boolean res = routeEditService.editRoute(editedRoute).getSuccessResult();
+        boolean res = UserRouteEditService.editRoute(db, editedRoute).getSuccessResult();
 
         assertTrue(res);
     }
@@ -113,14 +107,14 @@ public class UserRouteEditTest {
         String userName = "asd";
         String routeName = "route";
         UserRoute oldRoute = new UserRoute(routeName, points, "", userName);
-        routeCreateService.createRoute(oldRoute);
+        UserRouteCreateService.createRoute(db, oldRoute);
         String routeName2 = routeName + "2";
         List<Point> points2 = new ArrayList<>();
         for (Point p : points) {
             points2.add(p);
         }
         points2.add(new Point(2.0, 2.0, PointType.NEW, ""));
-        routeCreateService.createRoute(
+        UserRouteCreateService.createRoute(db,
                 new UserRoute(routeName2, points2, "", userName)
         );
 
@@ -129,7 +123,7 @@ public class UserRouteEditTest {
         EditedUserRoute editedRoute = new EditedUserRoute(newRoute, oldRoute);
 
         assertThrows(IllegalArgumentException.class,
-                () -> routeEditService.editRoute(editedRoute)
+                () -> UserRouteEditService.editRoute(db, editedRoute)
         );
     }
 
@@ -141,14 +135,14 @@ public class UserRouteEditTest {
         String userName = "asd";
         String routeName = "route";
         UserRoute oldRoute = new UserRoute(routeName, points, "", userName);
-        routeCreateService.createRoute(oldRoute);
+        UserRouteCreateService.createRoute(db, oldRoute);
         String routeName2 = routeName + "2";
         List<Point> points2 = new ArrayList<>();
         for (Point p : points) {
             points2.add(p);
         }
         points2.add(new Point(2.0, 2.0, PointType.NEW, ""));
-        routeCreateService.createRoute(
+        UserRouteCreateService.createRoute(db,
                 new UserRoute(routeName2, points2, "", userName)
         );
 
@@ -156,7 +150,7 @@ public class UserRouteEditTest {
         EditedUserRoute editedRoute = new EditedUserRoute(newRoute, oldRoute);
 
         assertThrows(IllegalArgumentException.class,
-                () -> routeEditService.editRoute(editedRoute)
+                () -> UserRouteEditService.editRoute(db, editedRoute)
         );
     }
 
@@ -168,13 +162,13 @@ public class UserRouteEditTest {
         String userName = "asd";
         String routeName = "route";
         UserRoute oldRoute = new UserRoute(routeName, points, "", userName);
-        routeCreateService.createRoute(oldRoute);
+        UserRouteCreateService.createRoute(db, oldRoute);
 
         List<Point> newPoints = new ArrayList<>();
         points.add(new Point(0.0, 0.0, PointType.SET, ""));
         points.add(new Point(1.0, 1.0, PointType.CASTLE, ""));
         UserRoute newRoute = new UserRoute(routeName, newPoints, "", userName);
-        boolean res = routeEditService.editRoute(new EditedUserRoute(newRoute, oldRoute)).getSuccessResult();
+        boolean res = UserRouteEditService.editRoute(db, new EditedUserRoute(newRoute, oldRoute)).getSuccessResult();
 
         assertTrue(res);
     }
@@ -187,10 +181,10 @@ public class UserRouteEditTest {
         String userName = "asd";
         String routeName = "route";
         UserRoute oldRoute = new UserRoute(routeName, points, "", userName);
-        routeCreateService.createRoute(oldRoute);
+        UserRouteCreateService.createRoute(db, oldRoute);
 
         UserRoute newRoute = new UserRoute(routeName, points, "description", userName);
-        boolean res = routeEditService.editRoute(new EditedUserRoute(newRoute, oldRoute)).getSuccessResult();
+        boolean res = UserRouteEditService.editRoute(db, new EditedUserRoute(newRoute, oldRoute)).getSuccessResult();
 
         assertTrue(res);
     }

@@ -6,18 +6,11 @@ import hu.kristof.nagy.hikebookserver.model.ResponseResult;
 import hu.kristof.nagy.hikebookserver.model.routes.UserRoute;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import hu.kristof.nagy.hikebookserver.service.route.routeuniqueness.SimpleRouteUniquenessHandler;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
-@Service
 public class UserRouteCreateService {
-
-    @Autowired
-    private Firestore db;
-
-    public ResponseResult<Boolean> createRoute(UserRoute route) {
+    public static ResponseResult<Boolean> createRoute(Firestore db, UserRoute route) {
         route.handleRouteUniqueness(new SimpleRouteUniquenessHandler
                 .Builder(db)
         );

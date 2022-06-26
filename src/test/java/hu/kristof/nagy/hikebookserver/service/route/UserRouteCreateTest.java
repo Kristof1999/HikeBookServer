@@ -22,10 +22,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 public class UserRouteCreateTest {
-
-    @Autowired
-    private UserRouteCreateService routeCreateService;
-
     @Autowired
     private Firestore db;
 
@@ -40,7 +36,7 @@ public class UserRouteCreateTest {
         points.add(new Point(0.0, 0.0, PointType.SET, ""));
         points.add(new Point(1.0, 1.0, PointType.NEW, ""));
 
-        boolean res = routeCreateService.createRoute(
+        boolean res = UserRouteCreateService.createRoute(db,
                 new UserRoute("route", points, "", "asd")
         ).getSuccessResult();
 
@@ -56,12 +52,12 @@ public class UserRouteCreateTest {
         points2.add(new Point(0.0, 0.0, PointType.SET, ""));
         points2.add(new Point(1.0, 0.0, PointType.NEW, ""));
 
-        routeCreateService.createRoute(
+        UserRouteCreateService.createRoute(db,
                 new UserRoute("route", points, "", "asd")
         );
 
         assertThrows(IllegalArgumentException.class, () ->
-            routeCreateService.createRoute(
+            UserRouteCreateService.createRoute(db,
                     new UserRoute("route", points2, "", "asd")
             )
         );
@@ -73,12 +69,12 @@ public class UserRouteCreateTest {
         points.add(new Point(0.0, 0.0, PointType.SET, ""));
         points.add(new Point(1.0, 1.0, PointType.NEW, ""));
 
-        routeCreateService.createRoute(
+        UserRouteCreateService.createRoute(db,
                 new UserRoute("route", points, "", "asd")
         );
 
         assertThrows(IllegalArgumentException.class, () ->
-                routeCreateService.createRoute(
+                UserRouteCreateService.createRoute(db,
                         new UserRoute("route", points, "", "asd")
                 )
         );
@@ -90,10 +86,10 @@ public class UserRouteCreateTest {
         points.add(new Point(0.0, 0.0, PointType.SET, ""));
         points.add(new Point(1.0, 1.0, PointType.NEW, ""));
 
-        routeCreateService.createRoute(
+        UserRouteCreateService.createRoute(db,
                 new UserRoute("route", points, "", "asd")
         );
-        boolean res = routeCreateService.createRoute(
+        boolean res = UserRouteCreateService.createRoute(db,
                 new UserRoute("route", points, "", "user")
         ).getSuccessResult();
 

@@ -10,28 +10,19 @@ import hu.kristof.nagy.hikebookserver.model.routes.UserRoute;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import hu.kristof.nagy.hikebookserver.service.Util;
 import hu.kristof.nagy.hikebookserver.service.route.RouteLoadService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-@Service
-public class UserRouteLoadService {
-    @Autowired
-    private Firestore db;
-
-    @Autowired
-    private RouteLoadService routeLoadService;
-
+public final class UserRouteLoadService {
     /**
      * Loads all the routes associated with the given user.
      */
-    public ResponseResult<List<UserRoute>> loadUserRoutes(String userName) {
+    public static ResponseResult<List<UserRoute>> loadUserRoutes(Firestore db, String userName) {
         return ResponseResult.success(
-                routeLoadService.loadRoutes(userName, DbFields.UserRoute.NAME)
+                RouteLoadService.loadRoutes(db, userName, DbFields.UserRoute.NAME)
                 .stream()
                 .map(route -> new UserRoute(route, userName))
                 .collect(Collectors.toList())
@@ -41,7 +32,7 @@ public class UserRouteLoadService {
     /**
      * Loads the given route associated with the given user.
      */
-    public ResponseResult<UserRoute> loadUserRoute(String userName, String routeName) {
+    public static ResponseResult<UserRoute> loadUserRoute(Firestore db, String userName, String routeName) {
         var queryFuture = db
                 .collection(DbCollections.ROUTE)
                 .select(UserRoute.getSelectPaths())
@@ -61,7 +52,7 @@ public class UserRouteLoadService {
     /**
      * Lists all the user routes' name and associated user name.
      */
-    public ResponseResult<List<BrowseListItem>> listUserRoutes(String requesterName) {
+    public static ResponseResult<List<BrowseListItem>> listUserRoutes(Firestore db, String requesterName) {
         var routes = new ArrayList<BrowseListItem>();
         var queryFuture = db.collection(DbCollections.ROUTE)
                 .select(BrowseListItem.getSelectPaths())

@@ -6,23 +6,18 @@ import hu.kristof.nagy.hikebookserver.data.DbFields;
 import hu.kristof.nagy.hikebookserver.model.ResponseResult;
 import hu.kristof.nagy.hikebookserver.model.User;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
 @Service
-public class RegisterService {
-
-    @Autowired
-    private Firestore db;
-
+public final class RegisterService {
     /**
      * Registers the user if there is no other user
      * in the database with the same name.
      * @return true if registration was successful
      */
-    public ResponseResult<Boolean> registerUser(User user) {
+    public static ResponseResult<Boolean> registerUser(Firestore db, User user) {
         var transactionFuture = db.runTransaction(transaction -> {
             var users = db.collection(DbCollections.USER);
             var query = users

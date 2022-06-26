@@ -6,7 +6,6 @@ import hu.kristof.nagy.hikebookserver.model.GroupHikeCreateHelper;
 import hu.kristof.nagy.hikebookserver.model.Point;
 import hu.kristof.nagy.hikebookserver.model.PointType;
 import hu.kristof.nagy.hikebookserver.model.routes.GroupHikeRoute;
-import hu.kristof.nagy.hikebookserver.model.routes.Route;
 import hu.kristof.nagy.hikebookserver.service.TestUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,10 +19,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 public class GroupHikeCreateServiceTest {
-
-    @Autowired
-    private GroupHikeCreateService groupHikeCreateService;
-
     @Autowired
     private Firestore db;
 
@@ -43,8 +38,8 @@ public class GroupHikeCreateServiceTest {
         var route = new GroupHikeRoute("route", points, "", groupHikeName);
         var helper = new GroupHikeCreateHelper(dateTime, route);
 
-        boolean res = groupHikeCreateService
-                .createGroupHike(userName, groupHikeName, helper)
+        boolean res = GroupHikeCreateService
+                .createGroupHike(db, userName, groupHikeName, helper)
                 .getSuccessResult();
 
         assertTrue(res);
@@ -59,10 +54,10 @@ public class GroupHikeCreateServiceTest {
         points.add(new Point(0.0, 0.0, PointType.NEW, ""));
         var route = new GroupHikeRoute("route", points, "", groupHikeName);
         var helper = new GroupHikeCreateHelper(dateTime, route);
-        groupHikeCreateService.createGroupHike(userName, groupHikeName, helper);
+        GroupHikeCreateService.createGroupHike(db, userName, groupHikeName, helper);
 
-        assertThrows(IllegalArgumentException.class, () -> groupHikeCreateService
-                .createGroupHike(userName, groupHikeName, helper)
+        assertThrows(IllegalArgumentException.class, () -> GroupHikeCreateService
+                .createGroupHike(db, userName, groupHikeName, helper)
         );
     }
 }

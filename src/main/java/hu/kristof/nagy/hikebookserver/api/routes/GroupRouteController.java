@@ -1,5 +1,6 @@
 package hu.kristof.nagy.hikebookserver.api.routes;
 
+import com.google.cloud.firestore.Firestore;
 import hu.kristof.nagy.hikebookserver.model.ResponseResult;
 import hu.kristof.nagy.hikebookserver.model.routes.EditedGroupRoute;
 import hu.kristof.nagy.hikebookserver.model.routes.GroupRoute;
@@ -17,16 +18,7 @@ import java.util.List;
 public class GroupRouteController {
 
     @Autowired
-    private GroupRouteCreateService groupRouteCreateService;
-
-    @Autowired
-    private GroupRouteLoadService groupRouteLoadService;
-
-    @Autowired
-    private GroupRouteDeleteService groupRouteDeleteService;
-
-    @Autowired
-    private GroupRouteEditService groupRouteEditService;
+    private Firestore db;
 
     @PutMapping("{groupName}/{routeName}")
     public ResponseResult<Boolean> createGroupRoute(
@@ -34,14 +26,14 @@ public class GroupRouteController {
             @PathVariable String routeName,
             @RequestBody GroupRoute groupRoute
     ) {
-        return groupRouteCreateService.createRoute(groupRoute);
+        return GroupRouteCreateService.createRoute(db, groupRoute);
     }
 
     @GetMapping("{groupName}")
     public ResponseResult<List<GroupRoute>> loadGroupRoutes(
             @PathVariable String groupName
     ) {
-        return groupRouteLoadService.loadGroupRoutes(groupName);
+        return GroupRouteLoadService.loadGroupRoutes(db, groupName);
     }
 
     @GetMapping("{groupName}/{routeName}")
@@ -49,7 +41,7 @@ public class GroupRouteController {
             @PathVariable String groupName,
             @PathVariable String routeName
     ) {
-        return groupRouteLoadService.loadGroupRoute(groupName, routeName);
+        return GroupRouteLoadService.loadGroupRoute(db, groupName, routeName);
     }
 
     @DeleteMapping("{groupName}/{routeName}")
@@ -57,7 +49,7 @@ public class GroupRouteController {
             @PathVariable String groupName,
             @PathVariable String routeName
     ) {
-        return groupRouteDeleteService.deleteGroupRoute(groupName, routeName);
+        return GroupRouteDeleteService.deleteGroupRoute(db, groupName, routeName);
     }
 
     @PutMapping("edit/{groupName}/{oldRouteName}")
@@ -66,6 +58,6 @@ public class GroupRouteController {
             @PathVariable String oldRouteName,
             @RequestBody EditedGroupRoute editedGroupRoute
     ) {
-        return groupRouteEditService.editRoute(editedGroupRoute);
+        return GroupRouteEditService.editRoute(db, editedGroupRoute);
     }
 }

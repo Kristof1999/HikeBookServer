@@ -12,10 +12,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 public class GroupCreateServiceTest {
-
-    @Autowired
-    private GroupCreateService groupCreateService;
-
     @Autowired
     private Firestore db;
 
@@ -29,7 +25,7 @@ public class GroupCreateServiceTest {
         var groupName = "group";
         var userName = "user";
 
-        boolean res = groupCreateService.createGroup(groupName, userName).getSuccessResult();
+        boolean res = GroupCreateService.createGroup(db, groupName, userName).getSuccessResult();
 
         assertTrue(res);
     }
@@ -39,13 +35,13 @@ public class GroupCreateServiceTest {
         var groupName = "group";
         var userName = "user";
 
-        groupCreateService.createGroup(groupName, userName);
+        GroupCreateService.createGroup(db, groupName, userName);
 
         assertThrows(IllegalArgumentException.class, () ->
-                groupCreateService.createGroup(groupName, userName)
+                GroupCreateService.createGroup(db, groupName, userName)
         );
         assertThrows(IllegalArgumentException.class, () ->
-                groupCreateService.createGroup(groupName, userName + "diff")
+                GroupCreateService.createGroup(db, groupName, userName + "diff")
         );
     }
 }

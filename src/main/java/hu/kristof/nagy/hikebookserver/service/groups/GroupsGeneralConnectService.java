@@ -8,33 +8,27 @@ import hu.kristof.nagy.hikebookserver.model.Group;
 import hu.kristof.nagy.hikebookserver.model.ResponseResult;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import hu.kristof.nagy.hikebookserver.service.Util;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
-@Service
-public class GroupsGeneralConnectService {
-
-    @Autowired
-    private Firestore db;
-
-    public ResponseResult<Boolean> generalConnect(
+public final class GroupsGeneralConnectService {
+    public static ResponseResult<Boolean> generalConnect(
+            Firestore db,
             String groupName,
             String userName,
             boolean isConnectedPage
     ) {
         if (isConnectedPage) {
-            return ResponseResult.success(disconnect(groupName, userName));
+            return ResponseResult.success(disconnect(db, groupName, userName));
         } else {
-            return ResponseResult.success(connect(new Group(groupName, userName)));
+            return ResponseResult.success(connect(db, new Group(groupName, userName)));
         }
     }
 
-    private boolean connect(Group group) {
+    private static boolean connect(Firestore db, Group group) {
         Map<String, Object> data = group.toMap();
-        if (groupExists(group.getGroupName())) {
-            if (hasNotConnected(group.getGroupName(), group.getMemberName())) {
+        if (groupExists(db, group.getGroupName())) {
+            if (hasNotConnected(db, group.getGroupName(), group.getMemberName())) {
                 return FutureUtil.handleFutureGet(() -> {
                     db.collection(DbCollections.GROUP)
                             .add(data)
@@ -49,14 +43,14 @@ public class GroupsGeneralConnectService {
         }
     }
 
-    private boolean groupExists(String groupName) {
+    private static boolean groupExists(Firestore db, String groupName) {
         var queryFuture = db.collection(DbCollections.GROUP)
                 .whereEqualTo(DbFields.Group.NAME, groupName)
                 .get();
         return FutureUtil.handleFutureGet(() -> !queryFuture.get().isEmpty());
     }
 
-    private boolean hasNotConnected(String groupName, String userName) {
+    private static boolean hasNotConnected(Firestore db, String groupName, String userName) {
         var queryFuture = db.collection(DbCollections.GROUP)
                 .whereEqualTo(DbFields.Group.NAME, groupName)
                 .whereEqualTo(DbFields.Group.MEMBER_NAME, userName)
@@ -64,7 +58,7 @@ public class GroupsGeneralConnectService {
         return FutureUtil.handleFutureGet(() -> queryFuture.get().isEmpty());
     }
 
-    private boolean disconnect(String groupName, String userName) {
+    private static boolean disconnect(Firestore db, String groupName, String userName) {
         var futureResult = db.runTransaction(transaction -> {
             var query = db
                     .collection(DbCollections.GROUP)
@@ -81,8 +75,8 @@ public class GroupsGeneralConnectService {
                         .collection(DbCollections.GROUP)
                         .document(id);
 
-                if (getNumberOfMembers(groupName, transaction) == 1) {
-                    deleteGroupRoutes(groupName, transaction);
+                if (getNumberOfMembers(db, groupName, transaction) == 1) {
+                    deleteGroupRoutes(db, groupName, transaction);
                 }
 
                 transaction.delete(docRef);
@@ -93,7 +87,7 @@ public class GroupsGeneralConnectService {
         return FutureUtil.handleFutureGet(futureResult::get);
     }
 
-    private int getNumberOfMembers(String groupName, Transaction transaction) {
+    private static int getNumberOfMembers(Firestore db, String groupName, Transaction transaction) {
         var query = db
                 .collection(DbCollections.GROUP)
                 .whereEqualTo(DbFields.Group.NAME, groupName);
@@ -104,7 +98,7 @@ public class GroupsGeneralConnectService {
         ).size();
     }
 
-    private void deleteGroupRoutes(String groupName, Transaction transaction) {
+    private static void deleteGroupRoutes(Firestore db, String groupName, Transaction transaction) {
         var query = db
                 .collection(DbCollections.ROUTE)
                 .whereEqualTo(DbFields.GroupRoute.NAME, groupName);

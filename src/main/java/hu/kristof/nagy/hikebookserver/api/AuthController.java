@@ -11,6 +11,7 @@ whether distributed in print or electronically.
 
 package hu.kristof.nagy.hikebookserver.api;
 
+import com.google.cloud.firestore.Firestore;
 import hu.kristof.nagy.hikebookserver.model.ResponseResult;
 import hu.kristof.nagy.hikebookserver.model.User;
 import hu.kristof.nagy.hikebookserver.service.authentication.LoginService;
@@ -24,18 +25,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     @Autowired
-    private LoginService login;
-
-    @Autowired
-    private RegisterService register;
+    private Firestore db;
 
     @PostMapping("/login")
     public ResponseResult<Boolean> loginUser(@RequestBody User user) {
-        return login.loginUser(user);
+        return LoginService.loginUser(db, user);
     }
 
     @PostMapping("/register")
     public ResponseResult<Boolean> registerUser(@RequestBody User user) {
-        return register.registerUser(user);
+        return RegisterService.registerUser(db, user);
     }
 }

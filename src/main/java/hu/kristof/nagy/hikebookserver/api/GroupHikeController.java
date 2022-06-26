@@ -1,10 +1,10 @@
 package hu.kristof.nagy.hikebookserver.api;
 
+import com.google.cloud.firestore.Firestore;
 import hu.kristof.nagy.hikebookserver.model.DateTime;
 import hu.kristof.nagy.hikebookserver.model.GroupHikeCreateHelper;
 import hu.kristof.nagy.hikebookserver.model.GroupHikeListHelper;
 import hu.kristof.nagy.hikebookserver.model.ResponseResult;
-import hu.kristof.nagy.hikebookserver.model.routes.Route;
 import hu.kristof.nagy.hikebookserver.service.grouphike.GroupHikeCreateService;
 import hu.kristof.nagy.hikebookserver.service.grouphike.GroupHikeGeneralConnectService;
 import hu.kristof.nagy.hikebookserver.service.grouphike.GroupHikeListService;
@@ -12,7 +12,6 @@ import hu.kristof.nagy.hikebookserver.service.grouphike.GroupHikeParticipantsLis
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Calendar;
 import java.util.List;
 
 @RestController
@@ -20,23 +19,14 @@ import java.util.List;
 public class GroupHikeController {
 
     @Autowired
-    private GroupHikeListService groupHikeListService;
-
-    @Autowired
-    private GroupHikeCreateService groupHikeCreateService;
-
-    @Autowired
-    private GroupHikeParticipantsListService groupHikeParticipantsListService;
-
-    @Autowired
-    private GroupHikeGeneralConnectService groupHikeGeneralConnectService;
+    private Firestore db;
 
     @GetMapping("{userName}/{isConnectedPage}")
     public ResponseResult<List<GroupHikeListHelper>> listGroupHikes(
             @PathVariable String userName,
             @PathVariable boolean isConnectedPage
     ) {
-        return groupHikeListService.listGroupHikes(userName, isConnectedPage);
+        return GroupHikeListService.listGroupHikes(db, userName, isConnectedPage);
     }
 
     @PutMapping("{userName}/{groupHikeName}")
@@ -45,14 +35,14 @@ public class GroupHikeController {
             @PathVariable String groupHikeName,
             @RequestBody GroupHikeCreateHelper helper
     ) {
-        return groupHikeCreateService.createGroupHike(userName, groupHikeName, helper);
+        return GroupHikeCreateService.createGroupHike(db, userName, groupHikeName, helper);
     }
 
     @GetMapping("{groupHikeName}")
     public ResponseResult<List<String>> listParticipants(
             @PathVariable String groupHikeName
     ) {
-        return groupHikeParticipantsListService.listParticipants(groupHikeName);
+        return GroupHikeParticipantsListService.listParticipants(db, groupHikeName);
     }
 
     @PutMapping("{groupHikeName}/{userName}/{isConnectedPage}")
@@ -62,6 +52,6 @@ public class GroupHikeController {
             @PathVariable boolean isConnectedPage,
             @RequestBody DateTime dateTime
     ) {
-        return groupHikeGeneralConnectService.generalConnect(groupHikeName, userName, isConnectedPage, dateTime);
+        return GroupHikeGeneralConnectService.generalConnect(db, groupHikeName, userName, isConnectedPage, dateTime);
     }
 }

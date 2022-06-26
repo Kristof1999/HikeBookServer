@@ -13,19 +13,12 @@ import hu.kristof.nagy.hikebookserver.model.routes.UserRoute;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import hu.kristof.nagy.hikebookserver.service.Util;
 import hu.kristof.nagy.hikebookserver.service.route.routeuniqueness.SimpleRouteUniquenessHandler;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
 
-@Service
 public class UserRouteEditService {
-
-    @Autowired
-    private Firestore db;
-
-    public ResponseResult<Boolean> editRoute(EditedUserRoute route) {
+    public static ResponseResult<Boolean> editRoute(Firestore db, EditedUserRoute route) {
         String oldRouteName = route.getOldRoute().getRouteName();
         String newRouteName = route.getNewRoute().getRouteName();
         List<Point> oldPoints = route.getOldRoute().getPoints();
@@ -40,21 +33,22 @@ public class UserRouteEditService {
         if (!oldPoints.equals(newPoints)) {
             userRoute.handleRoutePointsUniqueness(uniquenessHandlerBuilder);
         }
-        saveChanges(ownerName, oldRouteName, userRoute);
+        saveChanges(db, ownerName, oldRouteName, userRoute);
         return ResponseResult.success(true);
     }
 
-    private void saveChanges(
+    private static void saveChanges(
+            Firestore db,
             String ownerName,
             String oldRouteName,
             UserRoute newRoute
     ) {
-        var queryFuture = getRouteQuery(ownerName, oldRouteName).get();
+        var queryFuture = getRouteQuery(db, ownerName, oldRouteName).get();
         var querySnapshot = FutureUtil.handleFutureGet(queryFuture::get);
 
         var queryDocs = querySnapshot.getDocuments();
         Util.handleListSize(queryDocs, documentSnapshots -> {
-            var docRef = getDocToUpdate(documentSnapshots);
+            var docRef = getDocToUpdate(db, documentSnapshots);
             Map<String, Object> data = newRoute.toMap();
             return FutureUtil.handleFutureGet(() ->
                     docRef.set(data)
@@ -63,13 +57,14 @@ public class UserRouteEditService {
         });
     }
 
-    private DocumentReference getDocToUpdate(List<? extends DocumentSnapshot> queryDocs) {
+    private static DocumentReference getDocToUpdate(Firestore db, List<? extends DocumentSnapshot> queryDocs) {
         String id = queryDocs.get(0).getId();
         return db.collection(DbCollections.ROUTE)
                 .document(id);
     }
 
-    private Query getRouteQuery(
+    private static Query getRouteQuery(
+            Firestore db,
             String ownerName,
             String oldRouteName
     ) {
