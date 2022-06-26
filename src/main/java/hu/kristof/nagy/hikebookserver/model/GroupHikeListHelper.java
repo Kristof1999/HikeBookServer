@@ -1,7 +1,7 @@
 package hu.kristof.nagy.hikebookserver.model;
 
 import com.google.cloud.firestore.DocumentSnapshot;
-import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
+import hu.kristof.nagy.hikebookserver.data.DbFields;
 
 public class GroupHikeListHelper {
     private String groupHikeName;
@@ -16,19 +16,19 @@ public class GroupHikeListHelper {
     }
 
     public static GroupHikeListHelper from(DocumentSnapshot documentSnapshot) {
-        var groupHikeName = documentSnapshot.getString(DbPathConstants.GROUP_HIKE_NAME);
+        var groupHikeName = documentSnapshot.getString(DbFields.GroupHike.NAME);
         var dateTime = DateTime.from(documentSnapshot);
         return new GroupHikeListHelper(groupHikeName, dateTime);
     }
 
     public static String[] getSelectPaths() {
         return new String[] {
-                DbPathConstants.GROUP_HIKE_NAME,
-                DbPathConstants.GROUP_HIKE_YEAR,
-                DbPathConstants.GROUP_HIKE_MONTH,
-                DbPathConstants.GROUP_HIKE_DAY_OF_MONTH,
-                DbPathConstants.GROUP_HIKE_HOUR_OF_DAY,
-                DbPathConstants.GROUP_HIKE_MINUTE
+                DbFields.GroupHike.NAME,
+                DbFields.GroupHike.YEAR,
+                DbFields.GroupHike.MONTH,
+                DbFields.GroupHike.DAY_OF_MONTH,
+                DbFields.GroupHike.HOUR_OF_DAY,
+                DbFields.GroupHike.MINUTE
         };
     }
 

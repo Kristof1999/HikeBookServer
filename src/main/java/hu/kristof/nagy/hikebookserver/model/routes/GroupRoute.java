@@ -1,7 +1,7 @@
 package hu.kristof.nagy.hikebookserver.model.routes;
 
 import com.google.cloud.firestore.DocumentSnapshot;
-import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
+import hu.kristof.nagy.hikebookserver.data.DbFields;
 import hu.kristof.nagy.hikebookserver.model.Point;
 import hu.kristof.nagy.hikebookserver.service.route.routeuniqueness.RouteUniquenessHandler;
 
@@ -28,7 +28,7 @@ public final class GroupRoute extends Route {
     @Override
     public Map<String, Object> toMap() {
         Map<String, Object> data = super.toMap();
-        data.put(DbPathConstants.ROUTE_GROUP_NAME, groupName);
+        data.put(DbFields.GroupRoute.NAME, groupName);
         return data;
     }
 
@@ -43,7 +43,7 @@ public final class GroupRoute extends Route {
         String[] groupRouteSelectPaths = Arrays.copyOf(
                 routeSelectPaths, routeSelectPaths.length + 1
         );
-        groupRouteSelectPaths[groupRouteSelectPaths.length - 1] = DbPathConstants.ROUTE_GROUP_NAME;
+        groupRouteSelectPaths[groupRouteSelectPaths.length - 1] = DbFields.GroupRoute.NAME;
         return groupRouteSelectPaths;
     }
 
@@ -51,7 +51,7 @@ public final class GroupRoute extends Route {
     public void handleRouteUniqueness(RouteUniquenessHandler.Builder<?> builder) {
         super.handleRouteUniqueness(
                 builder.setOwnerName(groupName)
-                        .setOwnerPath(DbPathConstants.ROUTE_GROUP_NAME)
+                        .setOwnerPath(DbFields.GroupRoute.NAME)
         );
     }
 
@@ -59,7 +59,7 @@ public final class GroupRoute extends Route {
     public void handleRoutePointsUniqueness(RouteUniquenessHandler.Builder<?> builder) {
         super.handleRoutePointsUniqueness(
                 builder.setOwnerName(groupName)
-                        .setOwnerPath(DbPathConstants.ROUTE_GROUP_NAME)
+                        .setOwnerPath(DbFields.GroupRoute.NAME)
         );
     }
 
@@ -67,7 +67,7 @@ public final class GroupRoute extends Route {
     public void handleRouteNameUniqueness(RouteUniquenessHandler.Builder<?> builder) {
         super.handleRouteNameUniqueness(
                 builder.setOwnerName(groupName)
-                        .setOwnerPath(DbPathConstants.ROUTE_GROUP_NAME)
+                        .setOwnerPath(DbFields.GroupRoute.NAME)
         );
     }
 

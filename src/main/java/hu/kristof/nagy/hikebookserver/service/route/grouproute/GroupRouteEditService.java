@@ -1,15 +1,14 @@
 package hu.kristof.nagy.hikebookserver.service.route.grouproute;
 
 import com.google.cloud.firestore.*;
-import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
+import hu.kristof.nagy.hikebookserver.data.DbCollections;
+import hu.kristof.nagy.hikebookserver.data.DbFields;
 import hu.kristof.nagy.hikebookserver.model.Point;
 import hu.kristof.nagy.hikebookserver.model.ResponseResult;
 import hu.kristof.nagy.hikebookserver.model.routes.EditedGroupRoute;
-import hu.kristof.nagy.hikebookserver.model.routes.EditedRoute;
 import hu.kristof.nagy.hikebookserver.model.routes.GroupRoute;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import hu.kristof.nagy.hikebookserver.service.Util;
-import hu.kristof.nagy.hikebookserver.service.route.routeuniqueness.SimpleRouteUniquenessHandler;
 import hu.kristof.nagy.hikebookserver.service.route.routeuniqueness.TransactionRouteUniquenessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -65,9 +64,9 @@ public class GroupRouteEditService {
             String routeName
     ) {
         var query = db
-                .collection(DbPathConstants.COLLECTION_ROUTE)
-                .whereEqualTo(DbPathConstants.ROUTE_GROUP_NAME, groupName)
-                .whereEqualTo(DbPathConstants.ROUTE_NAME, routeName);
+                .collection(DbCollections.ROUTE)
+                .whereEqualTo(DbFields.GroupRoute.NAME, groupName)
+                .whereEqualTo(DbFields.Route.ROUTE_NAME, routeName);
         var queryFuture = transaction.get(query);
 
         return FutureUtil.handleFutureGet(() -> {
@@ -100,7 +99,7 @@ public class GroupRouteEditService {
 
     private DocumentReference getDocToUpdate(List<QueryDocumentSnapshot> queryDocs) {
         String id = queryDocs.get(0).getId();
-        return db.collection(DbPathConstants.COLLECTION_ROUTE)
+        return db.collection(DbCollections.ROUTE)
                 .document(id);
     }
 
@@ -108,8 +107,8 @@ public class GroupRouteEditService {
             String ownerName,
             String oldRouteName
     ) {
-        return db.collection(DbPathConstants.COLLECTION_ROUTE)
-                .whereEqualTo(DbPathConstants.ROUTE_GROUP_NAME, ownerName)
-                .whereEqualTo(DbPathConstants.ROUTE_NAME, oldRouteName);
+        return db.collection(DbCollections.ROUTE)
+                .whereEqualTo(DbFields.GroupRoute.NAME, ownerName)
+                .whereEqualTo(DbFields.Route.ROUTE_NAME, oldRouteName);
     }
 }

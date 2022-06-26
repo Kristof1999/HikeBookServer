@@ -1,17 +1,13 @@
 package hu.kristof.nagy.hikebookserver.service.authentication;
 
-import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.Firestore;
-import com.google.cloud.firestore.QuerySnapshot;
-import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
+import hu.kristof.nagy.hikebookserver.data.DbCollections;
+import hu.kristof.nagy.hikebookserver.data.DbFields;
 import hu.kristof.nagy.hikebookserver.model.ResponseResult;
 import hu.kristof.nagy.hikebookserver.model.User;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
-import hu.kristof.nagy.hikebookserver.service.route.QueryException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.concurrent.ExecutionException;
 
 @Service
 public class LoginService {
@@ -26,9 +22,9 @@ public class LoginService {
      */
     public ResponseResult<Boolean> loginUser(User user) {
         var queryFuture = db
-                .collection(DbPathConstants.COLLECTION_USER)
-                .whereEqualTo(DbPathConstants.USER_NAME, user.getName())
-                .whereEqualTo(DbPathConstants.USER_PASSWORD, user.getPassword())
+                .collection(DbCollections.USER)
+                .whereEqualTo(DbFields.User.NAME, user.getName())
+                .whereEqualTo(DbFields.User.PASSWORD, user.getPassword())
                 .get();
 
         return ResponseResult.success(

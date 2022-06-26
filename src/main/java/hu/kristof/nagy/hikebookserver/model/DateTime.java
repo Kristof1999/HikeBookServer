@@ -1,8 +1,7 @@
 package hu.kristof.nagy.hikebookserver.model;
 
 import com.google.cloud.firestore.DocumentSnapshot;
-import com.google.cloud.firestore.QueryDocumentSnapshot;
-import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
+import hu.kristof.nagy.hikebookserver.data.DbFields;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,29 +23,29 @@ public class DateTime {
 
     public Map<String, Object> toMap() {
         var data = new HashMap<String, Object>();
-        data.put(DbPathConstants.GROUP_HIKE_YEAR, year);
-        data.put(DbPathConstants.GROUP_HIKE_MONTH, month);
-        data.put(DbPathConstants.GROUP_HIKE_DAY_OF_MONTH, dayOfMonth);
-        data.put(DbPathConstants.GROUP_HIKE_HOUR_OF_DAY, hourOfDay);
-        data.put(DbPathConstants.GROUP_HIKE_MINUTE, minute);
+        data.put(DbFields.GroupHike.YEAR, year);
+        data.put(DbFields.GroupHike.MONTH, month);
+        data.put(DbFields.GroupHike.DAY_OF_MONTH, dayOfMonth);
+        data.put(DbFields.GroupHike.HOUR_OF_DAY, hourOfDay);
+        data.put(DbFields.GroupHike.MINUTE, minute);
         return data;
     }
 
     public static DateTime from(DocumentSnapshot documentSnapshot) {
         var year = Objects.requireNonNull(
-                documentSnapshot.getLong(DbPathConstants.GROUP_HIKE_YEAR)
+                documentSnapshot.getLong(DbFields.GroupHike.YEAR)
         ).intValue();
         var month = Objects.requireNonNull(
-                documentSnapshot.getLong(DbPathConstants.GROUP_HIKE_MONTH)
+                documentSnapshot.getLong(DbFields.GroupHike.MONTH)
         ).intValue();
         var dayOfMonth = Objects.requireNonNull(
-                documentSnapshot.getLong(DbPathConstants.GROUP_HIKE_DAY_OF_MONTH)
+                documentSnapshot.getLong(DbFields.GroupHike.DAY_OF_MONTH)
         ).intValue();
         var hourOfDay = Objects.requireNonNull(
-                documentSnapshot.getLong(DbPathConstants.GROUP_HIKE_HOUR_OF_DAY)
+                documentSnapshot.getLong(DbFields.GroupHike.HOUR_OF_DAY)
         ).intValue();
         var minute = Objects.requireNonNull(
-                documentSnapshot.getLong(DbPathConstants.GROUP_HIKE_MINUTE)
+                documentSnapshot.getLong(DbFields.GroupHike.MINUTE)
         ).intValue();
         return new DateTime(year, month, dayOfMonth, hourOfDay, minute);
     }

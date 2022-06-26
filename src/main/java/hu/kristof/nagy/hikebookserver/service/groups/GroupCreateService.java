@@ -2,7 +2,8 @@ package hu.kristof.nagy.hikebookserver.service.groups;
 
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.Transaction;
-import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
+import hu.kristof.nagy.hikebookserver.data.DbCollections;
+import hu.kristof.nagy.hikebookserver.data.DbFields;
 import hu.kristof.nagy.hikebookserver.model.Group;
 import hu.kristof.nagy.hikebookserver.model.ResponseResult;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
@@ -37,15 +38,15 @@ public class GroupCreateService {
 
     private void save(Transaction transaction, Group group) {
         Map<String, Object> data = group.toMap();
-        var docRef = db.collection(DbPathConstants.COLLECTION_GROUP)
+        var docRef = db.collection(DbCollections.GROUP)
                 .document();
         transaction.create(docRef, data);
     }
 
     private boolean isNameUnique(Transaction transaction, String name) {
         var query = db
-                .collection(DbPathConstants.COLLECTION_GROUP)
-                .whereEqualTo(DbPathConstants.GROUP_NAME, name);
+                .collection(DbCollections.GROUP)
+                .whereEqualTo(DbFields.Group.NAME, name);
         var queryFuture = transaction.get(query);
         return FutureUtil.handleFutureGet(() ->
                 queryFuture.get().isEmpty()

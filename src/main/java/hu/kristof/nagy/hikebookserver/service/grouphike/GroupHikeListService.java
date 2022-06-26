@@ -1,10 +1,10 @@
 package hu.kristof.nagy.hikebookserver.service.grouphike;
 
 import com.google.cloud.firestore.Firestore;
-import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
+import hu.kristof.nagy.hikebookserver.data.DbCollections;
+import hu.kristof.nagy.hikebookserver.data.DbFields;
 import hu.kristof.nagy.hikebookserver.model.GroupHikeListHelper;
 import hu.kristof.nagy.hikebookserver.model.ResponseResult;
-import hu.kristof.nagy.hikebookserver.model.routes.GroupHikeRoute;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,9 +30,9 @@ public class GroupHikeListService {
 
     private List<GroupHikeListHelper> listConnectedGroupHikes(String userName) {
         var queryFuture = db
-                .collection(DbPathConstants.COLLECTION_GROUP_HIKE)
+                .collection(DbCollections.GROUP_HIKE)
                 .select(GroupHikeListHelper.getSelectPaths())
-                .whereEqualTo(DbPathConstants.GROUP_HIKE_PARTICIPANT_NAME, userName)
+                .whereEqualTo(DbFields.GroupHike.PARTICIPANT_NAME, userName)
                 .get();
         return FutureUtil.handleFutureGet(() -> new ArrayList<>(
                 queryFuture.get().getDocuments().stream()
@@ -50,9 +50,9 @@ public class GroupHikeListService {
             return listAllGroupHikes();
         } else {
             var queryFuture = db
-                    .collection(DbPathConstants.COLLECTION_GROUP_HIKE)
+                    .collection(DbCollections.GROUP_HIKE)
                     .select(GroupHikeListHelper.getSelectPaths())
-                    .whereNotIn(DbPathConstants.GROUP_HIKE_NAME, connectedGroupHikeNames)
+                    .whereNotIn(DbFields.GroupHike.NAME, connectedGroupHikeNames)
                     .get();
             return FutureUtil.handleFutureGet(() -> new ArrayList<>(
                     queryFuture.get().getDocuments().stream()
@@ -63,7 +63,7 @@ public class GroupHikeListService {
     }
 
     private List<GroupHikeListHelper> listAllGroupHikes() {
-        var groupHikes = db.collection(DbPathConstants.COLLECTION_GROUP_HIKE);
+        var groupHikes = db.collection(DbCollections.GROUP_HIKE);
         var res = new HashSet<GroupHikeListHelper>(); // distinct substitute
         for (var doc: groupHikes.listDocuments()) {
             var docFuture = doc.get();

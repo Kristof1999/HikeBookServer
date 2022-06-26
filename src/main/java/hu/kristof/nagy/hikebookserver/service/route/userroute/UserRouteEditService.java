@@ -4,10 +4,10 @@ import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.Query;
-import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
+import hu.kristof.nagy.hikebookserver.data.DbCollections;
+import hu.kristof.nagy.hikebookserver.data.DbFields;
 import hu.kristof.nagy.hikebookserver.model.Point;
 import hu.kristof.nagy.hikebookserver.model.ResponseResult;
-import hu.kristof.nagy.hikebookserver.model.routes.EditedRoute;
 import hu.kristof.nagy.hikebookserver.model.routes.EditedUserRoute;
 import hu.kristof.nagy.hikebookserver.model.routes.UserRoute;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
@@ -65,7 +65,7 @@ public class UserRouteEditService {
 
     private DocumentReference getDocToUpdate(List<? extends DocumentSnapshot> queryDocs) {
         String id = queryDocs.get(0).getId();
-        return db.collection(DbPathConstants.COLLECTION_ROUTE)
+        return db.collection(DbCollections.ROUTE)
                 .document(id);
     }
 
@@ -73,8 +73,8 @@ public class UserRouteEditService {
             String ownerName,
             String oldRouteName
     ) {
-        return db.collection(DbPathConstants.COLLECTION_ROUTE)
-                .whereEqualTo(DbPathConstants.ROUTE_USER_NAME, ownerName)
-                .whereEqualTo(DbPathConstants.ROUTE_NAME, oldRouteName);
+        return db.collection(DbCollections.ROUTE)
+                .whereEqualTo(DbFields.UserRoute.NAME, ownerName)
+                .whereEqualTo(DbFields.Route.ROUTE_NAME, oldRouteName);
     }
 }

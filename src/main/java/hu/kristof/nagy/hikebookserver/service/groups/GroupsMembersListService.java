@@ -1,7 +1,8 @@
 package hu.kristof.nagy.hikebookserver.service.groups;
 
 import com.google.cloud.firestore.Firestore;
-import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
+import hu.kristof.nagy.hikebookserver.data.DbCollections;
+import hu.kristof.nagy.hikebookserver.data.DbFields;
 import hu.kristof.nagy.hikebookserver.model.ResponseResult;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,15 +19,15 @@ public class GroupsMembersListService {
 
     public ResponseResult<List<String>> listMembers(String groupName) {
         var queryFuture = db
-                .collection(DbPathConstants.COLLECTION_GROUP)
-                .select(DbPathConstants.GROUP_MEMBER_NAME)
-                .whereEqualTo(DbPathConstants.GROUP_NAME, groupName)
+                .collection(DbCollections.GROUP)
+                .select(DbFields.Group.MEMBER_NAME)
+                .whereEqualTo(DbFields.Group.NAME, groupName)
                 .get();
         return ResponseResult.success(
                 FutureUtil.handleFutureGet(() ->
                 queryFuture.get().getDocuments().stream()
                         .map(queryDocumentSnapshot ->
-                                queryDocumentSnapshot.getString(DbPathConstants.GROUP_MEMBER_NAME)
+                                queryDocumentSnapshot.getString(DbFields.Group.MEMBER_NAME)
                         )
                         .collect(Collectors.toList())
                 )

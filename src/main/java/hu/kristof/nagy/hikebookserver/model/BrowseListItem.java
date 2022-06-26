@@ -1,6 +1,6 @@
 package hu.kristof.nagy.hikebookserver.model;
 
-import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
+import hu.kristof.nagy.hikebookserver.data.DbFields;
 
 import java.util.Objects;
 
@@ -29,8 +29,8 @@ public final class BrowseListItem {
 
     public static String[] getSelectPaths() {
         return new String[] {
-                DbPathConstants.ROUTE_USER_NAME,
-                DbPathConstants.ROUTE_NAME
+                DbFields.UserRoute.NAME,
+                DbFields.Route.ROUTE_NAME
         };
     }
 

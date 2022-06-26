@@ -1,7 +1,7 @@
 package hu.kristof.nagy.hikebookserver.model.routes;
 
 import com.google.cloud.firestore.DocumentSnapshot;
-import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
+import hu.kristof.nagy.hikebookserver.data.DbFields;
 import hu.kristof.nagy.hikebookserver.model.Point;
 import hu.kristof.nagy.hikebookserver.service.route.routeuniqueness.RouteUniquenessHandler;
 
@@ -28,7 +28,7 @@ public class GroupHikeRoute extends Route {
     @Override
     public Map<String, Object> toMap() {
         Map<String, Object> data = super.toMap();
-        data.put(DbPathConstants.ROUTE_GROUP_HIKE_NAME, groupHikeName);
+        data.put(DbFields.GroupHikeRoute.NAME, groupHikeName);
         return data;
     }
 
@@ -43,7 +43,7 @@ public class GroupHikeRoute extends Route {
         String[] userRouteSelectPaths = Arrays.copyOf(
                 routeSelectPaths, routeSelectPaths.length + 1
         );
-        userRouteSelectPaths[userRouteSelectPaths.length - 1] = DbPathConstants.ROUTE_GROUP_HIKE_NAME;
+        userRouteSelectPaths[userRouteSelectPaths.length - 1] = DbFields.GroupHikeRoute.NAME;
         return userRouteSelectPaths;
     }
 
@@ -51,7 +51,7 @@ public class GroupHikeRoute extends Route {
     public void handleRouteUniqueness(RouteUniquenessHandler.Builder<?> builder) {
         super.handleRouteUniqueness(
                 builder.setOwnerName(groupHikeName)
-                        .setOwnerPath(DbPathConstants.ROUTE_GROUP_HIKE_NAME)
+                        .setOwnerPath(DbFields.GroupHikeRoute.NAME)
         );
     }
 

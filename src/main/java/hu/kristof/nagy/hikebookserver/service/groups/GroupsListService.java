@@ -1,7 +1,8 @@
 package hu.kristof.nagy.hikebookserver.service.groups;
 
 import com.google.cloud.firestore.Firestore;
-import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
+import hu.kristof.nagy.hikebookserver.data.DbCollections;
+import hu.kristof.nagy.hikebookserver.data.DbFields;
 import hu.kristof.nagy.hikebookserver.model.ResponseResult;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,14 +29,14 @@ public class GroupsListService {
 
     private List<String> listConnectedGroupNames(String userName) {
         var queryFuture = db
-                .collection(DbPathConstants.COLLECTION_GROUP)
-                .select(DbPathConstants.GROUP_NAME)
-                .whereEqualTo(DbPathConstants.GROUP_MEMBER_NAME, userName)
+                .collection(DbCollections.GROUP)
+                .select(DbFields.Group.NAME)
+                .whereEqualTo(DbFields.Group.MEMBER_NAME, userName)
                 .get();
         return FutureUtil.handleFutureGet(() -> new ArrayList<>(
                 queryFuture.get().getDocuments().stream()
                 .map(queryDocumentSnapshot ->
-                        queryDocumentSnapshot.getString(DbPathConstants.GROUP_NAME)
+                        queryDocumentSnapshot.getString(DbFields.Group.NAME)
                 )
                 .collect(Collectors.toSet()) // distinct substitute
         ));
@@ -47,14 +48,14 @@ public class GroupsListService {
             return listAllGroups();
         } else {
             var queryFuture = db
-                    .collection(DbPathConstants.COLLECTION_GROUP)
-                    .select(DbPathConstants.GROUP_NAME)
-                    .whereNotIn(DbPathConstants.GROUP_NAME, connectedGroupNames)
+                    .collection(DbCollections.GROUP)
+                    .select(DbFields.Group.NAME)
+                    .whereNotIn(DbFields.Group.NAME, connectedGroupNames)
                     .get();
             return FutureUtil.handleFutureGet(() -> new ArrayList<>(
                     queryFuture.get().getDocuments().stream()
                     .map(queryDocumentSnapshot ->
-                            queryDocumentSnapshot.getString(DbPathConstants.GROUP_NAME)
+                            queryDocumentSnapshot.getString(DbFields.Group.NAME)
                     )
                     .collect(Collectors.toSet()) // distinct substitute
             ));
@@ -62,11 +63,11 @@ public class GroupsListService {
     }
 
     private List<String> listAllGroups() {
-        var groups = db.collection(DbPathConstants.COLLECTION_GROUP);
+        var groups = db.collection(DbCollections.GROUP);
         var res = new HashSet<String>(); // distinct substitute
         for (var doc: groups.listDocuments()) {
             String groupName = FutureUtil.handleFutureGet(() ->
-                    doc.get().get().getString(DbPathConstants.GROUP_NAME)
+                    doc.get().get().getString(DbFields.Group.NAME)
             );
             res.add(groupName);
         }

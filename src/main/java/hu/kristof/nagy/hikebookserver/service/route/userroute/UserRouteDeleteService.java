@@ -2,7 +2,8 @@ package hu.kristof.nagy.hikebookserver.service.route.userroute;
 
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QuerySnapshot;
-import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
+import hu.kristof.nagy.hikebookserver.data.DbCollections;
+import hu.kristof.nagy.hikebookserver.data.DbFields;
 import hu.kristof.nagy.hikebookserver.model.ResponseResult;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import hu.kristof.nagy.hikebookserver.service.Util;
@@ -21,10 +22,10 @@ public class UserRouteDeleteService {
      * @return true if deletion was successful
      */
     public ResponseResult<Boolean> deleteUserRoute(String userName, String routeName) {
-        var routes = db.collection(DbPathConstants.COLLECTION_ROUTE);
+        var routes = db.collection(DbCollections.ROUTE);
         var queryFuture = routes
-                .whereEqualTo(DbPathConstants.ROUTE_USER_NAME, userName)
-                .whereEqualTo(DbPathConstants.ROUTE_NAME, routeName)
+                .whereEqualTo(DbFields.UserRoute.NAME, userName)
+                .whereEqualTo(DbFields.Route.ROUTE_NAME, routeName)
                 .get();
 
         QuerySnapshot querySnapshot = FutureUtil.handleFutureGet(queryFuture::get);

@@ -1,7 +1,7 @@
 package hu.kristof.nagy.hikebookserver.service.route.userroute;
 
 import com.google.cloud.firestore.Firestore;
-import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
+import hu.kristof.nagy.hikebookserver.data.DbCollections;
 import hu.kristof.nagy.hikebookserver.model.ResponseResult;
 import hu.kristof.nagy.hikebookserver.model.routes.UserRoute;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
@@ -24,7 +24,7 @@ public class UserRouteCreateService {
 
         Map<String, Object> data = route.toMap();
         FutureUtil.handleFutureGet(() ->
-                db.collection(DbPathConstants.COLLECTION_ROUTE)
+                db.collection(DbCollections.ROUTE)
                         .add(data)
                         .get() // wait for write result
         );

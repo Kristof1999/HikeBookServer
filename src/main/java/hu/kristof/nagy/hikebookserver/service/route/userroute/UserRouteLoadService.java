@@ -2,7 +2,8 @@ package hu.kristof.nagy.hikebookserver.service.route.userroute;
 
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
-import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
+import hu.kristof.nagy.hikebookserver.data.DbCollections;
+import hu.kristof.nagy.hikebookserver.data.DbFields;
 import hu.kristof.nagy.hikebookserver.model.BrowseListItem;
 import hu.kristof.nagy.hikebookserver.model.ResponseResult;
 import hu.kristof.nagy.hikebookserver.model.routes.UserRoute;
@@ -30,7 +31,7 @@ public class UserRouteLoadService {
      */
     public ResponseResult<List<UserRoute>> loadUserRoutes(String userName) {
         return ResponseResult.success(
-                routeLoadService.loadRoutes(userName, DbPathConstants.ROUTE_USER_NAME)
+                routeLoadService.loadRoutes(userName, DbFields.UserRoute.NAME)
                 .stream()
                 .map(route -> new UserRoute(route, userName))
                 .collect(Collectors.toList())
@@ -42,10 +43,10 @@ public class UserRouteLoadService {
      */
     public ResponseResult<UserRoute> loadUserRoute(String userName, String routeName) {
         var queryFuture = db
-                .collection(DbPathConstants.COLLECTION_ROUTE)
+                .collection(DbCollections.ROUTE)
                 .select(UserRoute.getSelectPaths())
-                .whereEqualTo(DbPathConstants.ROUTE_USER_NAME, userName)
-                .whereEqualTo(DbPathConstants.ROUTE_NAME, routeName)
+                .whereEqualTo(DbFields.UserRoute.NAME, userName)
+                .whereEqualTo(DbFields.Route.ROUTE_NAME, routeName)
                 .get();
 
         QueryDocumentSnapshot queryDocumentSnapshot = FutureUtil.handleFutureGet(() -> {
@@ -62,19 +63,19 @@ public class UserRouteLoadService {
      */
     public ResponseResult<List<BrowseListItem>> listUserRoutes(String requesterName) {
         var routes = new ArrayList<BrowseListItem>();
-        var queryFuture = db.collection(DbPathConstants.COLLECTION_ROUTE)
+        var queryFuture = db.collection(DbCollections.ROUTE)
                 .select(BrowseListItem.getSelectPaths())
-                .whereNotEqualTo(DbPathConstants.ROUTE_USER_NAME, requesterName)
+                .whereNotEqualTo(DbFields.UserRoute.NAME, requesterName)
                 .get();
         var queryDocs = FutureUtil.handleFutureGet(() ->
                 queryFuture.get().getDocuments()
         );
         for(var documentSnapshot : queryDocs) {
             var userName = Objects.requireNonNull(
-                    documentSnapshot.getString(DbPathConstants.ROUTE_USER_NAME)
+                    documentSnapshot.getString(DbFields.UserRoute.NAME)
             );
             var routeName = Objects.requireNonNull(
-                    documentSnapshot.getString(DbPathConstants.ROUTE_NAME)
+                    documentSnapshot.getString(DbFields.Route.ROUTE_NAME)
             );
             routes.add(new BrowseListItem(userName, routeName));
         }

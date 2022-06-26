@@ -1,6 +1,6 @@
 package hu.kristof.nagy.hikebookserver.model;
 
-import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
+import hu.kristof.nagy.hikebookserver.data.DbFields;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,8 +19,8 @@ public final class Group {
 
     public Map<String, Object> toMap() {
         var data = new HashMap<String, Object>();
-        data.put(DbPathConstants.GROUP_NAME, groupName);
-        data.put(DbPathConstants.GROUP_MEMBER_NAME, memberName);
+        data.put(DbFields.Group.NAME, groupName);
+        data.put(DbFields.Group.MEMBER_NAME, memberName);
         return data;
     }
 

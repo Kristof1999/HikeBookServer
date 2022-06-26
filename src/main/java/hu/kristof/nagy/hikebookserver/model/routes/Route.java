@@ -1,7 +1,7 @@
 package hu.kristof.nagy.hikebookserver.model.routes;
 
 import com.google.cloud.firestore.DocumentSnapshot;
-import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
+import hu.kristof.nagy.hikebookserver.data.DbFields;
 import hu.kristof.nagy.hikebookserver.model.Point;
 import hu.kristof.nagy.hikebookserver.service.route.routeuniqueness.RouteUniquenessHandler;
 
@@ -30,9 +30,9 @@ public class Route {
 
     public Map<String, Object> toMap() {
         var data = new HashMap<String, Object>();
-        data.put(DbPathConstants.ROUTE_NAME, getRouteName());
-        data.put(DbPathConstants.ROUTE_POINTS, getPoints());
-        data.put(DbPathConstants.ROUTE_DESCRIPTION, getDescription());
+        data.put(DbFields.Route.ROUTE_NAME, getRouteName());
+        data.put(DbFields.Route.POINTS, getPoints());
+        data.put(DbFields.Route.DESCRIPTION, getDescription());
         return data;
     }
 
@@ -44,9 +44,9 @@ public class Route {
 
     public static String[] getSelectPaths() {
         return new String[] {
-                DbPathConstants.ROUTE_NAME,
-                DbPathConstants.ROUTE_POINTS,
-                DbPathConstants.ROUTE_DESCRIPTION
+                DbFields.Route.ROUTE_NAME,
+                DbFields.Route.POINTS,
+                DbFields.Route.DESCRIPTION
         };
     }
 

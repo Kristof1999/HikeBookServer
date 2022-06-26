@@ -2,13 +2,13 @@ package hu.kristof.nagy.hikebookserver.service.grouphike;
 
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.Transaction;
-import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
+import hu.kristof.nagy.hikebookserver.data.DbCollections;
+import hu.kristof.nagy.hikebookserver.data.DbFields;
 import hu.kristof.nagy.hikebookserver.model.DateTime;
 import hu.kristof.nagy.hikebookserver.model.GroupHikeCreateHelper;
 import hu.kristof.nagy.hikebookserver.model.ResponseResult;
 import hu.kristof.nagy.hikebookserver.model.routes.GroupHikeRoute;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
-import hu.kristof.nagy.hikebookserver.service.route.routeuniqueness.TransactionRouteUniquenessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -46,8 +46,8 @@ public class GroupHikeCreateService {
             Transaction transaction,
             String groupHikeName
     ) {
-        var query = db.collection(DbPathConstants.COLLECTION_GROUP_HIKE)
-                .whereEqualTo(DbPathConstants.GROUP_HIKE_NAME, groupHikeName);
+        var query = db.collection(DbCollections.GROUP_HIKE)
+                .whereEqualTo(DbFields.GroupHike.NAME, groupHikeName);
         var queryFuture = transaction.get(query);
         return FutureUtil.handleFutureGet(() -> queryFuture.get().isEmpty());
     }
@@ -59,10 +59,10 @@ public class GroupHikeCreateService {
             DateTime dateTime
     ) {
         Map<String, Object> data = dateTime.toMap();
-        data.put(DbPathConstants.GROUP_HIKE_PARTICIPANT_NAME, participantName);
-        data.put(DbPathConstants.GROUP_HIKE_NAME, groupHikeName);
-        data.put(DbPathConstants.GROUP_HIKE_DATE_TIME, dateTime.toString());
-        var docRef = db.collection(DbPathConstants.COLLECTION_GROUP_HIKE)
+        data.put(DbFields.GroupHike.PARTICIPANT_NAME, participantName);
+        data.put(DbFields.GroupHike.NAME, groupHikeName);
+        data.put(DbFields.GroupHike.DATE_TIME, dateTime.toString());
+        var docRef = db.collection(DbCollections.GROUP_HIKE)
                 .document();
         transaction.create(docRef, data);
     }
@@ -73,11 +73,11 @@ public class GroupHikeCreateService {
             DateTime dateTime
     ) {
         Map<String, Object> data = groupHikeRoute.toMap();
-        var description = (String) data.get(DbPathConstants.ROUTE_DESCRIPTION);
+        var description = (String) data.get(DbFields.Route.DESCRIPTION);
         description = dateTime.toString() + "\n" + description;
-        data.put(DbPathConstants.ROUTE_DESCRIPTION, description);
+        data.put(DbFields.Route.DESCRIPTION, description);
         var docRef = db
-                .collection(DbPathConstants.COLLECTION_ROUTE)
+                .collection(DbCollections.ROUTE)
                 .document();
         // wait for write to finish
         transaction.create(docRef, data);

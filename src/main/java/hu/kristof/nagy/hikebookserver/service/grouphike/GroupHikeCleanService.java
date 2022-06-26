@@ -3,7 +3,8 @@ package hu.kristof.nagy.hikebookserver.service.grouphike;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.firestore.Transaction;
-import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
+import hu.kristof.nagy.hikebookserver.data.DbCollections;
+import hu.kristof.nagy.hikebookserver.data.DbFields;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -32,12 +33,12 @@ public class GroupHikeCleanService {
                     transaction,
                     groupHikesToDelete.stream()
                     .map(queryDocumentSnapshot ->
-                            queryDocumentSnapshot.getString(DbPathConstants.GROUP_HIKE_NAME)
+                            queryDocumentSnapshot.getString(DbFields.GroupHike.NAME)
                     ).collect(Collectors.toList())
             );
 
             var groupHikes = db
-                    .collection(DbPathConstants.COLLECTION_GROUP_HIKE);
+                    .collection(DbCollections.GROUP_HIKE);
             for (var docSnapshot : groupHikesToDelete) {
                 String id = docSnapshot.getId();
                 var docRef = groupHikes.document(id);
@@ -45,7 +46,7 @@ public class GroupHikeCleanService {
             }
 
             var groupHikeRoutes = db
-                    .collection(DbPathConstants.COLLECTION_ROUTE);
+                    .collection(DbCollections.ROUTE);
             for (var docSnapshot : groupHikeRoutesToDelete) {
                 String id = docSnapshot.getId();
                 var docRef = groupHikeRoutes.document(id);
@@ -60,8 +61,8 @@ public class GroupHikeCleanService {
             List<String> groupHikeNames
     ) {
         var query = db
-                .collection(DbPathConstants.COLLECTION_ROUTE)
-                .whereIn(DbPathConstants.ROUTE_GROUP_HIKE_NAME, groupHikeNames);
+                .collection(DbCollections.ROUTE)
+                .whereIn(DbFields.GroupHikeRoute.NAME, groupHikeNames);
         var queryFuture = transaction.get(query);
         return FutureUtil.handleFutureGet(() -> queryFuture.get().getDocuments());
     }
@@ -71,10 +72,10 @@ public class GroupHikeCleanService {
         // We can only make inequality comparisons on one field per query:
         // https://firebase.google.com/docs/firestore/query-data/queries#query_limitations
         var groupHikes = db
-                .collection(DbPathConstants.COLLECTION_GROUP_HIKE);
-        var select = groupHikes.select(DbPathConstants.GROUP_HIKE_NAME);
+                .collection(DbCollections.GROUP_HIKE);
+        var select = groupHikes.select(DbFields.GroupHike.NAME);
         var yearQuery = select
-                .whereLessThanOrEqualTo(DbPathConstants.GROUP_HIKE_YEAR, currentTime.get(Calendar.YEAR));
+                .whereLessThanOrEqualTo(DbFields.GroupHike.YEAR, currentTime.get(Calendar.YEAR));
         var yearQueryFuture = transaction.get(yearQuery);
         var years = FutureUtil.handleFutureGet(() -> yearQueryFuture.get().getDocuments());
         // if there are no group hikes which happened in the past year,
@@ -82,12 +83,12 @@ public class GroupHikeCleanService {
         // which dates are in the last month
         if (years.isEmpty()) {
             var monthQuery = select
-                    .whereLessThanOrEqualTo(DbPathConstants.GROUP_HIKE_MONTH, currentTime.get(Calendar.MONTH));
+                    .whereLessThanOrEqualTo(DbFields.GroupHike.MONTH, currentTime.get(Calendar.MONTH));
             var monthQueryFuture = transaction.get(monthQuery);
             var months = FutureUtil.handleFutureGet(() -> monthQueryFuture.get().getDocuments());
             if (months.isEmpty()) {
                 var dayOfMonthQuery = select
-                        .whereLessThanOrEqualTo(DbPathConstants.GROUP_HIKE_DAY_OF_MONTH, currentTime.get(Calendar.DAY_OF_MONTH));
+                        .whereLessThanOrEqualTo(DbFields.GroupHike.DAY_OF_MONTH, currentTime.get(Calendar.DAY_OF_MONTH));
                 var dayOfMonthQueryFuture = transaction.get(dayOfMonthQuery);
                 return FutureUtil.handleFutureGet(() -> dayOfMonthQueryFuture.get().getDocuments());
             } else {

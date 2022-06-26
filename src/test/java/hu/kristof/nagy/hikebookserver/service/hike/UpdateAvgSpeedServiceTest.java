@@ -2,7 +2,8 @@ package hu.kristof.nagy.hikebookserver.service.hike;
 
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
-import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
+import hu.kristof.nagy.hikebookserver.data.DbCollections;
+import hu.kristof.nagy.hikebookserver.data.DbFields;
 import hu.kristof.nagy.hikebookserver.model.User;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
 import hu.kristof.nagy.hikebookserver.service.TestUtils;
@@ -54,10 +55,10 @@ public class UpdateAvgSpeedServiceTest {
     }
 
     private double getSpeed(String userName) {
-        var users = db.collection(DbPathConstants.COLLECTION_USER);
+        var users = db.collection(DbCollections.USER);
         var queryFuture = users
-                .select(DbPathConstants.USER_AVG_SPEED)
-                .whereEqualTo(DbPathConstants.USER_NAME, userName)
+                .select(DbFields.User.AVG_SPEED)
+                .whereEqualTo(DbFields.User.NAME, userName)
                 .get();
 
         QueryDocumentSnapshot userQueryDoc = FutureUtil.handleFutureGet(() -> {
@@ -67,7 +68,7 @@ public class UpdateAvgSpeedServiceTest {
             );
         });
         return Objects.requireNonNull(
-                userQueryDoc.getDouble(DbPathConstants.USER_AVG_SPEED)
+                userQueryDoc.getDouble(DbFields.User.AVG_SPEED)
         );
     }
 }

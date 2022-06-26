@@ -1,16 +1,12 @@
 package hu.kristof.nagy.hikebookserver.service.route;
 
 import com.google.cloud.firestore.Firestore;
-import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
 import hu.kristof.nagy.hikebookserver.model.BrowseListItem;
 import hu.kristof.nagy.hikebookserver.model.Point;
 import hu.kristof.nagy.hikebookserver.model.PointType;
-import hu.kristof.nagy.hikebookserver.model.routes.Route;
 import hu.kristof.nagy.hikebookserver.model.routes.UserRoute;
 import hu.kristof.nagy.hikebookserver.service.TestUtils;
-import hu.kristof.nagy.hikebookserver.service.route.QueryException;
 import hu.kristof.nagy.hikebookserver.service.route.userroute.UserRouteCreateService;
-import hu.kristof.nagy.hikebookserver.service.route.RouteLoadService;
 import hu.kristof.nagy.hikebookserver.service.route.userroute.UserRouteLoadService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,7 +16,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 

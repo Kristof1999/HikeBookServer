@@ -2,7 +2,8 @@ package hu.kristof.nagy.hikebookserver.service.grouphike;
 
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.Transaction;
-import hu.kristof.nagy.hikebookserver.data.DbPathConstants;
+import hu.kristof.nagy.hikebookserver.data.DbCollections;
+import hu.kristof.nagy.hikebookserver.data.DbFields;
 import hu.kristof.nagy.hikebookserver.model.DateTime;
 import hu.kristof.nagy.hikebookserver.model.ResponseResult;
 import hu.kristof.nagy.hikebookserver.service.FutureUtil;
@@ -53,11 +54,11 @@ public class GroupHikeGeneralConnectService {
                 throw new IllegalArgumentException("A csoportos túra véget ért/megszűnt.");
 
             Map<String, Object> data = dateTime.toMap();
-            data.put(DbPathConstants.GROUP_HIKE_DATE_TIME, dateTime.toString());
-            data.put(DbPathConstants.GROUP_HIKE_NAME, groupHikeName);
-            data.put(DbPathConstants.GROUP_HIKE_PARTICIPANT_NAME, userName);
+            data.put(DbFields.GroupHike.DATE_TIME, dateTime.toString());
+            data.put(DbFields.GroupHike.NAME, groupHikeName);
+            data.put(DbFields.GroupHike.PARTICIPANT_NAME, userName);
             return FutureUtil.handleFutureGet(() -> {
-                var docRef = db.collection(DbPathConstants.COLLECTION_GROUP_HIKE)
+                var docRef = db.collection(DbCollections.GROUP_HIKE)
                         .document();
                 transaction.create(docRef, data);
                 return true;
@@ -70,9 +71,9 @@ public class GroupHikeGeneralConnectService {
     private boolean disconnect(String groupHikeName, String userName) {
         var transactionFuture = db.runTransaction(transaction -> {
             var query = db
-                    .collection(DbPathConstants.COLLECTION_GROUP_HIKE)
-                    .whereEqualTo(DbPathConstants.GROUP_HIKE_NAME, groupHikeName)
-                    .whereEqualTo(DbPathConstants.GROUP_HIKE_PARTICIPANT_NAME, userName);
+                    .collection(DbCollections.GROUP_HIKE)
+                    .whereEqualTo(DbFields.GroupHike.NAME, groupHikeName)
+                    .whereEqualTo(DbFields.GroupHike.PARTICIPANT_NAME, userName);
             var queryFuture = transaction.get(query);
             var queryDocs = FutureUtil.handleFutureGet(() ->
                     queryFuture.get().getDocuments()
@@ -83,7 +84,7 @@ public class GroupHikeGeneralConnectService {
                 }
 
                 String id = documentSnapshots.get(0).getId();
-                var docRef = db.collection(DbPathConstants.COLLECTION_GROUP_HIKE)
+                var docRef = db.collection(DbCollections.GROUP_HIKE)
                         .document(id);
                 transaction.delete(docRef);
                 return true;
@@ -93,21 +94,21 @@ public class GroupHikeGeneralConnectService {
     }
 
     private void deleteGroupHikeRoute(Transaction transaction, String groupHikeName) {
-        var query = db.collection(DbPathConstants.COLLECTION_ROUTE)
-                .whereEqualTo(DbPathConstants.ROUTE_GROUP_HIKE_NAME, groupHikeName);
+        var query = db.collection(DbCollections.ROUTE)
+                .whereEqualTo(DbFields.GroupHikeRoute.NAME, groupHikeName);
         var queryFuture = transaction.get(query);
         var queryDocs = FutureUtil.handleFutureGet(() -> queryFuture.get().getDocuments());
         Util.handleListSize(queryDocs, documentSnapshots -> {
             String id = documentSnapshots.get(0).getId();
-            var docRef = db.collection(DbPathConstants.COLLECTION_ROUTE)
+            var docRef = db.collection(DbCollections.ROUTE)
                     .document(id);
             return transaction.delete(docRef);
         });
     }
 
     private int participantNumber(Transaction transaction, String groupHikeName) {
-        var query = db.collection(DbPathConstants.COLLECTION_GROUP_HIKE)
-                .whereEqualTo(DbPathConstants.GROUP_HIKE_NAME, groupHikeName);
+        var query = db.collection(DbCollections.GROUP_HIKE)
+                .whereEqualTo(DbFields.GroupHike.NAME, groupHikeName);
         var queryFuture = transaction.get(query);
         return FutureUtil.handleFutureGet(() -> queryFuture.get().getDocuments().size());
     }
